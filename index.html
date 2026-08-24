@@ -81,238 +81,279 @@
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
-<body class="flex flex-col min-h-screen selection:bg-amber-500 selection:text-slate-950">
+<body class="flex flex-col min-h-screen selection:bg-amber-500 selection:text-slate-950 bg-[#060911]">
 
-    <!-- Header / Navbar Responsive -->
-    <header class="w-full max-w-7xl mx-auto px-4 sm:px-6 py-5 flex justify-between items-center transition-all z-30">
-        <div class="text-xl sm:text-2xl font-extrabold tracking-wider flex items-center gap-2 cursor-pointer group" onclick="cambiarVista('clientView')">
-            <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-amber-600 to-amber-400 flex items-center justify-center shadow-lg shadow-amber-500/20 group-hover:scale-105 transition-transform">
-                <span class="text-slate-950 font-black text-lg sm:text-xl">B</span>
+    <!-- Contenedor para Notificaciones Customizadas -->
+    <div id="toast-container" class="fixed top-5 right-5 z-[100] flex flex-col gap-3 pointer-events-none"></div>
+
+    <!-- PANTALLA DE INICIO DE SESIÓN / REGISTRO -->
+    <div id="authLandingView" class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-[#060911] transition-opacity duration-500">
+        <div class="flex flex-col md:flex-row w-full max-w-6xl bg-[#0a0e17] rounded-[2rem] overflow-hidden shadow-2xl border border-white/5 h-full max-h-[750px] relative">
+            
+            <!-- Sección Izquierda: Imagen inspirada en el mockup -->
+            <div class="hidden md:flex md:w-1/2 relative bg-black">
+                <img src="https://img.magnific.com/fotos-premium/barberia-cartel-que-dice-que-es-barberia_1015384-126289.jpg?semt=ais_hybrid&w=740&q=80" alt="Barberia" class="absolute inset-0 w-full h-full object-cover opacity-60">
+                <div class="absolute inset-0 bg-gradient-to-t from-[#0a0e17] via-[#0a0e17]/40 to-transparent"></div>
+                <div class="absolute bottom-12 left-12 right-12 z-10">
+                    <h2 class="text-3xl lg:text-4xl font-extrabold text-white mb-3 leading-tight drop-shadow-lg">Forja tu estilo,<br>un corte a la vez.</h2>
+                    <p class="text-slate-300 text-sm lg:text-base drop-shadow-md">Únete a la élite de Barber Studio y vive una experiencia VIP inigualable. Tu imagen es nuestra obra maestra.</p>
+                </div>
             </div>
-            <div>
-                <span class="text-white drop-shadow-md">BARBER</span><span class="text-amber-400 drop-shadow-md">STUDIO</span>
+            
+            <!-- Sección Derecha: Formulario -->
+            <div class="w-full md:w-1/2 p-8 sm:p-12 lg:p-16 flex flex-col justify-center bg-[#0a0e17] relative overflow-y-auto no-scrollbar">
+                <div class="max-w-md w-full mx-auto">
+                    <h3 class="text-2xl lg:text-3xl font-semibold text-white mb-2" id="landingAuthTitle">Inicia Sesión</h3>
+                    <p class="text-sm text-slate-400 mb-8" id="landingAuthSubtitle">Ingresa tus datos para agendar tu próxima cita.</p>
+                    
+                    <div class="space-y-5">
+                        <div id="fieldNombre" class="hidden">
+                            <label class="block text-[11px] uppercase tracking-wider text-slate-400 mb-1.5">Nombre Completo *</label>
+                            <input type="text" id="authNombre" class="w-full bg-[#131824] border border-white/5 rounded-xl px-4 py-3.5 text-white text-sm focus:border-amber-500/50 focus:bg-[#1a2133] transition-all outline-none" placeholder="Ej. Alejandro Molina">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-[11px] uppercase tracking-wider text-slate-400 mb-1.5">Correo Electrónico *</label>
+                            <input type="text" id="authCorreo" class="w-full bg-[#131824] border border-white/5 rounded-xl px-4 py-3.5 text-white text-sm focus:border-amber-500/50 focus:bg-[#1a2133] transition-all outline-none" placeholder="correo@example.com">
+                        </div>
+                        
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5" id="passwordGrid">
+                            <div class="col-span-1 sm:col-span-2" id="passContainer">
+                                <label class="block text-[11px] uppercase tracking-wider text-slate-400 mb-1.5">Contraseña *</label>
+                                <input type="password" id="authPass" class="w-full bg-[#131824] border border-white/5 rounded-xl px-4 py-3.5 text-white text-sm focus:border-amber-500/50 focus:bg-[#1a2133] transition-all outline-none" placeholder="••••••••">
+                            </div>
+                            
+                            <div class="hidden" id="fieldPassConfirm">
+                                <label class="block text-[11px] uppercase tracking-wider text-slate-400 mb-1.5">Confirmar Contraseña *</label>
+                                <input type="password" id="authPassConfirm" class="w-full bg-[#131824] border border-white/5 rounded-xl px-4 py-3.5 text-white text-sm focus:border-amber-500/50 focus:bg-[#1a2133] transition-all outline-none" placeholder="••••••••">
+                            </div>
+                        </div>
+                        <p class="text-[10px] text-slate-500 hidden" id="passwordHint">La contraseña debe tener al menos 6 caracteres.</p>
+                        
+                        <button id="btnAuthAction" onclick="procesarAuth()" class="w-full py-4 mt-4 bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 text-slate-950 font-bold rounded-xl text-sm transition-transform active:scale-[0.98] shadow-lg shadow-amber-500/20">
+                            Entrar
+                        </button>
+                        
+                        <div class="text-center pt-6 mt-6 border-t border-white/5">
+                            <span class="text-sm text-slate-400" id="btnAuthToggleText">¿No tienes una cuenta? </span>
+                            <button id="btnAuthToggle" onclick="toggleAuthMode()" class="text-sm text-amber-400 hover:text-amber-300 transition-colors font-semibold">
+                                Regístrate
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <span class="text-[10px] tracking-widest px-2 py-0.5 bg-amber-400/20 text-amber-300 rounded-full font-bold border border-amber-400/40 hidden xs:inline-block">ELITE</span>
         </div>
-
-        <nav class="hidden md:flex gap-6 lg:gap-8 text-sm font-semibold text-slate-100 items-center drop-shadow">
-            <a href="#" onclick="cambiarVista('clientView')" class="hover:text-amber-400 transition-colors">Reservar Cita</a>
-            <a href="#catalogoSection" onclick="cambiarVista('clientView')" class="hover:text-amber-400 transition-colors">Catálogo VIP</a>
-            <button onclick="abrirModalLogin()" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 text-slate-950 font-extrabold text-sm shadow-lg shadow-amber-500/25 hover:scale-105 transition-all duration-300 active:scale-95">
-                Admin 🔒
-            </button>
-        </nav>
-
-        <div class="flex md:hidden items-center gap-2">
-            <button onclick="abrirModalLogin()" class="px-3 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-amber-400 text-slate-950 font-bold text-xs shadow-md">
-                Admin 🔒
-            </button>
-            <button onclick="toggleMobileMenu()" class="w-10 h-10 rounded-xl bg-black/60 border border-white/20 flex items-center justify-center text-white focus:outline-none">
-                ☰
-            </button>
-        </div>
-    </header>
-
-    <div id="mobileMenu" class="hidden md:hidden glass-panel mx-4 rounded-2xl p-4 mb-4 space-y-3 z-20 animate-slide">
-        <a href="#" onclick="cambiarVista('clientView'); toggleMobileMenu();" class="block py-2.5 px-4 rounded-xl text-white font-medium hover:bg-white/10 transition">📅 Reservar Cita</a>
-        <a href="#catalogoSection" onclick="cambiarVista('clientView'); toggleMobileMenu();" class="block py-2.5 px-4 rounded-xl text-white font-medium hover:bg-white/10 transition">✂️ Catálogo VIP</a>
     </div>
 
-    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 w-full py-4 sm:py-6 z-10">
-        
-        <!-- Vista 1: Cliente -->
-        <div id="clientView" class="view-section animate-slide space-y-12">
-            <div class="max-w-xl mx-auto glass-panel rounded-3xl p-6 sm:p-10 shadow-2xl relative overflow-hidden">
-                <div class="absolute -right-16 -top-16 w-48 h-48 bg-amber-500/15 rounded-full blur-3xl pointer-events-none"></div>
-                
-                <div class="text-center mb-6 sm:mb-8 relative z-10">
-                    <h2 class="text-2xl sm:text-3xl font-extrabold text-white mb-2 drop-shadow">Reserva tu Estilo <span class="text-amber-400">VIP</span></h2>
-                    <p class="text-slate-200 text-xs sm:text-sm drop-shadow">Selecciona tu servicio profesional con precios en Lempiras (HNL)</p>
-                </div>
-
-                <div class="space-y-4 sm:space-y-5 relative z-10">
-                    <div>
-                        <label class="block text-xs uppercase tracking-widest text-slate-200 font-bold mb-2">Nombre del Cliente</label>
-                        <input type="text" id="cliNombre" placeholder="Ej. Alejandro Molina" class="w-full glass-input rounded-xl px-4 py-3 sm:py-3.5 text-white placeholder-slate-400 focus:outline-none transition-all text-sm">
-                    </div>
-
-                    <div>
-                        <label class="block text-xs uppercase tracking-widest text-slate-200 font-bold mb-2">Correo Electrónico</label>
-                        <input type="email" id="cliCorreo" placeholder="Ej. correo@example.com" class="w-full glass-input rounded-xl px-4 py-3 sm:py-3.5 text-white placeholder-slate-400 focus:outline-none transition-all text-sm">
-                    </div>
-
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-xs uppercase tracking-widest text-slate-200 font-bold mb-2">Servicio</label>
-                            <select id="cliServicio" class="w-full glass-input rounded-xl px-4 py-3 sm:py-3.5 text-white focus:outline-none transition-all cursor-pointer text-sm">
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-xs uppercase tracking-widest text-slate-200 font-bold mb-2">Barbero Preferido</label>
-                            <input type="text" id="cliBarbero" placeholder="Ej. Marcos" class="w-full glass-input rounded-xl px-4 py-3 sm:py-3.5 text-white placeholder-slate-400 focus:outline-none transition-all text-sm">
-                        </div>
-                    </div>
-
-                    <div>
-                        <label class="block text-xs uppercase tracking-widest text-slate-200 font-bold mb-2">Fecha y Hora de la Cita</label>
-                        <input type="datetime-local" id="cliFechaHora" class="w-full glass-input rounded-xl px-4 py-3 sm:py-3.5 text-white focus:outline-none transition-all text-sm">
-                    </div>
-
-                    <button onclick="clienteAgendar()" class="w-full py-3.5 sm:py-4 bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 text-slate-950 font-black rounded-xl transition-all duration-300 shadow-xl shadow-amber-500/25 hover:scale-[1.01] active:scale-95 text-sm sm:text-base">
-                        Confirmar y Agendar Mi Cita 🚀
-                    </button>
-                </div>
-            </div>
-
-            <div id="catalogoSection" class="pt-6">
-                <div class="text-center mb-8 sm:mb-12">
-                    <span class="text-[11px] sm:text-xs uppercase tracking-widest text-amber-400 font-bold px-3 py-1 bg-amber-500/20 rounded-full border border-amber-500/30">Estándar Internacional</span>
-                    <h2 class="text-3xl sm:text-4xl font-extrabold text-white mt-3 mb-2 drop-shadow">Catálogo Exclusivo</h2>
-                    <p class="text-slate-200 text-xs sm:text-sm max-w-xl mx-auto px-4 drop-shadow">Cortes de precisión, fades impecables y tratamientos con tarifas oficiales.</p>
-                </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" id="catalogoGrid">
-                </div>
-            </div>
-        </div>
-
-        <!-- Vista 2: Panel de Administración -->
-        <div id="adminView" class="view-section hidden animate-slide">
-            <div class="flex justify-between items-center mb-6 sm:mb-8 flex-wrap gap-4 border-b border-white/20 pb-5">
-                <div>
-                    <h1 class="text-2xl sm:text-3xl font-extrabold text-white flex items-center gap-2 sm:gap-3 drop-shadow">Panel Admin <span class="text-amber-400 text-base sm:text-lg">⚙️</span></h1>
-                    <p class="text-slate-200 text-xs sm:text-sm mt-1">Control de finanzas, catálogo de servicios y seguimiento de citas sincronizado con Supabase.</p>
-                </div>
-                <div class="flex gap-2.5 sm:gap-3 flex-wrap w-full sm:w-auto">
-                    <button onclick="finalizarDiaCaja()" class="flex-1 sm:flex-none px-4 sm:px-5 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-white rounded-xl text-xs sm:text-sm font-bold shadow-lg shadow-emerald-500/20 transition-all hover:scale-105">
-                        🏁 Finalizar Día
-                    </button>
-                    <button onclick="cerrarSesionAdmin()" class="px-4 sm:px-5 py-2.5 bg-red-500/20 text-red-200 border border-red-500/40 hover:bg-red-500 hover:text-white rounded-xl text-xs sm:text-sm font-semibold transition-all">
-                        Cerrar Sesión 🚪
-                    </button>
-                </div>
-            </div>
-
-            <!-- Dashboard Stats Grid -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-8">
-                <div class="glass-panel p-5 sm:p-6 rounded-3xl relative overflow-hidden glow-hover">
-                    <span class="text-xs uppercase tracking-widest text-slate-200 font-bold">Caja Total (Histórico + Día)</span>
-                    <div class="text-3xl sm:text-4xl font-black mt-3 text-emerald-400 tracking-tight" id="statIngresos">L. 0.00</div>
-                </div>
-                <div class="glass-panel p-5 sm:p-6 rounded-3xl relative overflow-hidden glow-hover">
-                    <span class="text-xs uppercase tracking-widest text-slate-200 font-bold">Citas Registradas</span>
-                    <div class="text-3xl sm:text-4xl font-black mt-3 text-white tracking-tight" id="statCitas">0</div>
-                </div>
-                <div class="glass-panel p-5 sm:p-6 rounded-3xl relative overflow-hidden glow-hover sm:col-span-2 lg:col-span-1">
-                    <span class="text-xs uppercase tracking-widest text-slate-200 font-bold">Clientes Atendidos</span>
-                    <div class="text-3xl sm:text-4xl font-black mt-3 text-amber-400 tracking-tight" id="statAtendidos">0</div>
-                </div>
-            </div>
-
-            <!-- GESTIÓN DE SERVICIOS -->
-            <div class="glass-panel rounded-3xl p-5 sm:p-8 mb-8">
-                <h3 class="font-bold text-lg sm:text-xl text-white mb-4 flex items-center gap-2">
-                    <span>✂️</span> Gestión del Catálogo de Servicios
-                </h3>
-                
-                <div class="bg-black/30 p-5 rounded-2xl border border-white/10 mb-6 space-y-4">
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <input type="text" id="nuevoServicioNombre" placeholder="Nombre del Servicio *" class="glass-input rounded-xl px-4 py-2.5 text-white text-sm">
-                        <input type="number" id="nuevoServicioPrecio" placeholder="Precio (L.) *" class="glass-input rounded-xl px-4 py-2.5 text-white text-sm">
-                    </div>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <input type="url" id="nuevoServicioImg" placeholder="URL de la imagen (Opcional)" class="glass-input rounded-xl px-4 py-2.5 text-white text-sm">
-                        <input type="text" id="nuevoServicioDesc" placeholder="Descripción breve (Opcional)" class="glass-input rounded-xl px-4 py-2.5 text-white text-sm">
-                    </div>
-                    <button onclick="agregarNuevoServicio()" class="w-full sm:w-auto px-6 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold rounded-xl text-sm transition-all shadow-md">
-                        + Agregar Servicio
-                    </button>
-                </div>
-
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse min-w-[500px]">
-                        <thead>
-                            <tr class="text-slate-200 text-xs uppercase border-b border-white/20 tracking-wider">
-                                <th class="py-2 px-3">Servicio</th>
-                                <th class="py-2 px-3">Precio</th>
-                                <th class="py-2 px-3 text-right">Acción</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tablaAdminServicios" class="divide-y divide-white/10 text-sm">
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- Tabla de Citas con Botón Atender -->
-            <div class="glass-panel rounded-3xl p-5 sm:p-8 mb-8">
-                <h3 class="font-bold text-lg sm:text-xl text-white mb-6">Listado de Citas & Control Operativo (Supabase)</h3>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse min-w-[700px]">
-                        <thead>
-                            <tr class="text-slate-200 text-xs uppercase border-b border-white/20 tracking-wider">
-                                <th class="py-3.5 px-4"># ID</th>
-                                <th class="py-3.5 px-4">Cliente</th>
-                                <th class="py-3.5 px-4">Correo</th>
-                                <th class="py-3.5 px-4">Servicio</th>
-                                <th class="py-3.5 px-4">Barbero</th>
-                                <th class="py-3.5 px-4">Hora Programada</th>
-                                <th class="py-3.5 px-4">Monto</th>
-                                <th class="py-3.5 px-4">Estatus</th>
-                                <th class="py-3.5 px-4 text-center">Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tablaAdminCitas" class="divide-y divide-white/10 text-sm"></tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- TABLA DE HISTORIAL DE DÍAS FINALIZADOS -->
-            <div class="glass-panel rounded-3xl p-5 sm:p-8">
-                <h3 class="font-bold text-lg sm:text-xl text-white mb-4 flex items-center gap-2">
-                    <span>📊</span> Historial de Días Cerrados
-                </h3>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse min-w-[500px]">
-                        <thead>
-                            <tr class="text-slate-200 text-xs uppercase border-b border-white/20 tracking-wider">
-                                <th class="py-3 px-4">Jornada / Fecha</th>
-                                <th class="py-3 px-4">Ingresos Generados</th>
-                                <th class="py-3 px-4 text-right">Acción</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tablaHistorialDias" class="divide-y divide-white/10 text-sm">
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-    </main>
-
-    <!-- Modal Login Admin -->
-    <div id="loginModal" class="fixed inset-0 bg-black/65 backdrop-blur-md hidden justify-center items-center z-50 p-4 transition-all">
-        <div class="glass-panel w-full max-w-md rounded-3xl p-6 sm:p-8 relative shadow-2xl border border-white/25 animate-slide">
-            <button onclick="cerrarModalLogin()" class="absolute top-5 right-5 w-8 h-8 rounded-full bg-white/20 flex items-center justify-center hover:bg-red-500 hover:text-white transition text-white">✕</button>
-            <div class="text-center mb-6">
-                <div class="w-12 h-12 rounded-2xl bg-amber-500/30 border border-amber-500/40 flex items-center justify-center mx-auto mb-3 text-amber-300 text-xl font-black">🔒</div>
-                <h3 class="text-xl sm:text-2xl font-extrabold text-white mb-1">Acceso Administrador</h3>
-            </div>
-            <div class="space-y-4">
-                <div>
-                    <label class="block text-xs uppercase tracking-widest text-slate-200 mb-1.5 font-bold">Usuario</label>
-                    <input type="text" id="loginUser" class="w-full glass-input rounded-xl px-4 py-3 text-white text-sm" placeholder="Usuario">
+    <!-- CONTENEDOR PRINCIPAL DE LA APP (Oculto hasta iniciar sesión) -->
+    <div id="appContainer" class="hidden flex-col min-h-screen relative z-10 w-full">
+        <!-- Header / Navbar Responsive -->
+        <header class="w-full max-w-7xl mx-auto px-4 sm:px-6 py-5 flex justify-between items-center transition-all z-30">
+            <div class="text-xl sm:text-2xl font-extrabold tracking-wider flex items-center gap-2 cursor-pointer group" onclick="cambiarVista('clientView')">
+                <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-amber-600 to-amber-400 flex items-center justify-center shadow-lg shadow-amber-500/20 group-hover:scale-105 transition-transform">
+                    <span class="text-slate-950 font-black text-lg sm:text-xl">B</span>
                 </div>
                 <div>
-                    <label class="block text-xs uppercase tracking-widest text-slate-200 mb-1.5 font-bold">Contraseña</label>
-                    <input type="password" id="loginPass" class="w-full glass-input rounded-xl px-4 py-3 text-white text-sm" placeholder="Contraseña">
+                    <span class="text-white drop-shadow-md">BARBER</span><span class="text-amber-400 drop-shadow-md">STUDIO</span>
                 </div>
-                <button onclick="verificarLoginAdmin()" class="w-full py-3.5 bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 text-slate-950 font-black rounded-xl text-sm">
-                    Entrar al Panel 🚀
+                <span class="text-[10px] tracking-widest px-2 py-0.5 bg-amber-400/20 text-amber-300 rounded-full font-bold border border-amber-400/40 hidden xs:inline-block">ELITE</span>
+            </div>
+
+            <nav class="hidden md:flex gap-6 lg:gap-8 text-sm font-semibold text-slate-100 items-center drop-shadow">
+                <span id="userGreeting" class="text-amber-400 font-bold tracking-wide"></span>
+                <a href="#" onclick="cambiarVista('clientView')" class="hover:text-amber-400 transition-colors">Reservar Cita</a>
+                <a href="#catalogoSection" onclick="cambiarVista('clientView')" class="hover:text-amber-400 transition-colors">Catálogo VIP</a>
+                <button id="btnLogoutNav" onclick="cerrarSesionUsuario()" class="px-5 py-2.5 rounded-xl bg-red-500/20 hover:bg-red-500 text-red-200 hover:text-white font-extrabold text-sm border border-red-500/40 transition-all duration-300">
+                    Salir
+                </button>
+            </nav>
+
+            <div class="flex md:hidden items-center gap-2">
+                <button onclick="toggleMobileMenu()" class="w-10 h-10 rounded-xl bg-black/60 border border-white/20 flex items-center justify-center text-white focus:outline-none">
+                    ☰
                 </button>
             </div>
+        </header>
+
+        <div id="mobileMenu" class="hidden md:hidden glass-panel mx-4 rounded-2xl p-4 mb-4 space-y-3 z-20 animate-slide">
+            <a href="#" onclick="cambiarVista('clientView'); toggleMobileMenu();" class="block py-2.5 px-4 rounded-xl text-white font-medium hover:bg-white/10 transition">📅 Reservar Cita</a>
+            <a href="#catalogoSection" onclick="cambiarVista('clientView'); toggleMobileMenu();" class="block py-2.5 px-4 rounded-xl text-white font-medium hover:bg-white/10 transition">✂️ Catálogo VIP</a>
+            <button id="btnLogoutMobile" onclick="cerrarSesionUsuario(); toggleMobileMenu();" class="w-full text-left py-2.5 px-4 rounded-xl text-red-400 font-medium hover:bg-red-500/20 transition">Cerrar Sesión</button>
         </div>
-    </div>
+
+        <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 w-full py-4 sm:py-6 z-10">
+            
+            <!-- Vista 1: Cliente -->
+            <div id="clientView" class="view-section animate-slide space-y-12">
+                <div class="max-w-xl mx-auto glass-panel rounded-3xl p-6 sm:p-10 shadow-2xl relative overflow-hidden">
+                    <div class="absolute -right-16 -top-16 w-48 h-48 bg-amber-500/15 rounded-full blur-3xl pointer-events-none"></div>
+                    
+                    <div class="text-center mb-6 sm:mb-8 relative z-10">
+                        <h2 class="text-2xl sm:text-3xl font-extrabold text-white mb-2 drop-shadow">Reserva tu Estilo <span class="text-amber-400">VIP</span></h2>
+                        <p class="text-slate-200 text-xs sm:text-sm drop-shadow">Selecciona tu servicio profesional con precios en Lempiras (HNL)</p>
+                    </div>
+
+                    <div class="space-y-4 sm:space-y-5 relative z-10">
+                        <div>
+                            <label class="block text-xs uppercase tracking-widest text-slate-200 font-bold mb-2">Nombre del Cliente</label>
+                            <input type="text" id="cliNombre" placeholder="Tu nombre cargará automáticamente..." class="w-full glass-input rounded-xl px-4 py-3 sm:py-3.5 text-white placeholder-slate-400 focus:outline-none transition-all text-sm">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs uppercase tracking-widest text-slate-200 font-bold mb-2">Correo Electrónico</label>
+                            <input type="email" id="cliCorreo" placeholder="Tu correo cargará automáticamente..." class="w-full glass-input rounded-xl px-4 py-3 sm:py-3.5 text-white placeholder-slate-400 focus:outline-none transition-all text-sm">
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs uppercase tracking-widest text-slate-200 font-bold mb-2">Servicio</label>
+                                <select id="cliServicio" class="w-full glass-input rounded-xl px-4 py-3 sm:py-3.5 text-white focus:outline-none transition-all cursor-pointer text-sm">
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs uppercase tracking-widest text-slate-200 font-bold mb-2">Barbero Preferido</label>
+                                <input type="text" id="cliBarbero" placeholder="Ej. Marcos" class="w-full glass-input rounded-xl px-4 py-3 sm:py-3.5 text-white placeholder-slate-400 focus:outline-none transition-all text-sm">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs uppercase tracking-widest text-slate-200 font-bold mb-2">Fecha y Hora de la Cita</label>
+                            <input type="datetime-local" id="cliFechaHora" class="w-full glass-input rounded-xl px-4 py-3 sm:py-3.5 text-white focus:outline-none transition-all text-sm">
+                        </div>
+
+                        <button onclick="clienteAgendar()" class="w-full py-3.5 sm:py-4 bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 text-slate-950 font-black rounded-xl transition-all duration-300 shadow-xl shadow-amber-500/25 hover:scale-[1.01] active:scale-95 text-sm sm:text-base">
+                            Confirmar y Agendar Mi Cita 🚀
+                        </button>
+                    </div>
+                </div>
+
+                <div id="catalogoSection" class="pt-6">
+                    <div class="text-center mb-8 sm:mb-12">
+                        <span class="text-[11px] sm:text-xs uppercase tracking-widest text-amber-400 font-bold px-3 py-1 bg-amber-500/20 rounded-full border border-amber-500/30">Estándar Internacional</span>
+                        <h2 class="text-3xl sm:text-4xl font-extrabold text-white mt-3 mb-2 drop-shadow">Catálogo Exclusivo</h2>
+                        <p class="text-slate-200 text-xs sm:text-sm max-w-xl mx-auto px-4 drop-shadow">Cortes sincronizados en tiempo real desde la base de datos.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" id="catalogoGrid">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Vista 2: Panel de Administración -->
+            <div id="adminView" class="view-section hidden animate-slide">
+                <div class="flex justify-between items-center mb-6 sm:mb-8 flex-wrap gap-4 border-b border-white/20 pb-5">
+                    <div>
+                        <h1 class="text-2xl sm:text-3xl font-extrabold text-white flex items-center gap-2 sm:gap-3 drop-shadow">Panel Admin <span class="text-amber-400 text-base sm:text-lg">⚙️</span></h1>
+                        <p class="text-slate-200 text-xs sm:text-sm mt-1">Control de finanzas, catálogo de servicios y seguimiento de citas sincronizado con Supabase.</p>
+                    </div>
+                    <div class="flex gap-2.5 sm:gap-3 flex-wrap w-full sm:w-auto">
+                        <button onclick="finalizarDiaCaja()" class="flex-1 sm:flex-none px-4 sm:px-5 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-white rounded-xl text-xs sm:text-sm font-bold shadow-lg shadow-emerald-500/20 transition-all hover:scale-105">
+                            🏁 Finalizar Día
+                        </button>
+                        <button onclick="cerrarSesionUsuario()" class="px-4 sm:px-5 py-2.5 bg-red-500/20 text-red-200 border border-red-500/40 hover:bg-red-500 hover:text-white rounded-xl text-xs sm:text-sm font-semibold transition-all">
+                            Cerrar Sesión 🚪
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Dashboard Stats Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-8">
+                    <div class="glass-panel p-5 sm:p-6 rounded-3xl relative overflow-hidden glow-hover">
+                        <span class="text-xs uppercase tracking-widest text-slate-200 font-bold">Caja Total (Histórico + Día)</span>
+                        <div class="text-3xl sm:text-4xl font-black mt-3 text-emerald-400 tracking-tight" id="statIngresos">L. 0.00</div>
+                    </div>
+                    <div class="glass-panel p-5 sm:p-6 rounded-3xl relative overflow-hidden glow-hover">
+                        <span class="text-xs uppercase tracking-widest text-slate-200 font-bold">Citas Registradas</span>
+                        <div class="text-3xl sm:text-4xl font-black mt-3 text-white tracking-tight" id="statCitas">0</div>
+                    </div>
+                    <div class="glass-panel p-5 sm:p-6 rounded-3xl relative overflow-hidden glow-hover sm:col-span-2 lg:col-span-1">
+                        <span class="text-xs uppercase tracking-widest text-slate-200 font-bold">Clientes Atendidos</span>
+                        <div class="text-3xl sm:text-4xl font-black mt-3 text-amber-400 tracking-tight" id="statAtendidos">0</div>
+                    </div>
+                </div>
+
+                <!-- GESTIÓN DE SERVICIOS -->
+                <div class="glass-panel rounded-3xl p-5 sm:p-8 mb-8">
+                    <h3 class="font-bold text-lg sm:text-xl text-white mb-4 flex items-center gap-2">
+                        <span>✂️</span> Gestión del Catálogo de Servicios (Nube)
+                    </h3>
+                    
+                    <div class="bg-black/30 p-5 rounded-2xl border border-white/10 mb-6 space-y-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <input type="text" id="nuevoServicioNombre" placeholder="Nombre del Servicio *" class="glass-input rounded-xl px-4 py-2.5 text-white text-sm">
+                            <input type="number" id="nuevoServicioPrecio" placeholder="Precio (L.) *" class="glass-input rounded-xl px-4 py-2.5 text-white text-sm">
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <input type="url" id="nuevoServicioImg" placeholder="URL de la imagen (Opcional)" class="glass-input rounded-xl px-4 py-2.5 text-white text-sm">
+                            <input type="text" id="nuevoServicioDesc" placeholder="Descripción breve (Opcional)" class="glass-input rounded-xl px-4 py-2.5 text-white text-sm">
+                        </div>
+                        <button onclick="agregarNuevoServicio()" class="w-full sm:w-auto px-6 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold rounded-xl text-sm transition-all shadow-md">
+                            + Agregar Servicio Global
+                        </button>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse min-w-[500px]">
+                            <thead>
+                                <tr class="text-slate-200 text-xs uppercase border-b border-white/20 tracking-wider">
+                                    <th class="py-2 px-3">Servicio</th>
+                                    <th class="py-2 px-3">Precio</th>
+                                    <th class="py-2 px-3 text-right">Acción</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tablaAdminServicios" class="divide-y divide-white/10 text-sm">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Tabla de Citas -->
+                <div class="glass-panel rounded-3xl p-5 sm:p-8 mb-8">
+                    <h3 class="font-bold text-lg sm:text-xl text-white mb-6">Listado de Citas & Control Operativo (Supabase)</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse min-w-[700px]">
+                            <thead>
+                                <tr class="text-slate-200 text-xs uppercase border-b border-white/20 tracking-wider">
+                                    <th class="py-3.5 px-4"># ID</th>
+                                    <th class="py-3.5 px-4">Cliente</th>
+                                    <th class="py-3.5 px-4">Correo</th>
+                                    <th class="py-3.5 px-4">Servicio</th>
+                                    <th class="py-3.5 px-4">Barbero</th>
+                                    <th class="py-3.5 px-4">Hora Programada</th>
+                                    <th class="py-3.5 px-4">Monto</th>
+                                    <th class="py-3.5 px-4">Estatus</th>
+                                    <th class="py-3.5 px-4 text-center">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tablaAdminCitas" class="divide-y divide-white/10 text-sm"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- TABLA DE HISTORIAL DE DÍAS FINALIZADOS -->
+                <div class="glass-panel rounded-3xl p-5 sm:p-8">
+                    <h3 class="font-bold text-lg sm:text-xl text-white mb-4 flex items-center gap-2">
+                        <span>📊</span> Historial de Días Cerrados
+                    </h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse min-w-[500px]">
+                            <thead>
+                                <tr class="text-slate-200 text-xs uppercase border-b border-white/20 tracking-wider">
+                                    <th class="py-3 px-4">Jornada / Fecha</th>
+                                    <th class="py-3 px-4">Ingresos Generados</th>
+                                    <th class="py-3 px-4 text-right">Acción</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tablaHistorialDias" class="divide-y divide-white/10 text-sm">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div> <!-- FIN DE appContainer -->
 
     <script>
         // CONFIGURACIÓN DE SUPABASE
@@ -320,154 +361,346 @@
         const SUPABASE_ANON_KEY = 'sb_publishable_53VUwTtPWsqkJXukMLLSiw_XFkJVGWU';
         const bd = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+        let authMode = 'login'; // 'login' o 'register'
+        let usuarioActual = null; // Guardará { nombre, correo }
+
         const catálogoBase = [
-            { nombre: "Corte Normal", precio: 100, desc: "Corte clásico a máquina o tijera con acabado pulcro y limpio.", img: "https://images.unsplash.com/photo-1622286342621-4bd786c2447c?q=80&w=600&auto=format&fit=crop" },
-            { nombre: "Corte + Barba Detallada", precio: 180, desc: "Corte completo al gusto y perfilado de barba con toalla caliente.", img: "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?q=80&w=600&auto=format&fit=crop" },
-            { nombre: "Corte Fade & Diseño", precio: 150, desc: "Desvanecido perfecto con trazos artísticos.", img: "https://images.unsplash.com/photo-1599351431202-1e0f0137899a?q=80&w=600&auto=format&fit=crop" }
+            { id: 1, nombre: "Corte Normal", precio: 100, desc: "Corte clásico a máquina o tijera con acabado pulcro y limpio.", img: "https://images.unsplash.com/photo-1622286342621-4bd786c2447c?q=80&w=600&auto=format&fit=crop" },
+            { id: 2, nombre: "Corte + Barba Detallada", precio: 180, desc: "Corte completo al gusto y perfilado de barba con toalla caliente.", img: "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?q=80&w=600&auto=format&fit=crop" },
+            { id: 3, nombre: "Corte Fade & Diseño", precio: 150, desc: "Desvanecido perfecto con trazos artísticos.", img: "https://images.unsplash.com/photo-1599351431202-1e0f0137899a?q=80&w=600&auto=format&fit=crop" }
         ];
 
         window.onload = function() {
             renderizarCatalogo();
+            mostrarLandingAuth(); // Obligar el inicio de sesión
         };
 
-        function obtenerServicios() {
-            const guardados = localStorage.getItem('barberiaServiciosV1');
-            return guardados ? JSON.parse(guardados) : catálogoBase;
-        }
+        // --- SISTEMA DE NOTIFICACIONES CUSTOM (Toast) ---
+        function mostrarToast(mensaje, tipo = 'info') {
+            const container = document.getElementById('toast-container');
+            if(!container) return;
 
-        function guardarServicios(servicios) {
-            localStorage.setItem('barberiaServiciosV1', JSON.stringify(servicios));
-            renderizarCatalogo();
-            if(!document.getElementById('adminView').classList.contains('hidden')) {
-                actualizarTablaServiciosAdmin();
+            const toast = document.createElement('div');
+            
+            let bgColor = 'bg-slate-800 border-slate-600 text-white';
+            let icon = 'ℹ️';
+            
+            if (tipo === 'success') {
+                bgColor = 'bg-emerald-900/90 border-emerald-500/50 text-emerald-100';
+                icon = '✅';
+            } else if (tipo === 'error') {
+                bgColor = 'bg-red-900/90 border-red-500/50 text-red-100';
+                icon = '❌';
+            } else if (tipo === 'warning') {
+                bgColor = 'bg-amber-900/90 border-amber-500/50 text-amber-100';
+                icon = '⚠️';
             }
-        }
-
-        function renderizarCatalogo() {
-            const servicios = obtenerServicios();
-            const grid = document.getElementById('catalogoGrid');
-            grid.innerHTML = '';
-
-            servicios.forEach(serv => {
-                const imagen = serv.img || 'https://images.unsplash.com/photo-1622286342621-4bd786c2447c?q=80&w=600&auto=format&fit=crop';
-                const descripcion = serv.desc || 'Servicio profesional realizado por nuestro equipo VIP.';
-                grid.innerHTML += `
-                    <div class="glass-panel rounded-3xl overflow-hidden flex flex-col glow-hover transition-all duration-300 group">
-                        <div class="relative h-48 sm:h-52 overflow-hidden">
-                            <img src="${imagen}" alt="${serv.nombre}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                            <span class="absolute bottom-3 left-4 text-amber-400 font-black text-lg sm:text-xl drop-shadow-md">L. ${serv.precio}</span>
-                        </div>
-                        <div class="p-5 sm:p-6 flex flex-col flex-grow">
-                            <h3 class="font-bold text-base sm:text-lg mb-1.5 text-white drop-shadow">${serv.nombre}</h3>
-                            <p class="text-xs text-slate-200 mb-5 flex-grow leading-relaxed">${descripcion}</p>
-                            <button onclick="seleccionarServicioRapido('${serv.nombre}|${serv.precio}')" class="w-full py-3 bg-amber-500/25 text-amber-300 border border-amber-500/40 rounded-xl text-xs font-extrabold hover:bg-amber-400 hover:text-slate-950 transition-all shadow-md">Reservar Este Servicio</button>
-                        </div>
-                    </div>
-                `;
-            });
-
-            const select = document.getElementById('cliServicio');
-            select.innerHTML = '';
-            servicios.forEach(serv => {
-                select.innerHTML += `<option value="${serv.nombre}|${serv.precio}" class="bg-slate-900 text-white">${serv.nombre} - L. ${serv.precio}</option>`;
-            });
-        }
-
-        function agregarNuevoServicio() {
-            const nombre = document.getElementById('nuevoServicioNombre').value.trim();
-            const precio = parseFloat(document.getElementById('nuevoServicioPrecio').value);
-            const img = document.getElementById('nuevoServicioImg').value.trim();
-            const desc = document.getElementById('nuevoServicioDesc').value.trim();
-
-            if (!nombre || isNaN(precio)) {
-                alert("Por favor ingresa un nombre y precio válido para el servicio.");
-                return;
-            }
-
-            let servicios = obtenerServicios();
-            servicios.push({ 
-                nombre, 
-                precio, 
-                desc: desc || "Servicio profesional realizado por nuestro equipo VIP.", 
-                img: img || "" 
-            });
-            guardarServicios(servicios);
-
-            document.getElementById('nuevoServicioNombre').value = '';
-            document.getElementById('nuevoServicioPrecio').value = '';
-            document.getElementById('nuevoServicioImg').value = '';
-            document.getElementById('nuevoServicioDesc').value = '';
-        }
-
-        function eliminarServicio(index) {
-            let servicios = obtenerServicios();
-            if (confirm(`¿Seguro que deseas eliminar "${servicios[index].nombre}" del catálogo?`)) {
-                servicios.splice(index, 1);
-                guardarServicios(servicios);
-            }
-        }
-
-        function actualizarTablaServiciosAdmin() {
-            const servicios = obtenerServicios();
-            const tbody = document.getElementById('tablaAdminServicios');
-            tbody.innerHTML = '';
-
-            servicios.forEach((s, index) => {
-                tbody.innerHTML += `
-                    <tr>
-                        <td class="py-2.5 px-3 font-semibold text-white">${s.nombre}</td>
-                        <td class="py-2.5 px-3 text-amber-400 font-bold">L. ${parseFloat(s.precio).toFixed(2)}</td>
-                        <td class="py-2.5 px-3 text-right">
-                            <button onclick="eliminarServicio(${index})" class="px-3 py-1 bg-red-500/20 text-red-300 hover:bg-red-500 hover:text-white rounded-lg text-xs font-bold transition-all">Eliminar</button>
-                        </td>
-                    </tr>
-                `;
-            });
+            
+            toast.className = `flex items-center gap-3 px-4 py-3 rounded-xl border shadow-lg backdrop-blur-md transition-all duration-300 transform translate-x-full opacity-0 ${bgColor}`;
+            toast.innerHTML = `<span class="text-lg">${icon}</span><p class="text-sm font-medium">${mensaje}</p>`;
+            
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.classList.remove('translate-x-full', 'opacity-0');
+            }, 10);
+            
+            setTimeout(() => {
+                toast.classList.add('translate-x-full', 'opacity-0');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
         }
 
         function cambiarVista(vistaId) {
             document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
             const vistaTarget = document.getElementById(vistaId);
             if(vistaTarget) vistaTarget.classList.remove('hidden');
-        }
-
-        function seleccionarServicioRapido(valorServicio) {
-            document.getElementById('cliServicio').value = valorServicio;
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        function abrirModalLogin() {
-            document.getElementById('loginModal').classList.remove('hidden');
-            document.getElementById('loginModal').classList.add('flex');
+        // --- AUTH Y SESIONES ---
+        function mostrarLandingAuth() {
+            document.getElementById('authLandingView').classList.remove('hidden');
+            document.getElementById('authLandingView').classList.add('flex');
+            document.getElementById('appContainer').classList.remove('flex');
+            document.getElementById('appContainer').classList.add('hidden');
+            
+            document.getElementById('authNombre').value = '';
+            document.getElementById('authCorreo').value = '';
+            document.getElementById('authPass').value = '';
+            document.getElementById('authPassConfirm').value = '';
+            
+            authMode = 'login';
+            actualizarUIAuth();
         }
 
-        function cerrarModalLogin() {
-            document.getElementById('loginModal').classList.remove('flex');
-            document.getElementById('loginModal').classList.add('hidden');
+        function ocultarLandingAuth() {
+            document.getElementById('authLandingView').classList.remove('flex');
+            document.getElementById('authLandingView').classList.add('hidden');
+            document.getElementById('appContainer').classList.remove('hidden');
+            document.getElementById('appContainer').classList.add('flex');
         }
 
-        function verificarLoginAdmin() {
-            const u = document.getElementById('loginUser').value.trim();
-            const p = document.getElementById('loginPass').value.trim();
+        function toggleAuthMode() {
+            authMode = authMode === 'login' ? 'register' : 'login';
+            actualizarUIAuth();
+        }
 
-            if (u === "1" && p === "1") {
-                cerrarModalLogin();
-                cambiarVista('adminView');
-                actualizarTablaServiciosAdmin();
-                actualizarDashboardAdmin();
+        function actualizarUIAuth() {
+            const isLogin = authMode === 'login';
+            
+            document.getElementById('landingAuthTitle').innerText = isLogin ? 'Inicia Sesión' : 'Crea tu cuenta';
+            document.getElementById('landingAuthSubtitle').innerText = isLogin 
+                ? 'Ingresa tus datos para agendar tu próxima cita.' 
+                : 'Únete a una red de clientes exclusivos de Barber Studio.';
+            document.getElementById('btnAuthAction').innerText = isLogin ? 'Entrar' : 'Crear Cuenta';
+            document.getElementById('btnAuthToggleText').innerText = isLogin ? '¿No tienes una cuenta? ' : '¿Ya tienes una cuenta? ';
+            document.getElementById('btnAuthToggle').innerText = isLogin ? 'Regístrate' : 'Inicia Sesión';
+            
+            const passContainer = document.getElementById('passContainer');
+            
+            if(isLogin) {
+                document.getElementById('fieldNombre').classList.add('hidden');
+                document.getElementById('fieldPassConfirm').classList.add('hidden');
+                document.getElementById('passwordHint').classList.add('hidden');
+                passContainer.classList.add('sm:col-span-2');
+                passContainer.classList.remove('sm:col-span-1');
             } else {
-                alert("Credenciales incorrectas. Usa usuario: 1 y contraseña: 1");
+                document.getElementById('fieldNombre').classList.remove('hidden');
+                document.getElementById('fieldPassConfirm').classList.remove('hidden');
+                document.getElementById('passwordHint').classList.remove('hidden');
+                passContainer.classList.remove('sm:col-span-2');
+                passContainer.classList.add('sm:col-span-1');
             }
         }
 
-        function cerrarSesionAdmin() {
-            cambiarVista('clientView');
+        async function procesarAuth() {
+            const correo = document.getElementById('authCorreo').value.trim();
+            const pass = document.getElementById('authPass').value.trim();
+
+            if(!correo || !pass) {
+                mostrarToast('Por favor completa los campos principales.', 'warning');
+                return;
+            }
+
+            if(authMode === 'login') {
+                if (correo === "1" && pass === "1") {
+                    mostrarToast('¡Bienvenido Administrador!', 'success');
+                    ocultarLandingAuth();
+                    cambiarVista('adminView');
+                    actualizarTablaServiciosAdmin();
+                    actualizarDashboardAdmin();
+                } else if (correo === "0" && pass === "0") {
+                    // Acceso rápido para pruebas de cliente
+                    usuarioActual = { nombre: "Usuario Prueba", correo: "cliente@prueba.com" };
+                    mostrarToast('¡Hola de nuevo, Usuario de Prueba!', 'success');
+                    
+                    ocultarLandingAuth();
+                    cambiarVista('clientView');
+                    
+                    document.getElementById('cliNombre').value = usuarioActual.nombre;
+                    document.getElementById('cliNombre').disabled = true;
+                    document.getElementById('cliNombre').classList.add('opacity-75', 'cursor-not-allowed');
+                    
+                    document.getElementById('cliCorreo').value = usuarioActual.correo;
+                    document.getElementById('cliCorreo').disabled = true;
+                    document.getElementById('cliCorreo').classList.add('opacity-75', 'cursor-not-allowed');
+                    
+                    document.getElementById('userGreeting').innerText = `Hola, Usuario`;
+                } else {
+                    const { data, error } = await bd.from('usuarios').select('*').eq('correo', correo).eq('password', pass);
+                    if (data && data.length > 0) {
+                        const usr = data[0];
+                        usuarioActual = { nombre: usr.nombre, correo: usr.correo };
+                        mostrarToast(`¡Hola de nuevo, ${usr.nombre.split(' ')[0]}!`, 'success');
+                        
+                        ocultarLandingAuth();
+                        cambiarVista('clientView');
+                        
+                        document.getElementById('cliNombre').value = usr.nombre;
+                        document.getElementById('cliNombre').disabled = true;
+                        document.getElementById('cliNombre').classList.add('opacity-75', 'cursor-not-allowed');
+                        
+                        document.getElementById('cliCorreo').value = usr.correo;
+                        document.getElementById('cliCorreo').disabled = true;
+                        document.getElementById('cliCorreo').classList.add('opacity-75', 'cursor-not-allowed');
+                        
+                        document.getElementById('userGreeting').innerText = `Hola, ${usr.nombre.split(' ')[0]}`;
+                    } else {
+                        mostrarToast('Usuario o contraseña incorrectos.', 'error');
+                    }
+                }
+            } else {
+                const nombre = document.getElementById('authNombre').value.trim();
+                const passConfirm = document.getElementById('authPassConfirm').value.trim();
+
+                if(!nombre || !passConfirm) {
+                    mostrarToast('Completa todos los campos para registrarte.', 'warning');
+                    return;
+                }
+                if(pass !== passConfirm) {
+                    mostrarToast('Las contraseñas no coinciden. Intenta de nuevo.', 'error');
+                    return;
+                }
+
+                const nuevoUser = { nombre, correo, password: pass };
+                const { error } = await bd.from('usuarios').insert([nuevoUser]);
+
+                if(error) {
+                    mostrarToast('Error al registrar usuario. Intenta de nuevo o verifica tu conexión.', 'error');
+                } else {
+                    mostrarToast('¡Cuenta creada con éxito! Iniciando sesión...', 'success');
+                    
+                    usuarioActual = { nombre, correo };
+                    setTimeout(() => {
+                        ocultarLandingAuth();
+                        cambiarVista('clientView');
+                        
+                        document.getElementById('cliNombre').value = nombre;
+                        document.getElementById('cliNombre').disabled = true;
+                        document.getElementById('cliNombre').classList.add('opacity-75', 'cursor-not-allowed');
+                        
+                        document.getElementById('cliCorreo').value = correo;
+                        document.getElementById('cliCorreo').disabled = true;
+                        document.getElementById('cliCorreo').classList.add('opacity-75', 'cursor-not-allowed');
+                        
+                        document.getElementById('userGreeting').innerText = `Hola, ${nombre.split(' ')[0]}`;
+                    }, 1200);
+                }
+            }
         }
 
-        function obtenerHistorialDias() { return JSON.parse(localStorage.getItem('barberiaHistorialDiasV7')) || []; }
-        function guardarHistorialDias(historial) { localStorage.setItem('barberiaHistorialDiasV7', JSON.stringify(historial)); }
+        function cerrarSesionUsuario() {
+            usuarioActual = null;
+            document.getElementById('cliNombre').value = '';
+            document.getElementById('cliNombre').disabled = false;
+            document.getElementById('cliNombre').classList.remove('opacity-75', 'cursor-not-allowed');
+            
+            document.getElementById('cliCorreo').value = '';
+            document.getElementById('cliCorreo').disabled = false;
+            document.getElementById('cliCorreo').classList.remove('opacity-75', 'cursor-not-allowed');
+            
+            document.getElementById('userGreeting').innerText = '';
+            
+            mostrarLandingAuth();
+            mostrarToast('Has cerrado sesión.', 'success');
+        }
 
-        // --- CONEXIÓN A SUPABASE ---
+        // --- GESTIÓN DEL CATÁLOGO DE SERVICIOS EN SUPABASE ---
+        async function obtenerServicios() {
+            const { data, error } = await bd.from('servicios').select('*');
+            if (error || !data || data.length === 0) {
+                return catálogoBase;
+            }
+            return data;
+        }
+
+        async function renderizarCatalogo() {
+            const servicios = await obtenerServicios();
+            const grid = document.getElementById('catalogoGrid');
+            if (grid) grid.innerHTML = '';
+
+            const select = document.getElementById('cliServicio');
+            if (select) select.innerHTML = '';
+
+            servicios.forEach(serv => {
+                const imagen = serv.img || 'https://images.unsplash.com/photo-1622286342621-4bd786c2447c?q=80&w=600&auto=format&fit=crop';
+                const descripcion = serv.desc || 'Servicio profesional realizado por nuestro equipo VIP.';
+                
+                if (grid) {
+                    grid.innerHTML += `
+                        <div class="glass-panel rounded-3xl overflow-hidden flex flex-col glow-hover transition-all duration-300 group">
+                            <div class="relative h-48 sm:h-52 overflow-hidden">
+                                <img src="${imagen}" alt="${serv.nombre}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                                <span class="absolute bottom-3 left-4 text-amber-400 font-black text-lg sm:text-xl drop-shadow-md">L. ${serv.precio}</span>
+                            </div>
+                            <div class="p-5 sm:p-6 flex flex-col flex-grow">
+                                <h3 class="font-bold text-base sm:text-lg mb-1.5 text-white drop-shadow">${serv.nombre}</h3>
+                                <p class="text-xs text-slate-200 mb-5 flex-grow leading-relaxed">${descripcion}</p>
+                                <button onclick="seleccionarServicioRapido('${serv.nombre}|${serv.precio}')" class="w-full py-3 bg-amber-500/25 text-amber-300 border border-amber-500/40 rounded-xl text-xs font-extrabold hover:bg-amber-400 hover:text-slate-950 transition-all shadow-md">Reservar Este Servicio</button>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                if (select) {
+                    select.innerHTML += `<option value="${serv.nombre}|${serv.precio}" class="bg-slate-900 text-white">${serv.nombre} - L. ${serv.precio}</option>`;
+                }
+            });
+        }
+
+        async function agregarNuevoServicio() {
+            const nombre = document.getElementById('nuevoServicioNombre').value.trim();
+            const precio = parseFloat(document.getElementById('nuevoServicioPrecio').value);
+            const img = document.getElementById('nuevoServicioImg').value.trim();
+            const desc = document.getElementById('nuevoServicioDesc').value.trim();
+
+            if (!nombre || isNaN(precio)) {
+                mostrarToast("Por favor ingresa un nombre y precio válido para el servicio.", "warning");
+                return;
+            }
+
+            const nuevo = {
+                nombre,
+                precio,
+                desc: desc || "Servicio profesional realizado por nuestro equipo VIP.",
+                img: img || ""
+            };
+
+            const { error } = await bd.from('servicios').insert([nuevo]);
+            if (error) {
+                mostrarToast("Error al agregar servicio: " + error.message, "error");
+            } else {
+                mostrarToast("¡Servicio agregado y sincronizado globalmente!", "success");
+                document.getElementById('nuevoServicioNombre').value = '';
+                document.getElementById('nuevoServicioPrecio').value = '';
+                document.getElementById('nuevoServicioImg').value = '';
+                document.getElementById('nuevoServicioDesc').value = '';
+                renderizarCatalogo();
+                actualizarTablaServiciosAdmin();
+            }
+        }
+
+        async function eliminarServicio(id) {
+            if (confirm("¿Seguro que deseas eliminar este servicio del catálogo global?")) {
+                const { error } = await bd.from('servicios').delete().eq('id', id);
+                if (error) {
+                    mostrarToast("Error al eliminar: " + error.message, "error");
+                } else {
+                    mostrarToast("Servicio eliminado.", "success");
+                    renderizarCatalogo();
+                    actualizarTablaServiciosAdmin();
+                }
+            }
+        }
+
+        async function actualizarTablaServiciosAdmin() {
+            const servicios = await obtenerServicios();
+            const tbody = document.getElementById('tablaAdminServicios');
+            if(tbody) tbody.innerHTML = '';
+
+            servicios.forEach((s) => {
+                if(tbody) {
+                    tbody.innerHTML += `
+                        <tr>
+                            <td class="py-2.5 px-3 font-semibold text-white">${s.nombre}</td>
+                            <td class="py-2.5 px-3 text-amber-400 font-bold">L. ${parseFloat(s.precio).toFixed(2)}</td>
+                            <td class="py-2.5 px-3 text-right">
+                                <button onclick="eliminarServicio(${s.id})" class="px-3 py-1 bg-red-500/20 text-red-300 hover:bg-red-500 hover:text-white rounded-lg text-xs font-bold transition-all">Eliminar</button>
+                            </td>
+                        </tr>
+                    `;
+                }
+            });
+        }
+
+        function seleccionarServicioRapido(valorServicio) {
+            const select = document.getElementById('cliServicio');
+            if(select) select.value = valorServicio;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // --- CITAS Y DASHBOARD ADMIN ---
         async function clienteAgendar() {
             const cliente = document.getElementById('cliNombre').value.trim();
             const correo = document.getElementById('cliCorreo').value.trim();
@@ -476,7 +709,7 @@
             const fechaHora = document.getElementById('cliFechaHora').value;
 
             if (!cliente || !correo || !barbero || !fechaHora) {
-                alert("Completa todos los campos requeridos, incluyendo el correo.");
+                mostrarToast("Completa todos los campos requeridos.", "warning");
                 return;
             }
 
@@ -493,11 +726,11 @@
             const { error } = await bd.from('citas').insert([nuevaCita]);
 
             if (error) {
-                alert("Error al guardar en Supabase: " + error.message);
+                mostrarToast("Error al guardar en Supabase: " + error.message, "error");
             } else {
-                alert("¡Cita agendada con éxito y sincronizada con la nube!");
-                document.getElementById('cliNombre').value = "";
-                document.getElementById('cliCorreo').value = "";
+                mostrarToast("¡Cita agendada con éxito!", "success");
+                
+                // Limpiar solo los campos que no están bloqueados
                 document.getElementById('cliBarbero').value = "";
                 document.getElementById('cliFechaHora').value = "";
             }
@@ -505,22 +738,25 @@
 
         async function marcarComoAtendido(id) {
             const { error } = await bd.from('citas').update({ atendido: true }).eq('id', id);
-            if (error) alert("Error: " + error.message);
+            if (error) mostrarToast("Error: " + error.message, "error");
             else actualizarDashboardAdmin();
         }
 
         async function eliminarCitaAdmin(id) {
             if (confirm("¿Seguro que deseas eliminar esta cita de la base de datos?")) {
                 const { error } = await bd.from('citas').delete().eq('id', id);
-                if (error) alert("Error: " + error.message);
+                if (error) mostrarToast("Error: " + error.message, "error");
                 else actualizarDashboardAdmin();
             }
         }
 
+        function obtenerHistorialDias() { return JSON.parse(localStorage.getItem('barberiaHistorialDiasV7')) || []; }
+        function guardarHistorialDias(historial) { localStorage.setItem('barberiaHistorialDiasV7', JSON.stringify(historial)); }
+
         async function finalizarDiaCaja() {
             const { data: citas, error } = await bd.from('citas').select('*');
             if (error) {
-                alert("Error al obtener citas: " + error.message);
+                mostrarToast("Error al obtener citas: " + error.message, "error");
                 return;
             }
 
@@ -530,7 +766,7 @@
             });
 
             if (totalDia === 0 && citas.length === 0) {
-                alert("No hay citas registradas para finalizar el día.");
+                mostrarToast("No hay citas registradas para finalizar el día.", "warning");
                 return;
             }
 
@@ -549,7 +785,7 @@
                 }
 
                 actualizarDashboardAdmin();
-                alert("¡Jornada finalizada y base de datos limpiada exitosamente!");
+                mostrarToast("¡Jornada finalizada exitosamente!", "success");
             }
         }
 
@@ -565,15 +801,15 @@
         async function actualizarDashboardAdmin() {
             const { data: citas, error } = await bd.from('citas').select('*');
             if (error) {
-                console.error("Error al cargar citas de Supabase:", error.message);
+                console.error("Error al cargar citas:", error.message);
                 return;
             }
 
             const historial = obtenerHistorialDias();
             const tbody = document.getElementById('tablaAdminCitas');
             const tbodyHistorial = document.getElementById('tablaHistorialDias');
-            tbody.innerHTML = '';
-            tbodyHistorial.innerHTML = '';
+            if(tbody) tbody.innerHTML = '';
+            if(tbodyHistorial) tbodyHistorial.innerHTML = '';
 
             let totalAtendidos = 0;
             let ingresosDiaActual = 0;
@@ -584,62 +820,70 @@
                     ingresosDiaActual += c.precio;
                 }
 
-                tbody.innerHTML += `
-                    <tr>
-                        <td class="py-3 px-4 text-amber-400 font-mono">VIP-${c.id}</td>
-                        <td class="py-3 px-4 text-white font-semibold">${c.nombre}</td>
-                        <td class="py-3 px-4 text-slate-300 text-xs">${c.correo || 'N/A'}</td>
-                        <td class="py-3 px-4 text-slate-200">${c.servicio}</td>
-                        <td class="py-3 px-4 text-slate-200">${c.barbero}</td>
-                        <td class="py-3 px-4 text-slate-300 text-xs">${c.fechahora}</td>
-                        <td class="py-3 px-4 text-amber-400 font-bold">L. ${parseFloat(c.precio).toFixed(2)}</td>
-                        <td class="py-3 px-4">
-                            ${c.atendido 
-                                ? '<span class="text-emerald-400 font-bold flex items-center gap-1">✔ Atendido</span>' 
-                                : '<span class="text-amber-400 font-bold">⏳ Pendiente</span>'}
-                        </td>
-                        <td class="py-3 px-4 text-center">
-                            <div class="flex items-center justify-center gap-2">
-                                ${!c.atendido ? `
-                                    <button onclick="marcarComoAtendido(${c.id})" class="px-3 py-1 bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 hover:bg-emerald-500 hover:text-slate-950 rounded-lg text-xs font-extrabold transition-all">
-                                        ✓ Atender
-                                    </button>
-                                ` : ''}
-                                <button onclick="eliminarCitaAdmin(${c.id})" class="text-red-400 hover:underline text-xs">Borrar</button>
-                            </div>
-                        </td>
-                    </tr>
-                `;
+                if(tbody) {
+                    tbody.innerHTML += `
+                        <tr>
+                            <td class="py-3 px-4 text-amber-400 font-mono">VIP-${c.id}</td>
+                            <td class="py-3 px-4 text-white font-semibold">${c.nombre}</td>
+                            <td class="py-3 px-4 text-slate-300 text-xs">${c.correo || 'N/A'}</td>
+                            <td class="py-3 px-4 text-slate-200">${c.servicio}</td>
+                            <td class="py-3 px-4 text-slate-200">${c.barbero}</td>
+                            <td class="py-3 px-4 text-slate-300 text-xs">${c.fechahora}</td>
+                            <td class="py-3 px-4 text-amber-400 font-bold">L. ${parseFloat(c.precio).toFixed(2)}</td>
+                            <td class="py-3 px-4">
+                                ${c.atendido 
+                                    ? '<span class="text-emerald-400 font-bold flex items-center gap-1">✔ Atendido</span>' 
+                                    : '<span class="text-amber-400 font-bold">⏳ Pendiente</span>'}
+                            </td>
+                            <td class="py-3 px-4 text-center">
+                                <div class="flex items-center justify-center gap-2">
+                                    ${!c.atendido ? `
+                                        <button onclick="marcarComoAtendido(${c.id})" class="px-3 py-1 bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 hover:bg-emerald-500 hover:text-slate-950 rounded-lg text-xs font-extrabold transition-all">
+                                            ✓ Atender
+                                        </button>
+                                    ` : ''}
+                                    <button onclick="eliminarCitaAdmin(${c.id})" class="text-red-400 hover:underline text-xs">Borrar</button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                }
             });
 
             let ingresosHistoricos = historial.reduce((sum, d) => sum + d.ingresos, 0);
             let ingresosTotales = ingresosHistoricos + ingresosDiaActual;
 
             if(historial.length === 0) {
-                tbodyHistorial.innerHTML = `<tr><td colspan="3" class="py-3 px-4 text-slate-400 text-center italic">No hay días finalizados registrados aún.</td></tr>`;
+                if(tbodyHistorial) tbodyHistorial.innerHTML = `<tr><td colspan="3" class="py-3 px-4 text-slate-400 text-center italic">No hay días finalizados registrados aún.</td></tr>`;
             } else {
                 historial.forEach((h, index) => {
-                    tbodyHistorial.innerHTML += `
-                        <tr>
-                            <td class="py-3 px-4 font-semibold text-white">${h.fecha}</td>
-                            <td class="py-3 px-4 text-emerald-400 font-bold">L. ${parseFloat(h.ingresos).toFixed(2)}</td>
-                            <td class="py-3 px-4 text-right">
-                                <button onclick="eliminarDiaHistorial(${index})" class="px-3 py-1 bg-red-500/20 text-red-300 hover:bg-red-500 hover:text-white rounded-lg text-xs font-bold transition-all">
-                                    Eliminar
-                                </button>
-                            </td>
-                        </tr>
-                    `;
+                    if(tbodyHistorial) {
+                        tbodyHistorial.innerHTML += `
+                            <tr>
+                                <td class="py-3 px-4 font-semibold text-white">${h.fecha}</td>
+                                <td class="py-3 px-4 text-emerald-400 font-bold">L. ${parseFloat(h.ingresos).toFixed(2)}</td>
+                                <td class="py-3 px-4 text-right">
+                                    <button onclick="eliminarDiaHistorial(${index})" class="px-3 py-1 bg-red-500/20 text-red-300 hover:bg-red-500 hover:text-white rounded-lg text-xs font-bold transition-all">
+                                        Eliminar
+                                    </button>
+                                </td>
+                            </tr>
+                        `;
+                    }
                 });
             }
 
-            document.getElementById('statIngresos').innerText = `L. ${ingresosTotales.toFixed(2)}`;
-            document.getElementById('statCitas').innerText = citas.length;
-            document.getElementById('statAtendidos').innerText = totalAtendidos;
+            const statI = document.getElementById('statIngresos');
+            const statC = document.getElementById('statCitas');
+            const statA = document.getElementById('statAtendidos');
+            if(statI) statI.innerText = `L. ${ingresosTotales.toFixed(2)}`;
+            if(statC) statC.innerText = citas.length;
+            if(statA) statA.innerText = totalAtendidos;
         }
 
         function toggleMobileMenu() {
-            document.getElementById('mobileMenu').classList.toggle('hidden');
+            const menu = document.getElementById('mobileMenu');
+            if(menu) menu.classList.toggle('hidden');
         }
     </script>
 </body>
