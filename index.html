@@ -136,7 +136,6 @@
                         <input type="text" id="cliNombre" placeholder="Ej. Alejandro Molina" class="w-full glass-input rounded-xl px-4 py-3 sm:py-3.5 text-white placeholder-slate-400 focus:outline-none transition-all text-sm">
                     </div>
 
-                    <!-- Agregado campo correo para la tabla que creamos en Supabase -->
                     <div>
                         <label class="block text-xs uppercase tracking-widest text-slate-200 font-bold mb-2">Correo Electrónico</label>
                         <input type="email" id="cliCorreo" placeholder="Ej. correo@example.com" class="w-full glass-input rounded-xl px-4 py-3 sm:py-3.5 text-white placeholder-slate-400 focus:outline-none transition-all text-sm">
@@ -316,10 +315,10 @@
     </div>
 
     <script>
-        // CONFIGURACIÓN DE SUPABASE (Sustituye con tus datos reales)
+        // CONFIGURACIÓN DE SUPABASE
         const SUPABASE_URL = 'https://mcxlatmgjugwnpaauwje.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_53VUwTtPWsqkJXukMLLSiw_XFkJVGWU';
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const bd = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         const catálogoBase = [
             { nombre: "Corte Normal", precio: 100, desc: "Corte clásico a máquina o tijera con acabado pulcro y limpio.", img: "https://images.unsplash.com/photo-1622286342621-4bd786c2447c?q=80&w=600&auto=format&fit=crop" },
@@ -468,7 +467,7 @@
         function obtenerHistorialDias() { return JSON.parse(localStorage.getItem('barberiaHistorialDiasV7')) || []; }
         function guardarHistorialDias(historial) { localStorage.setItem('barberiaHistorialDiasV7', JSON.stringify(historial)); }
 
-        // --- CONEXIÓN A SUPABASE PARA CITAS ---
+        // --- CONEXIÓN A SUPABASE ---
         async function clienteAgendar() {
             const cliente = document.getElementById('cliNombre').value.trim();
             const correo = document.getElementById('cliCorreo').value.trim();
@@ -491,7 +490,7 @@
                 atendido: false
             };
 
-            const { error } = await supabase.from('citas').insert([nuevaCita]);
+            const { error } = await bd.from('citas').insert([nuevaCita]);
 
             if (error) {
                 alert("Error al guardar en Supabase: " + error.message);
@@ -505,21 +504,21 @@
         }
 
         async function marcarComoAtendido(id) {
-            const { error } = await supabase.from('citas').update({ atendido: true }).eq('id', id);
+            const { error } = await bd.from('citas').update({ atendido: true }).eq('id', id);
             if (error) alert("Error: " + error.message);
             else actualizarDashboardAdmin();
         }
 
         async function eliminarCitaAdmin(id) {
             if (confirm("¿Seguro que deseas eliminar esta cita de la base de datos?")) {
-                const { error } = await supabase.from('citas').delete().eq('id', id);
+                const { error } = await bd.from('citas').delete().eq('id', id);
                 if (error) alert("Error: " + error.message);
                 else actualizarDashboardAdmin();
             }
         }
 
         async function finalizarDiaCaja() {
-            const { data: citas, error } = await supabase.from('citas').select('*');
+            const { data: citas, error } = await bd.from('citas').select('*');
             if (error) {
                 alert("Error al obtener citas: " + error.message);
                 return;
@@ -545,9 +544,8 @@
                 });
                 guardarHistorialDias(historial);
 
-                // Borrar todas las citas de Supabase al cerrar caja
                 for (let c of citas) {
-                    await supabase.from('citas').delete().eq('id', c.id);
+                    await bd.from('citas').delete().eq('id', c.id);
                 }
 
                 actualizarDashboardAdmin();
@@ -565,7 +563,7 @@
         }
 
         async function actualizarDashboardAdmin() {
-            const { data: citas, error } = await supabase.from('citas').select('*');
+            const { data: citas, error } = await bd.from('citas').select('*');
             if (error) {
                 console.error("Error al cargar citas de Supabase:", error.message);
                 return;
