@@ -6,8 +6,9 @@
     <title>Barber Studio - Full VIP Experience</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- SDK de Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -52,6 +53,27 @@
             border-color: #f59e0b;
             box-shadow: 0 0 15px rgba(245, 158, 11, 0.35);
             background: rgba(8, 12, 20, 0.8);
+            outline: none;
+        }
+
+        .dash-card {
+            background: rgba(15, 18, 28, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.08);
+            box-shadow: 0 15px 35px -5px rgba(0,0,0,0.5);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .dash-input {
+            background: rgba(0,0,0,0.4);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .dash-input:focus {
+            border-color: #f59e0b;
+            background: rgba(0,0,0,0.6);
+            outline: none;
         }
 
         @keyframes fadeInScale {
@@ -64,13 +86,8 @@
             50% { box-shadow: 0 0 35px rgba(245, 158, 11, 0.45); }
         }
 
-        .animate-slide {
-            animation: fadeInScale 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
-
-        .glow-hover {
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-        }
+        .animate-slide { animation: fadeInScale 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .glow-hover { transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
         .glow-hover:hover {
             animation: goldPulse 2s infinite;
             border-color: rgba(245, 158, 11, 0.5);
@@ -79,65 +96,124 @@
 
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .admin-tab-btn.active {
+            background: white;
+            color: #0f172a;
+            border-color: white;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        .admin-tab-btn {
+            background: transparent;
+            color: #94a3b8;
+            border-color: transparent;
+        }
+        .admin-tab-btn:hover:not(.active) {
+            color: white;
+            background: rgba(255,255,255,0.05);
+        }
+        
+        /* Sistema de Toast (Notificaciones) */
+        #toast-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .toast {
+            background: rgba(22, 25, 37, 0.95);
+            backdrop-filter: blur(10px);
+            border-left: 4px solid #f59e0b;
+            color: white;
+            padding: 16px 20px;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            transform: translateX(120%);
+            transition: transform 0.3s ease-in-out;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .toast.show {
+            transform: translateX(0);
+        }
+        .toast.error { border-left-color: #ef4444; }
+        .toast.success { border-left-color: #10b981; }
     </style>
 </head>
-<body class="flex flex-col min-h-screen selection:bg-amber-500 selection:text-slate-950 bg-[#060911]">
+<body class="selection:bg-amber-500 selection:text-slate-950 overflow-x-hidden">
 
-    <!-- Contenedor para Notificaciones Customizadas -->
-    <div id="toast-container" class="fixed top-5 right-5 z-[100] flex flex-col gap-3 pointer-events-none"></div>
+    <!-- Contenedor para Notificaciones -->
+    <div id="toast-container"></div>
 
-    <!-- PANTALLA DE INICIO DE SESIÓN / REGISTRO -->
-    <div id="authLandingView" class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-[#060911] transition-opacity duration-500">
-        <div class="flex flex-col md:flex-row w-full max-w-6xl bg-[#0a0e17] rounded-[2rem] overflow-hidden shadow-2xl border border-white/5 h-full max-h-[750px] relative">
+    <!-- Modal de Confirmación Personalizado (Reemplaza a window.confirm) -->
+    <div id="customConfirmModal" class="fixed inset-0 z-[9999] bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4 transition-opacity duration-300">
+        <div class="glass-panel max-w-sm w-full rounded-2xl p-6 sm:p-8 animate-slide shadow-2xl border border-white/10 text-center">
+            <div class="w-12 h-12 rounded-full bg-amber-500/20 border border-amber-500/30 flex items-center justify-center mx-auto mb-4 text-amber-500 font-bold text-xl">!</div>
+            <h3 class="text-xl font-bold text-white mb-2">Confirmar Accion</h3>
+            <p id="confirmMsg" class="text-slate-300 text-sm mb-8 font-light"></p>
+            <div class="flex justify-center gap-3">
+                <button onclick="closeCustomConfirm()" class="px-5 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-sm font-medium text-slate-300 transition-colors">Cancelar</button>
+                <button onclick="executeCustomConfirm()" class="px-5 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-xl text-sm transition-transform active:scale-95">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="authLandingView" class="fixed inset-0 z-50 flex bg-[#060911] transition-opacity duration-500">
+        <div class="flex w-full h-full flex-col lg:flex-row">
             
-            <!-- Sección Izquierda: Imagen inspirada en el mockup -->
-            <div class="hidden md:flex md:w-1/2 relative bg-black">
+            <div class="hidden lg:flex lg:w-1/2 relative bg-black h-full">
                 <img src="https://img.magnific.com/fotos-premium/barberia-cartel-que-dice-que-es-barberia_1015384-126289.jpg?semt=ais_hybrid&w=740&q=80" alt="Barberia" class="absolute inset-0 w-full h-full object-cover opacity-60">
-                <div class="absolute inset-0 bg-gradient-to-t from-[#0a0e17] via-[#0a0e17]/40 to-transparent"></div>
-                <div class="absolute bottom-12 left-12 right-12 z-10">
-                    <h2 class="text-3xl lg:text-4xl font-extrabold text-white mb-3 leading-tight drop-shadow-lg">Forja tu estilo,<br>un corte a la vez.</h2>
-                    <p class="text-slate-300 text-sm lg:text-base drop-shadow-md">Únete a la élite de Barber Studio y vive una experiencia VIP inigualable. Tu imagen es nuestra obra maestra.</p>
+                <div class="absolute inset-0 bg-gradient-to-t from-[#060911] via-transparent to-transparent"></div>
+                <div class="absolute inset-0 bg-gradient-to-r from-[#060911]/50 to-transparent"></div>
+                <div class="absolute bottom-20 left-16 right-16 z-10">
+                    <h2 class="text-5xl xl:text-6xl font-extrabold text-white mb-6 leading-tight drop-shadow-2xl">Forja tu estilo,<br>un corte a la vez.</h2>
+                    <p class="text-slate-300 text-lg xl:text-xl drop-shadow-lg max-w-md font-light leading-relaxed">Unete a la elite de Barber Studio y vive una experiencia inigualable. Tu imagen es nuestra obra maestra.</p>
                 </div>
             </div>
             
-            <!-- Sección Derecha: Formulario -->
-            <div class="w-full md:w-1/2 p-8 sm:p-12 lg:p-16 flex flex-col justify-center bg-[#0a0e17] relative overflow-y-auto no-scrollbar">
-                <div class="max-w-md w-full mx-auto">
-                    <h3 class="text-2xl lg:text-3xl font-semibold text-white mb-2" id="landingAuthTitle">Inicia Sesión</h3>
-                    <p class="text-sm text-slate-400 mb-8" id="landingAuthSubtitle">Ingresa tus datos para agendar tu próxima cita.</p>
+            <div class="w-full lg:w-1/2 h-full flex items-center justify-center bg-[#080b13] relative overflow-y-auto no-scrollbar border-l border-white/5 p-6 sm:p-12">
+                <div class="w-full max-w-md">
+                    <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-amber-600 to-amber-400 flex items-center justify-center shadow-lg shadow-amber-500/20 mb-10">
+                        <span class="text-slate-950 font-black text-3xl">B</span>
+                    </div>
+
+                    <h3 class="text-3xl font-semibold text-white mb-2" id="landingAuthTitle">Inicia Sesion</h3>
+                    <p class="text-sm text-slate-400 mb-10 font-light" id="landingAuthSubtitle">Ingresa a tu portal exclusivo.</p>
                     
-                    <div class="space-y-5">
+                    <div class="space-y-6">
                         <div id="fieldNombre" class="hidden">
-                            <label class="block text-[11px] uppercase tracking-wider text-slate-400 mb-1.5">Nombre Completo *</label>
-                            <input type="text" id="authNombre" class="w-full bg-[#131824] border border-white/5 rounded-xl px-4 py-3.5 text-white text-sm focus:border-amber-500/50 focus:bg-[#1a2133] transition-all outline-none" placeholder="Ej. Alejandro Molina">
+                            <label class="block text-xs text-slate-300 mb-2 font-medium">Nombre Completo *</label>
+                            <input type="text" id="authNombre" class="w-full bg-[#111520] border border-white/10 rounded-xl px-5 py-4 text-white text-sm focus:border-amber-500 focus:bg-[#151a28] transition-all outline-none" placeholder="Ingresa tu nombre">
                         </div>
                         
                         <div>
-                            <label class="block text-[11px] uppercase tracking-wider text-slate-400 mb-1.5">Correo Electrónico *</label>
-                            <input type="text" id="authCorreo" class="w-full bg-[#131824] border border-white/5 rounded-xl px-4 py-3.5 text-white text-sm focus:border-amber-500/50 focus:bg-[#1a2133] transition-all outline-none" placeholder="correo@example.com">
+                            <label class="block text-xs text-slate-300 mb-2 font-medium">Usuario o Correo *</label>
+                            <input type="text" id="authCorreo" class="w-full bg-[#111520] border border-white/10 rounded-xl px-5 py-4 text-white text-sm focus:border-amber-500 focus:bg-[#151a28] transition-all outline-none" placeholder="Usuario o correo">
                         </div>
                         
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-5" id="passwordGrid">
                             <div class="col-span-1 sm:col-span-2" id="passContainer">
-                                <label class="block text-[11px] uppercase tracking-wider text-slate-400 mb-1.5">Contraseña *</label>
-                                <input type="password" id="authPass" class="w-full bg-[#131824] border border-white/5 rounded-xl px-4 py-3.5 text-white text-sm focus:border-amber-500/50 focus:bg-[#1a2133] transition-all outline-none" placeholder="••••••••">
+                                <label class="block text-xs text-slate-300 mb-2 font-medium">Contrasena *</label>
+                                <input type="password" id="authPass" class="w-full bg-[#111520] border border-white/10 rounded-xl px-5 py-4 text-white text-sm focus:border-amber-500 focus:bg-[#151a28] transition-all outline-none" placeholder="••••••••">
                             </div>
                             
                             <div class="hidden" id="fieldPassConfirm">
-                                <label class="block text-[11px] uppercase tracking-wider text-slate-400 mb-1.5">Confirmar Contraseña *</label>
-                                <input type="password" id="authPassConfirm" class="w-full bg-[#131824] border border-white/5 rounded-xl px-4 py-3.5 text-white text-sm focus:border-amber-500/50 focus:bg-[#1a2133] transition-all outline-none" placeholder="••••••••">
+                                <label class="block text-xs text-slate-300 mb-2 font-medium">Confirmar Contrasena *</label>
+                                <input type="password" id="authPassConfirm" class="w-full bg-[#111520] border border-white/10 rounded-xl px-5 py-4 text-white text-sm focus:border-amber-500 focus:bg-[#151a28] transition-all outline-none" placeholder="••••••••">
                             </div>
                         </div>
-                        <p class="text-[10px] text-slate-500 hidden" id="passwordHint">La contraseña debe tener al menos 6 caracteres.</p>
                         
-                        <button id="btnAuthAction" onclick="procesarAuth()" class="w-full py-4 mt-4 bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 text-slate-950 font-bold rounded-xl text-sm transition-transform active:scale-[0.98] shadow-lg shadow-amber-500/20">
-                            Entrar
+                        <button id="btnAuthAction" onclick="procesarAuth()" class="w-full py-4 mt-8 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-xl text-sm transition-transform active:scale-[0.98] shadow-lg shadow-amber-500/20">
+                            Entrar al Portal
                         </button>
                         
-                        <div class="text-center pt-6 mt-6 border-t border-white/5">
-                            <span class="text-sm text-slate-400" id="btnAuthToggleText">¿No tienes una cuenta? </span>
-                            <button id="btnAuthToggle" onclick="toggleAuthMode()" class="text-sm text-amber-400 hover:text-amber-300 transition-colors font-semibold">
-                                Regístrate
+                        <div class="text-center pt-8 border-t border-white/5 mt-8">
+                            <span class="text-sm text-slate-400 font-light" id="btnAuthToggleText">No tienes una cuenta? </span>
+                            <button id="btnAuthToggle" onclick="toggleAuthMode()" class="text-sm text-amber-400 hover:text-amber-300 transition-colors font-medium">
+                                Registrate
                             </button>
                         </div>
                     </div>
@@ -146,571 +222,645 @@
         </div>
     </div>
 
-    <!-- CONTENEDOR PRINCIPAL DE LA APP (Oculto hasta iniciar sesión) -->
-    <div id="appContainer" class="hidden flex-col min-h-screen relative z-10 w-full">
-        <!-- Header / Navbar Responsive -->
-        <header class="w-full max-w-7xl mx-auto px-4 sm:px-6 py-5 flex justify-between items-center transition-all z-30">
-            <div class="text-xl sm:text-2xl font-extrabold tracking-wider flex items-center gap-2 cursor-pointer group" onclick="cambiarVista('clientView')">
-                <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-amber-600 to-amber-400 flex items-center justify-center shadow-lg shadow-amber-500/20 group-hover:scale-105 transition-transform">
-                    <span class="text-slate-950 font-black text-lg sm:text-xl">B</span>
+    <div id="clientContainer" class="hidden flex-col min-h-screen relative z-10">
+        <header class="w-full max-w-7xl mx-auto px-4 sm:px-6 py-6 flex justify-between items-center transition-all border-b border-white/10">
+            <div class="text-xl sm:text-2xl font-extrabold tracking-wider flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-600 to-amber-400 flex items-center justify-center shadow-lg shadow-amber-500/20">
+                    <span class="text-slate-950 font-black text-xl">B</span>
                 </div>
                 <div>
                     <span class="text-white drop-shadow-md">BARBER</span><span class="text-amber-400 drop-shadow-md">STUDIO</span>
                 </div>
-                <span class="text-[10px] tracking-widest px-2 py-0.5 bg-amber-400/20 text-amber-300 rounded-full font-bold border border-amber-400/40 hidden xs:inline-block">ELITE</span>
             </div>
 
-            <nav class="hidden md:flex gap-6 lg:gap-8 text-sm font-semibold text-slate-100 items-center drop-shadow">
-                <span id="userGreeting" class="text-amber-400 font-bold tracking-wide"></span>
-                <a href="#" onclick="cambiarVista('clientView')" class="hover:text-amber-400 transition-colors">Reservar Cita</a>
-                <a href="#catalogoSection" onclick="cambiarVista('clientView')" class="hover:text-amber-400 transition-colors">Catálogo VIP</a>
-                <button id="btnLogoutNav" onclick="cerrarSesionUsuario()" class="px-5 py-2.5 rounded-xl bg-red-500/20 hover:bg-red-500 text-red-200 hover:text-white font-extrabold text-sm border border-red-500/40 transition-all duration-300">
-                    Salir
-                </button>
+            <nav class="hidden md:flex gap-8 text-sm font-medium text-slate-200 items-center">
+                <button onclick="cambiarVistaCliente('catalogo')" class="hover:text-amber-400 transition-colors focus:outline-none">Catalogo VIP</button>
+                <button onclick="cambiarVistaCliente('reserva')" class="hover:text-amber-400 transition-colors focus:outline-none">Reservar Cita</button>
+                
+                <div class="flex items-center gap-5 ml-4 pl-5 border-l border-white/20">
+                    <span class="text-slate-300 text-sm flex items-center gap-2 font-light">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.8)]"></span>
+                        <span id="userGreeting">Hola, Usuario</span>
+                    </span>
+                    <button onclick="cerrarSesionGeneral()" class="text-slate-400 hover:text-white transition-colors text-sm font-medium">
+                        Salir
+                    </button>
+                </div>
             </nav>
 
-            <div class="flex md:hidden items-center gap-2">
-                <button onclick="toggleMobileMenu()" class="w-10 h-10 rounded-xl bg-black/60 border border-white/20 flex items-center justify-center text-white focus:outline-none">
-                    ☰
+            <div class="flex md:hidden items-center gap-4">
+                <button onclick="cerrarSesionGeneral()" class="text-slate-400 text-sm font-medium">
+                    Salir
+                </button>
+                <button onclick="document.getElementById('mobileMenu').classList.toggle('hidden')" class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-white">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
                 </button>
             </div>
         </header>
 
-        <div id="mobileMenu" class="hidden md:hidden glass-panel mx-4 rounded-2xl p-4 mb-4 space-y-3 z-20 animate-slide">
-            <a href="#" onclick="cambiarVista('clientView'); toggleMobileMenu();" class="block py-2.5 px-4 rounded-xl text-white font-medium hover:bg-white/10 transition">📅 Reservar Cita</a>
-            <a href="#catalogoSection" onclick="cambiarVista('clientView'); toggleMobileMenu();" class="block py-2.5 px-4 rounded-xl text-white font-medium hover:bg-white/10 transition">✂️ Catálogo VIP</a>
-            <button id="btnLogoutMobile" onclick="cerrarSesionUsuario(); toggleMobileMenu();" class="w-full text-left py-2.5 px-4 rounded-xl text-red-400 font-medium hover:bg-red-500/20 transition">Cerrar Sesión</button>
+        <div id="mobileMenu" class="hidden md:hidden glass-panel mx-4 rounded-2xl p-4 mb-4 mt-2 space-y-2 z-20 animate-slide">
+            <div class="pb-3 mb-2 border-b border-white/10 px-4">
+                <span class="text-slate-300 text-sm flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                    <span id="userGreetingMobile">Usuario</span>
+                </span>
+            </div>
+            <button onclick="cambiarVistaCliente('catalogo'); document.getElementById('mobileMenu').classList.add('hidden')" class="w-full text-left py-3 px-4 rounded-xl text-white font-medium hover:bg-white/10 transition">Catalogo VIP</button>
+            <button onclick="cambiarVistaCliente('reserva'); document.getElementById('mobileMenu').classList.add('hidden')" class="w-full text-left py-3 px-4 rounded-xl text-white font-medium hover:bg-white/10 transition">Reservar Cita</button>
         </div>
 
-        <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 w-full py-4 sm:py-6 z-10">
+        <main class="flex-grow w-full max-w-7xl mx-auto px-4 sm:px-6 py-8 pb-24 relative">
             
-            <!-- Vista 1: Cliente -->
-            <div id="clientView" class="view-section animate-slide space-y-12">
-                <div class="max-w-xl mx-auto glass-panel rounded-3xl p-6 sm:p-10 shadow-2xl relative overflow-hidden">
-                    <div class="absolute -right-16 -top-16 w-48 h-48 bg-amber-500/15 rounded-full blur-3xl pointer-events-none"></div>
+            <div id="vistaCatalogoCliente" class="animate-slide block">
+                <div class="mb-10 text-center sm:text-left">
+                    <h2 class="text-2xl sm:text-4xl font-extrabold text-white mb-3">Nuestros Servicios</h2>
+                    <p class="text-slate-400 text-sm sm:text-base font-light">Explora y elige el estilo que definira tu presencia.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12" id="catalogoGrid"></div>
+            </div>
+
+            <div id="vistaReservaCliente" class="animate-slide hidden">
+                <div class="max-w-2xl mx-auto glass-panel rounded-3xl p-8 sm:p-12 shadow-2xl relative overflow-hidden mt-4">
+                    <div class="absolute -left-16 -bottom-16 w-48 h-48 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
                     
-                    <div class="text-center mb-6 sm:mb-8 relative z-10">
-                        <h2 class="text-2xl sm:text-3xl font-extrabold text-white mb-2 drop-shadow">Reserva tu Estilo <span class="text-amber-400">VIP</span></h2>
-                        <p class="text-slate-200 text-xs sm:text-sm drop-shadow">Selecciona tu servicio profesional con precios en Lempiras (HNL)</p>
+                    <div class="text-center mb-10 relative z-10">
+                        <h2 class="text-3xl sm:text-4xl font-extrabold text-white mb-3">Confirma tu Cita</h2>
+                        <p class="text-slate-400 text-sm font-light">Verifica tus datos y agendemos tu espacio en el estudio.</p>
                     </div>
 
-                    <div class="space-y-4 sm:space-y-5 relative z-10">
+                    <div class="space-y-6 relative z-10">
                         <div>
-                            <label class="block text-xs uppercase tracking-widest text-slate-200 font-bold mb-2">Nombre del Cliente</label>
-                            <input type="text" id="cliNombre" placeholder="Tu nombre cargará automáticamente..." class="w-full glass-input rounded-xl px-4 py-3 sm:py-3.5 text-white placeholder-slate-400 focus:outline-none transition-all text-sm">
+                            <label class="block text-xs uppercase tracking-widest text-slate-400 font-semibold mb-2">Nombre del Cliente</label>
+                            <input type="text" id="cliNombre" class="w-full glass-input rounded-xl px-5 py-4 text-slate-300 font-medium cursor-not-allowed opacity-70" readonly>
+                        </div>
+                        <div>
+                            <label class="block text-xs uppercase tracking-widest text-slate-400 font-semibold mb-2">Correo / Usuario</label>
+                            <input type="text" id="cliCorreo" class="w-full glass-input rounded-xl px-5 py-4 text-slate-300 font-medium cursor-not-allowed opacity-70" readonly>
                         </div>
 
-                        <div>
-                            <label class="block text-xs uppercase tracking-widest text-slate-200 font-bold mb-2">Correo Electrónico</label>
-                            <input type="email" id="cliCorreo" placeholder="Tu correo cargará automáticamente..." class="w-full glass-input rounded-xl px-4 py-3 sm:py-3.5 text-white placeholder-slate-400 focus:outline-none transition-all text-sm">
-                        </div>
-
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                             <div>
-                                <label class="block text-xs uppercase tracking-widest text-slate-200 font-bold mb-2">Servicio</label>
-                                <select id="cliServicio" class="w-full glass-input rounded-xl px-4 py-3 sm:py-3.5 text-white focus:outline-none transition-all cursor-pointer text-sm">
+                                <label class="block text-xs uppercase tracking-widest text-slate-400 font-semibold mb-2">Servicio Elegido</label>
+                                <select id="cliServicio" class="w-full glass-input rounded-xl px-5 py-4 text-white font-medium cursor-pointer appearance-none">
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-xs uppercase tracking-widest text-slate-200 font-bold mb-2">Barbero Preferido</label>
-                                <input type="text" id="cliBarbero" placeholder="Ej. Marcos" class="w-full glass-input rounded-xl px-4 py-3 sm:py-3.5 text-white placeholder-slate-400 focus:outline-none transition-all text-sm">
+                                <label class="block text-xs uppercase tracking-widest text-slate-400 font-semibold mb-2">Barbero (Opcional)</label>
+                                <input type="text" id="cliBarbero" placeholder="Ej. Marcos" class="w-full glass-input rounded-xl px-5 py-4 text-white font-medium focus:border-amber-500 transition-colors">
                             </div>
                         </div>
 
                         <div>
-                            <label class="block text-xs uppercase tracking-widest text-slate-200 font-bold mb-2">Fecha y Hora de la Cita</label>
-                            <input type="datetime-local" id="cliFechaHora" class="w-full glass-input rounded-xl px-4 py-3 sm:py-3.5 text-white focus:outline-none transition-all text-sm">
+                            <label class="block text-xs uppercase tracking-widest text-slate-400 font-semibold mb-2">Fecha y Hora</label>
+                            <input type="datetime-local" id="cliFechaHora" class="w-full glass-input rounded-xl px-5 py-4 text-white font-medium focus:border-amber-500 transition-colors">
                         </div>
 
-                        <button onclick="clienteAgendar()" class="w-full py-3.5 sm:py-4 bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 text-slate-950 font-black rounded-xl transition-all duration-300 shadow-xl shadow-amber-500/25 hover:scale-[1.01] active:scale-95 text-sm sm:text-base">
-                            Confirmar y Agendar Mi Cita 🚀
+                        <button onclick="clienteAgendar()" class="w-full py-4 mt-4 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-xl transition-transform active:scale-[0.98] shadow-lg shadow-amber-500/20 text-base">
+                            Agendar Definitivamente
                         </button>
-                    </div>
-                </div>
-
-                <div id="catalogoSection" class="pt-6">
-                    <div class="text-center mb-8 sm:mb-12">
-                        <span class="text-[11px] sm:text-xs uppercase tracking-widest text-amber-400 font-bold px-3 py-1 bg-amber-500/20 rounded-full border border-amber-500/30">Estándar Internacional</span>
-                        <h2 class="text-3xl sm:text-4xl font-extrabold text-white mt-3 mb-2 drop-shadow">Catálogo Exclusivo</h2>
-                        <p class="text-slate-200 text-xs sm:text-sm max-w-xl mx-auto px-4 drop-shadow">Cortes sincronizados en tiempo real desde la base de datos.</p>
-                    </div>
-
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" id="catalogoGrid">
                     </div>
                 </div>
             </div>
+        </main>
+    </div>
 
-            <!-- Vista 2: Panel de Administración -->
-            <div id="adminView" class="view-section hidden animate-slide">
-                <div class="flex justify-between items-center mb-6 sm:mb-8 flex-wrap gap-4 border-b border-white/20 pb-5">
+    <div id="adminContainer" class="hidden h-screen bg-black/40 backdrop-blur-md text-white overflow-hidden flex-col md:flex-row relative z-50">
+        
+        <aside class="w-full md:w-64 bg-[#090b10]/90 border-b md:border-b-0 md:border-r border-white/10 flex flex-col h-auto md:h-full shrink-0 z-10 shadow-2xl">
+            <div class="p-6 lg:p-8 flex items-center gap-4 border-b border-white/5">
+                <div class="w-10 h-10 rounded-xl bg-amber-500 flex items-center justify-center shadow-lg shadow-amber-500/20">
+                    <span class="text-slate-950 font-black text-xl">X</span>
+                </div>
+                <span class="font-bold text-xl tracking-wide">Insight<span class="text-amber-500">X</span></span>
+            </div>
+
+            <nav class="flex-1 px-4 py-6 space-y-2 overflow-x-auto md:overflow-x-visible flex md:block whitespace-nowrap md:whitespace-normal no-scrollbar">
+                <div class="text-xs text-slate-500 font-semibold mb-4 hidden md:block px-3">Principal</div>
+                
+                <button onclick="switchAdminTab('tabOverview', this)" class="admin-tab-btn active w-full flex items-center gap-4 px-4 py-3 rounded-xl font-medium text-sm transition-all">
+                    Dashboard
+                </button>
+                <button onclick="switchAdminTab('tabServicios', this)" class="admin-tab-btn w-full flex items-center gap-4 px-4 py-3 rounded-xl font-medium text-sm transition-all">
+                    Servicios
+                </button>
+                <button onclick="switchAdminTab('tabCitas', this)" class="admin-tab-btn w-full flex items-center gap-4 px-4 py-3 rounded-xl font-medium text-sm transition-all">
+                    Reservas
+                </button>
+                
+                <div class="text-xs text-slate-500 font-semibold mb-4 mt-8 hidden md:block px-3 pt-6 border-t border-white/5">Sistema</div>
+                <button onclick="finalizarDiaCaja()" class="w-full flex items-center gap-4 px-4 py-3 text-emerald-400 hover:bg-emerald-400/10 rounded-xl font-medium text-sm transition-all">
+                    Cerrar Jornada
+                </button>
+            </nav>
+
+            <div class="p-6 border-t border-white/5 mt-auto hidden md:flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-[#111520] border border-white/10 flex items-center justify-center text-sm font-bold text-amber-500">
+                        AD
+                    </div>
                     <div>
-                        <h1 class="text-2xl sm:text-3xl font-extrabold text-white flex items-center gap-2 sm:gap-3 drop-shadow">Panel Admin <span class="text-amber-400 text-base sm:text-lg">⚙️</span></h1>
-                        <p class="text-slate-200 text-xs sm:text-sm mt-1">Control de finanzas, catálogo de servicios y seguimiento de citas sincronizado con Supabase.</p>
+                        <div class="text-sm font-medium text-white" id="adminNameDisplay">Administrador</div>
+                        <div class="text-xs text-emerald-400" id="adminStatusDisplay">Conectado</div>
                     </div>
-                    <div class="flex gap-2.5 sm:gap-3 flex-wrap w-full sm:w-auto">
-                        <button onclick="finalizarDiaCaja()" class="flex-1 sm:flex-none px-4 sm:px-5 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-white rounded-xl text-xs sm:text-sm font-bold shadow-lg shadow-emerald-500/20 transition-all hover:scale-105">
-                            🏁 Finalizar Día
-                        </button>
-                        <button onclick="cerrarSesionUsuario()" class="px-4 sm:px-5 py-2.5 bg-red-500/20 text-red-200 border border-red-500/40 hover:bg-red-500 hover:text-white rounded-xl text-xs sm:text-sm font-semibold transition-all">
-                            Cerrar Sesión 🚪
-                        </button>
+                </div>
+                <button onclick="cerrarSesionGeneral()" class="text-slate-500 hover:text-white transition-colors" title="Salir">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                </button>
+            </div>
+        </aside>
+
+        <main class="flex-1 overflow-y-auto p-4 md:p-8 lg:p-10 relative no-scrollbar">
+            
+            <div class="flex justify-between items-center mb-8">
+                <h1 class="text-3xl font-bold text-white tracking-tight" id="adminSectionTitle">Dashboard Overview</h1>
+                <div class="flex items-center gap-4">
+                    <button onclick="actualizarDashboardAdmin()" class="px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-sm font-medium text-slate-300 transition-colors hidden sm:block">
+                        Actualizar Datos
+                    </button>
+                    <button onclick="cerrarSesionGeneral()" class="md:hidden px-4 py-2 bg-red-500/10 text-red-400 rounded-xl text-sm font-medium">Salir</button>
+                </div>
+            </div>
+            
+            <div id="tabOverview" class="admin-tab-content block animate-slide space-y-6">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+                    <div class="dash-card rounded-2xl p-6 border border-amber-500/20">
+                        <div class="text-slate-400 text-xs font-medium mb-2 uppercase tracking-wider">Ingresos Totales</div>
+                        <div class="text-3xl font-bold text-white tracking-tight" id="statIngresos">L. 0.00</div>
+                        <div class="text-emerald-400 text-xs font-medium mt-2">Caja actual en Lempiras</div>
+                    </div>
+                    <div class="dash-card rounded-2xl p-6">
+                        <div class="text-slate-400 text-xs font-medium mb-2 uppercase tracking-wider">Citas Activas</div>
+                        <div class="text-3xl font-bold text-white tracking-tight" id="statCitas">0</div>
+                        <div class="text-slate-500 text-xs font-medium mt-2">Pendientes de atencion</div>
+                    </div>
+                    <div class="dash-card rounded-2xl p-6">
+                        <div class="text-slate-400 text-xs font-medium mb-2 uppercase tracking-wider">Clientes Atendidos</div>
+                        <div class="text-3xl font-bold text-white tracking-tight" id="statAtendidos">0</div>
+                        <div class="text-slate-500 text-xs font-medium mt-2">En el periodo actual</div>
+                    </div>
+                    <div class="dash-card rounded-2xl p-6">
+                        <div class="text-slate-400 text-xs font-medium mb-2 uppercase tracking-wider">Rendimiento</div>
+                        <div class="text-3xl font-bold text-white tracking-tight" id="statRendimiento">0%</div>
+                        <div class="text-slate-500 text-xs font-medium mt-2">Tasa de finalizacion</div>
                     </div>
                 </div>
 
-                <!-- Dashboard Stats Grid -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-8">
-                    <div class="glass-panel p-5 sm:p-6 rounded-3xl relative overflow-hidden glow-hover">
-                        <span class="text-xs uppercase tracking-widest text-slate-200 font-bold">Caja Total (Histórico + Día)</span>
-                        <div class="text-3xl sm:text-4xl font-black mt-3 text-emerald-400 tracking-tight" id="statIngresos">L. 0.00</div>
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="dash-card rounded-2xl p-6 lg:col-span-2">
+                        <h3 class="text-sm font-semibold text-white mb-4">Ingresos Recientes (Dias Cerrados)</h3>
+                        <div class="h-64 w-full">
+                            <canvas id="ingresosChart"></canvas>
+                        </div>
                     </div>
-                    <div class="glass-panel p-5 sm:p-6 rounded-3xl relative overflow-hidden glow-hover">
-                        <span class="text-xs uppercase tracking-widest text-slate-200 font-bold">Citas Registradas</span>
-                        <div class="text-3xl sm:text-4xl font-black mt-3 text-white tracking-tight" id="statCitas">0</div>
-                    </div>
-                    <div class="glass-panel p-5 sm:p-6 rounded-3xl relative overflow-hidden glow-hover sm:col-span-2 lg:col-span-1">
-                        <span class="text-xs uppercase tracking-widest text-slate-200 font-bold">Clientes Atendidos</span>
-                        <div class="text-3xl sm:text-4xl font-black mt-3 text-amber-400 tracking-tight" id="statAtendidos">0</div>
+                    <div class="dash-card rounded-2xl p-6">
+                        <h3 class="text-sm font-semibold text-white mb-4">Demanda de Servicios</h3>
+                        <div class="h-64 w-full flex items-center justify-center">
+                            <canvas id="serviciosChart"></canvas>
+                        </div>
                     </div>
                 </div>
 
-                <!-- GESTIÓN DE SERVICIOS -->
-                <div class="glass-panel rounded-3xl p-5 sm:p-8 mb-8">
-                    <h3 class="font-bold text-lg sm:text-xl text-white mb-4 flex items-center gap-2">
-                        <span>✂️</span> Gestión del Catálogo de Servicios (Nube)
-                    </h3>
-                    
-                    <div class="bg-black/30 p-5 rounded-2xl border border-white/10 mb-6 space-y-4">
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <input type="text" id="nuevoServicioNombre" placeholder="Nombre del Servicio *" class="glass-input rounded-xl px-4 py-2.5 text-white text-sm">
-                            <input type="number" id="nuevoServicioPrecio" placeholder="Precio (L.) *" class="glass-input rounded-xl px-4 py-2.5 text-white text-sm">
-                        </div>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <input type="url" id="nuevoServicioImg" placeholder="URL de la imagen (Opcional)" class="glass-input rounded-xl px-4 py-2.5 text-white text-sm">
-                            <input type="text" id="nuevoServicioDesc" placeholder="Descripción breve (Opcional)" class="glass-input rounded-xl px-4 py-2.5 text-white text-sm">
-                        </div>
-                        <button onclick="agregarNuevoServicio()" class="w-full sm:w-auto px-6 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold rounded-xl text-sm transition-all shadow-md">
-                            + Agregar Servicio Global
-                        </button>
-                    </div>
-
+                <div class="dash-card rounded-2xl p-6">
+                    <h3 class="text-sm font-semibold text-white mb-4">Ultimas Jornadas</h3>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left border-collapse min-w-[500px]">
                             <thead>
-                                <tr class="text-slate-200 text-xs uppercase border-b border-white/20 tracking-wider">
-                                    <th class="py-2 px-3">Servicio</th>
-                                    <th class="py-2 px-3">Precio</th>
-                                    <th class="py-2 px-3 text-right">Acción</th>
+                                <tr class="text-slate-400 text-xs border-b border-white/5">
+                                    <th class="py-3 px-2 font-medium">Fecha</th>
+                                    <th class="py-3 px-2 font-medium">Ingreso</th>
+                                    <th class="py-3 px-2 font-medium text-right">Acciones</th>
                                 </tr>
                             </thead>
-                            <tbody id="tablaAdminServicios" class="divide-y divide-white/10 text-sm">
+                            <tbody id="tablaHistorialDias" class="divide-y divide-white/5 text-sm">
                             </tbody>
                         </table>
                     </div>
                 </div>
+            </div>
 
-                <!-- Tabla de Citas -->
-                <div class="glass-panel rounded-3xl p-5 sm:p-8 mb-8">
-                    <h3 class="font-bold text-lg sm:text-xl text-white mb-6">Listado de Citas & Control Operativo (Supabase)</h3>
+            <div id="tabServicios" class="admin-tab-content hidden animate-slide space-y-6">
+                <div class="dash-card rounded-2xl p-6">
+                    <div class="bg-[#111520] p-6 rounded-xl border border-white/5 mb-8">
+                        <h4 class="text-sm font-medium text-white mb-6" id="tituloFormServicio">Agregar Nuevo Servicio</h4>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
+                            <div>
+                                <label class="block text-xs text-slate-400 mb-2">Nombre del Servicio</label>
+                                <input type="text" id="nuevoServicioNombre" class="w-full dash-input rounded-xl px-4 py-3 text-white text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs text-slate-400 mb-2">Precio (Lempiras)</label>
+                                <input type="number" id="nuevoServicioPrecio" class="w-full dash-input rounded-xl px-4 py-3 text-white text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs text-slate-400 mb-2">URL de la Imagen (Para el catalogo)</label>
+                                <input type="url" id="nuevoServicioImg" class="w-full dash-input rounded-xl px-4 py-3 text-white text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs text-slate-400 mb-2">Descripcion Corta</label>
+                                <input type="text" id="nuevoServicioDesc" class="w-full dash-input rounded-xl px-4 py-3 text-white text-sm">
+                            </div>
+                        </div>
+                        <div class="flex gap-3">
+                            <button id="btnAccionServicio" onclick="guardarOEditarServicio()" class="px-6 py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-xl text-sm transition-all shadow-lg">
+                                Guardar Servicio
+                            </button>
+                            <button id="btnCancelarEdicion" onclick="cancelarEdicionServicio()" class="hidden px-6 py-3 bg-white/5 hover:bg-white/10 text-white font-medium rounded-xl text-sm transition-all">
+                                Cancelar Edicion
+                            </button>
+                        </div>
+                    </div>
+
                     <div class="overflow-x-auto">
                         <table class="w-full text-left border-collapse min-w-[700px]">
                             <thead>
-                                <tr class="text-slate-200 text-xs uppercase border-b border-white/20 tracking-wider">
-                                    <th class="py-3.5 px-4"># ID</th>
-                                    <th class="py-3.5 px-4">Cliente</th>
-                                    <th class="py-3.5 px-4">Correo</th>
-                                    <th class="py-3.5 px-4">Servicio</th>
-                                    <th class="py-3.5 px-4">Barbero</th>
-                                    <th class="py-3.5 px-4">Hora Programada</th>
-                                    <th class="py-3.5 px-4">Monto</th>
-                                    <th class="py-3.5 px-4">Estatus</th>
-                                    <th class="py-3.5 px-4 text-center">Acciones</th>
+                                <tr class="text-slate-400 text-xs border-b border-white/5">
+                                    <th class="py-3 px-2 font-medium w-16">Imagen</th>
+                                    <th class="py-3 px-2 font-medium">Servicio</th>
+                                    <th class="py-3 px-2 font-medium">Precio</th>
+                                    <th class="py-3 px-2 font-medium">Descripcion</th>
+                                    <th class="py-3 px-2 font-medium text-right">Opciones</th>
                                 </tr>
                             </thead>
-                            <tbody id="tablaAdminCitas" class="divide-y divide-white/10 text-sm"></tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- TABLA DE HISTORIAL DE DÍAS FINALIZADOS -->
-                <div class="glass-panel rounded-3xl p-5 sm:p-8">
-                    <h3 class="font-bold text-lg sm:text-xl text-white mb-4 flex items-center gap-2">
-                        <span>📊</span> Historial de Días Cerrados
-                    </h3>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left border-collapse min-w-[500px]">
-                            <thead>
-                                <tr class="text-slate-200 text-xs uppercase border-b border-white/20 tracking-wider">
-                                    <th class="py-3 px-4">Jornada / Fecha</th>
-                                    <th class="py-3 px-4">Ingresos Generados</th>
-                                    <th class="py-3 px-4 text-right">Acción</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tablaHistorialDias" class="divide-y divide-white/10 text-sm">
+                            <tbody id="tablaAdminServicios" class="divide-y divide-white/5 text-sm">
                             </tbody>
                         </table>
                     </div>
                 </div>
             </div>
 
+            <div id="tabCitas" class="admin-tab-content hidden animate-slide space-y-6">
+                
+                <div class="dash-card rounded-2xl p-6 lg:p-8 flex flex-col lg:flex-row gap-8">
+                    <div class="w-full lg:w-2/3">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="text-lg font-semibold text-white" id="calendarMonthYear">Mes Ano</h3>
+                            <div class="flex gap-2">
+                                <button onclick="cambiarMes(-1)" class="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center text-white transition-colors">&lt;</button>
+                                <button onclick="cambiarMes(1)" class="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center text-white transition-colors">&gt;</button>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-7 gap-2 text-center mb-2">
+                            <div class="text-xs text-slate-500 font-medium">Dom</div>
+                            <div class="text-xs text-slate-500 font-medium">Lun</div>
+                            <div class="text-xs text-slate-500 font-medium">Mar</div>
+                            <div class="text-xs text-slate-500 font-medium">Mie</div>
+                            <div class="text-xs text-slate-500 font-medium">Jue</div>
+                            <div class="text-xs text-slate-500 font-medium">Vie</div>
+                            <div class="text-xs text-slate-500 font-medium">Sab</div>
+                        </div>
+                        
+                        <div id="calendarDaysGrid" class="grid grid-cols-7 gap-2">
+                        </div>
+                    </div>
+
+                    <div class="w-full lg:w-1/3 bg-[#111520] rounded-xl border border-white/5 p-6 flex flex-col h-[400px]">
+                        <h4 class="text-sm font-semibold text-amber-500 mb-4 pb-4 border-b border-white/10" id="detailDateTitle">Selecciona un dia</h4>
+                        <div id="detailAppointmentsList" class="flex-1 overflow-y-auto no-scrollbar space-y-3">
+                            <div class="text-xs text-slate-500 text-center mt-10">Haz clic en un dia marcado para ver la agenda.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dash-card rounded-2xl p-6">
+                    <h3 class="text-sm font-semibold text-white mb-6">Todas las Reservas</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse min-w-[800px]">
+                            <thead>
+                                <tr class="text-slate-400 text-xs border-b border-white/5">
+                                    <th class="py-3 px-2 font-medium">Cliente</th>
+                                    <th class="py-3 px-2 font-medium">Servicio</th>
+                                    <th class="py-3 px-2 font-medium">Fecha/Hora</th>
+                                    <th class="py-3 px-2 font-medium">Monto</th>
+                                    <th class="py-3 px-2 font-medium">Estado</th>
+                                    <th class="py-3 px-2 font-medium text-right">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tablaAdminCitas" class="divide-y divide-white/5 text-sm">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="h-10"></div>
         </main>
-    </div> <!-- FIN DE appContainer -->
+    </div>
+
+    <div id="imageModal" class="fixed inset-0 z-[100] bg-black/95 backdrop-blur-sm hidden flex-col items-center justify-center p-4 transition-opacity duration-300 opacity-0" onclick="cerrarModalImagen()">
+        <button class="absolute top-6 right-6 text-white/50 hover:text-white text-3xl font-light transition-colors focus:outline-none">&times;</button>
+        <img id="expandedImg" src="" class="max-w-full max-h-[90vh] object-contain rounded-xl shadow-2xl transform scale-95 transition-transform duration-300" onclick="event.stopPropagation()">
+    </div>
 
     <script>
-        // CONFIGURACIÓN DE SUPABASE
         const SUPABASE_URL = 'https://mcxlatmgjugwnpaauwje.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_53VUwTtPWsqkJXukMLLSiw_XFkJVGWU';
         const bd = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        let authMode = 'login'; // 'login' o 'register'
-        let usuarioActual = null; // Guardará { nombre, correo }
+        let authMode = 'login'; 
+        let usuarioActual = null; 
+        let idServicioEditando = null;
+        let serviciosGlobalesData = []; 
+        let citasGlobalesData = [];
+        let isMockMode = false; 
+        
+        let currentDate = new Date();
+        let currentMonth = currentDate.getMonth();
+        let currentYear = currentDate.getFullYear();
+        let citasAgrupadas = {};
 
-        const catálogoBase = [
-            { id: 1, nombre: "Corte Normal", precio: 100, desc: "Corte clásico a máquina o tijera con acabado pulcro y limpio.", img: "https://images.unsplash.com/photo-1622286342621-4bd786c2447c?q=80&w=600&auto=format&fit=crop" },
-            { id: 2, nombre: "Corte + Barba Detallada", precio: 180, desc: "Corte completo al gusto y perfilado de barba con toalla caliente.", img: "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?q=80&w=600&auto=format&fit=crop" },
-            { id: 3, nombre: "Corte Fade & Diseño", precio: 150, desc: "Desvanecido perfecto con trazos artísticos.", img: "https://images.unsplash.com/photo-1599351431202-1e0f0137899a?q=80&w=600&auto=format&fit=crop" }
+        let chartIngresos = null;
+        let chartServicios = null;
+
+        const catálogoInicial = [
+            { id: 1, nombre: "Corte Elite", precio: 150, desc: "Corte de precision a tijera y maquina, lavado con champu especial.", img: "https://images.unsplash.com/photo-1599351431202-1e0f0137899a?q=80&w=800&auto=format&fit=crop" },
+            { id: 2, nombre: "Perfilado de Barba", precio: 100, desc: "Recorte detallado, alineacion perfecta con navaja y toalla caliente.", img: "https://images.unsplash.com/photo-1622286342621-4bd786c2447c?q=80&w=800&auto=format&fit=crop" },
+            { id: 3, nombre: "Combo Royal", precio: 220, desc: "La experiencia completa: Corte Elite + Perfilado de Barba.", img: "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?q=80&w=800&auto=format&fit=crop" }
         ];
 
         window.onload = function() {
-            renderizarCatalogo();
-            mostrarLandingAuth(); // Obligar el inicio de sesión
+            configurarEventosTeclado();
         };
 
-        // --- SISTEMA DE NOTIFICACIONES CUSTOM (Toast) ---
-        function mostrarToast(mensaje, tipo = 'info') {
-            const container = document.getElementById('toast-container');
-            if(!container) return;
+        function configurarEventosTeclado() {
+            const inputs = ['authNombre', 'authCorreo', 'authPass', 'authPassConfirm'];
+            inputs.forEach((id, index) => {
+                const el = document.getElementById(id);
+                if(el) {
+                    el.addEventListener('keydown', function(e) {
+                        if (e.key === 'Enter') {
+                            e.preventDefault();
+                            if (index < inputs.length - 1 && authMode === 'register' && !document.getElementById(inputs[index+1]).parentElement.classList.contains('hidden')) {
+                                document.getElementById(inputs[index+1]).focus();
+                            } else if (id === 'authCorreo' && authMode === 'login') {
+                                document.getElementById('authPass').focus();
+                            } else {
+                                procesarAuth();
+                            }
+                        }
+                    });
+                }
+            });
+        }
 
+        function showToast(msg, type = 'success') {
+            const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
-            
-            let bgColor = 'bg-slate-800 border-slate-600 text-white';
-            let icon = 'ℹ️';
-            
-            if (tipo === 'success') {
-                bgColor = 'bg-emerald-900/90 border-emerald-500/50 text-emerald-100';
-                icon = '✅';
-            } else if (tipo === 'error') {
-                bgColor = 'bg-red-900/90 border-red-500/50 text-red-100';
-                icon = '❌';
-            } else if (tipo === 'warning') {
-                bgColor = 'bg-amber-900/90 border-amber-500/50 text-amber-100';
-                icon = '⚠️';
-            }
-            
-            toast.className = `flex items-center gap-3 px-4 py-3 rounded-xl border shadow-lg backdrop-blur-md transition-all duration-300 transform translate-x-full opacity-0 ${bgColor}`;
-            toast.innerHTML = `<span class="text-lg">${icon}</span><p class="text-sm font-medium">${mensaje}</p>`;
-            
+            toast.className = `toast ${type}`;
+            toast.innerText = msg;
             container.appendChild(toast);
             
-            setTimeout(() => {
-                toast.classList.remove('translate-x-full', 'opacity-0');
-            }, 10);
+            setTimeout(() => toast.classList.add('show'), 10);
             
             setTimeout(() => {
-                toast.classList.add('translate-x-full', 'opacity-0');
+                toast.classList.remove('show');
                 setTimeout(() => toast.remove(), 300);
             }, 3000);
         }
 
-        function cambiarVista(vistaId) {
-            document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
-            const vistaTarget = document.getElementById(vistaId);
-            if(vistaTarget) vistaTarget.classList.remove('hidden');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+        let pendingConfirmAction = null;
+        function customConfirm(msg, action) {
+            document.getElementById('confirmMsg').innerText = msg;
+            pendingConfirmAction = action;
+            document.getElementById('customConfirmModal').classList.remove('hidden');
+            document.getElementById('customConfirmModal').classList.add('flex');
+            setTimeout(() => { document.querySelector('#customConfirmModal > div').style.transform = 'scale(1)'; }, 10);
         }
 
-        // --- AUTH Y SESIONES ---
-        function mostrarLandingAuth() {
-            document.getElementById('authLandingView').classList.remove('hidden');
-            document.getElementById('authLandingView').classList.add('flex');
-            document.getElementById('appContainer').classList.remove('flex');
-            document.getElementById('appContainer').classList.add('hidden');
-            
-            document.getElementById('authNombre').value = '';
-            document.getElementById('authCorreo').value = '';
-            document.getElementById('authPass').value = '';
-            document.getElementById('authPassConfirm').value = '';
-            
-            authMode = 'login';
-            actualizarUIAuth();
+        function closeCustomConfirm() {
+            document.getElementById('customConfirmModal').classList.add('hidden');
+            document.getElementById('customConfirmModal').classList.remove('flex');
+            pendingConfirmAction = null;
         }
 
-        function ocultarLandingAuth() {
-            document.getElementById('authLandingView').classList.remove('flex');
-            document.getElementById('authLandingView').classList.add('hidden');
-            document.getElementById('appContainer').classList.remove('hidden');
-            document.getElementById('appContainer').classList.add('flex');
+        function executeCustomConfirm() {
+            if (pendingConfirmAction) pendingConfirmAction();
+            closeCustomConfirm();
         }
 
         function toggleAuthMode() {
             authMode = authMode === 'login' ? 'register' : 'login';
-            actualizarUIAuth();
-        }
-
-        function actualizarUIAuth() {
-            const isLogin = authMode === 'login';
             
-            document.getElementById('landingAuthTitle').innerText = isLogin ? 'Inicia Sesión' : 'Crea tu cuenta';
-            document.getElementById('landingAuthSubtitle').innerText = isLogin 
-                ? 'Ingresa tus datos para agendar tu próxima cita.' 
-                : 'Únete a una red de clientes exclusivos de Barber Studio.';
-            document.getElementById('btnAuthAction').innerText = isLogin ? 'Entrar' : 'Crear Cuenta';
-            document.getElementById('btnAuthToggleText').innerText = isLogin ? '¿No tienes una cuenta? ' : '¿Ya tienes una cuenta? ';
-            document.getElementById('btnAuthToggle').innerText = isLogin ? 'Regístrate' : 'Inicia Sesión';
-            
+            const title = document.getElementById('landingAuthTitle');
+            const subtitle = document.getElementById('landingAuthSubtitle');
+            const fieldNombre = document.getElementById('fieldNombre');
             const passContainer = document.getElementById('passContainer');
-            
-            if(isLogin) {
-                document.getElementById('fieldNombre').classList.add('hidden');
-                document.getElementById('fieldPassConfirm').classList.add('hidden');
-                document.getElementById('passwordHint').classList.add('hidden');
-                passContainer.classList.add('sm:col-span-2');
-                passContainer.classList.remove('sm:col-span-1');
+            const fieldPassConfirm = document.getElementById('fieldPassConfirm');
+            const btnAction = document.getElementById('btnAuthAction');
+            const toggleText = document.getElementById('btnAuthToggleText');
+            const btnToggle = document.getElementById('btnAuthToggle');
+
+            document.getElementById('authNombre').value = '';
+            document.getElementById('authCorreo').value = '';
+            document.getElementById('authPass').value = '';
+            document.getElementById('authPassConfirm').value = '';
+
+            if (authMode === 'register') {
+                title.innerText = 'Crear Cuenta';
+                subtitle.innerText = 'Unete a nuestra base de clientes exclusivos.';
+                fieldNombre.classList.remove('hidden');
+                fieldPassConfirm.classList.remove('hidden');
+                passContainer.classList.replace('sm:col-span-2', 'sm:col-span-1');
+                btnAction.innerText = 'Completar Registro';
+                toggleText.innerText = 'Ya tienes acceso? ';
+                btnToggle.innerText = 'Inicia Sesion';
             } else {
-                document.getElementById('fieldNombre').classList.remove('hidden');
-                document.getElementById('fieldPassConfirm').classList.remove('hidden');
-                document.getElementById('passwordHint').classList.remove('hidden');
-                passContainer.classList.remove('sm:col-span-2');
-                passContainer.classList.add('sm:col-span-1');
+                title.innerText = 'Inicia Sesion';
+                subtitle.innerText = 'Ingresa a tu portal exclusivo.';
+                fieldNombre.classList.add('hidden');
+                fieldPassConfirm.classList.add('hidden');
+                passContainer.classList.replace('sm:col-span-1', 'sm:col-span-2');
+                btnAction.innerText = 'Entrar al Portal';
+                toggleText.innerText = 'No tienes una cuenta? ';
+                btnToggle.innerText = 'Registrate';
             }
         }
 
         async function procesarAuth() {
+            const nombre = document.getElementById('authNombre').value.trim();
             const correo = document.getElementById('authCorreo').value.trim();
             const pass = document.getElementById('authPass').value.trim();
+            const passConfirm = document.getElementById('authPassConfirm').value.trim();
 
-            if(!correo || !pass) {
-                mostrarToast('Por favor completa los campos principales.', 'warning');
-                return;
-            }
-
-            if(authMode === 'login') {
-                if (correo === "1" && pass === "1") {
-                    mostrarToast('¡Bienvenido Administrador!', 'success');
-                    ocultarLandingAuth();
-                    cambiarVista('adminView');
-                    actualizarTablaServiciosAdmin();
-                    actualizarDashboardAdmin();
-                } else if (correo === "0" && pass === "0") {
-                    // Acceso rápido para pruebas de cliente
-                    usuarioActual = { nombre: "Usuario Prueba", correo: "cliente@prueba.com" };
-                    mostrarToast('¡Hola de nuevo, Usuario de Prueba!', 'success');
-                    
-                    ocultarLandingAuth();
-                    cambiarVista('clientView');
-                    
-                    document.getElementById('cliNombre').value = usuarioActual.nombre;
-                    document.getElementById('cliNombre').disabled = true;
-                    document.getElementById('cliNombre').classList.add('opacity-75', 'cursor-not-allowed');
-                    
-                    document.getElementById('cliCorreo').value = usuarioActual.correo;
-                    document.getElementById('cliCorreo').disabled = true;
-                    document.getElementById('cliCorreo').classList.add('opacity-75', 'cursor-not-allowed');
-                    
-                    document.getElementById('userGreeting').innerText = `Hola, Usuario`;
+            if (authMode === 'register') {
+                if (!nombre || !correo || !pass || !passConfirm) {
+                    showToast('Completa todos los campos', 'error'); return;
+                }
+                if (pass !== passConfirm) {
+                    showToast('Las contraseñas no coinciden', 'error'); return;
+                }
+                
+                const { error } = await bd.from('usuarios').insert([{ nombre, correo, password: pass }]);
+                if (error) {
+                    showToast("Asegurate de haber creado la tabla usuarios en Supabase.", 'error');
                 } else {
-                    const { data, error } = await bd.from('usuarios').select('*').eq('correo', correo).eq('password', pass);
-                    if (data && data.length > 0) {
-                        const usr = data[0];
-                        usuarioActual = { nombre: usr.nombre, correo: usr.correo };
-                        mostrarToast(`¡Hola de nuevo, ${usr.nombre.split(' ')[0]}!`, 'success');
-                        
-                        ocultarLandingAuth();
-                        cambiarVista('clientView');
-                        
-                        document.getElementById('cliNombre').value = usr.nombre;
-                        document.getElementById('cliNombre').disabled = true;
-                        document.getElementById('cliNombre').classList.add('opacity-75', 'cursor-not-allowed');
-                        
-                        document.getElementById('cliCorreo').value = usr.correo;
-                        document.getElementById('cliCorreo').disabled = true;
-                        document.getElementById('cliCorreo').classList.add('opacity-75', 'cursor-not-allowed');
-                        
-                        document.getElementById('userGreeting').innerText = `Hola, ${usr.nombre.split(' ')[0]}`;
-                    } else {
-                        mostrarToast('Usuario o contraseña incorrectos.', 'error');
-                    }
+                    showToast('Cuenta creada. Inicia sesion ahora.', 'success');
+                    toggleAuthMode(); 
                 }
             } else {
-                const nombre = document.getElementById('authNombre').value.trim();
-                const passConfirm = document.getElementById('authPassConfirm').value.trim();
-
-                if(!nombre || !passConfirm) {
-                    mostrarToast('Completa todos los campos para registrarte.', 'warning');
-                    return;
-                }
-                if(pass !== passConfirm) {
-                    mostrarToast('Las contraseñas no coinciden. Intenta de nuevo.', 'error');
-                    return;
+                if (!correo || !pass) {
+                    showToast('Ingresa tus credenciales', 'error'); return;
                 }
 
-                const nuevoUser = { nombre, correo, password: pass };
-                const { error } = await bd.from('usuarios').insert([nuevoUser]);
+                if (correo === "1" && pass === "1") {
+                    isMockMode = false;
+                    iniciarSesionExitosa({ nombre: "Owner Admin", correo: "admin@barber.com" }, 'admin');
+                    return;
+                }
 
-                if(error) {
-                    mostrarToast('Error al registrar usuario. Intenta de nuevo o verifica tu conexión.', 'error');
+                if (correo === "0" && pass === "0") {
+                    isMockMode = false;
+                    iniciarSesionExitosa({ nombre: "Cliente Demo", correo: "cliente@demo.com" }, 'client');
+                    return;
+                }
+
+                if (correo === "2" && pass === "2") {
+                    isMockMode = true; 
+                    generarDatosDePrueba(); 
+                    iniciarSesionExitosa({ nombre: "Admin Presentacion", correo: "demo@modo.com" }, 'admin');
+                    return;
+                }
+
+                const { data: dataCorreo } = await bd.from('usuarios').select('*').eq('correo', correo).eq('password', pass);
+                const { data: dataNombre } = await bd.from('usuarios').select('*').eq('nombre', correo).eq('password', pass);
+                const data = (dataCorreo && dataCorreo.length > 0) ? dataCorreo : dataNombre;
+
+                if (data && data.length > 0) {
+                    isMockMode = false;
+                    iniciarSesionExitosa(data[0], 'client');
                 } else {
-                    mostrarToast('¡Cuenta creada con éxito! Iniciando sesión...', 'success');
-                    
-                    usuarioActual = { nombre, correo };
-                    setTimeout(() => {
-                        ocultarLandingAuth();
-                        cambiarVista('clientView');
-                        
-                        document.getElementById('cliNombre').value = nombre;
-                        document.getElementById('cliNombre').disabled = true;
-                        document.getElementById('cliNombre').classList.add('opacity-75', 'cursor-not-allowed');
-                        
-                        document.getElementById('cliCorreo').value = correo;
-                        document.getElementById('cliCorreo').disabled = true;
-                        document.getElementById('cliCorreo').classList.add('opacity-75', 'cursor-not-allowed');
-                        
-                        document.getElementById('userGreeting').innerText = `Hola, ${nombre.split(' ')[0]}`;
-                    }, 1200);
+                    showToast('Credenciales incorrectas.', 'error');
                 }
             }
         }
 
-        function cerrarSesionUsuario() {
-            usuarioActual = null;
-            document.getElementById('cliNombre').value = '';
-            document.getElementById('cliNombre').disabled = false;
-            document.getElementById('cliNombre').classList.remove('opacity-75', 'cursor-not-allowed');
+        function iniciarSesionExitosa(userData, tipo) {
+            usuarioActual = userData;
+            document.getElementById('authLandingView').classList.add('hidden');
             
-            document.getElementById('cliCorreo').value = '';
-            document.getElementById('cliCorreo').disabled = false;
-            document.getElementById('cliCorreo').classList.remove('opacity-75', 'cursor-not-allowed');
-            
-            document.getElementById('userGreeting').innerText = '';
-            
-            mostrarLandingAuth();
-            mostrarToast('Has cerrado sesión.', 'success');
+            if(tipo === 'admin') {
+                document.getElementById('adminContainer').classList.remove('hidden');
+                document.getElementById('adminContainer').classList.add('flex');
+                
+                document.getElementById('adminNameDisplay').innerText = usuarioActual.nombre;
+                if(isMockMode) document.getElementById('adminStatusDisplay').innerText = "Modo Simulacion";
+                
+                switchAdminTab('tabOverview', document.querySelector('.admin-tab-btn'));
+                actualizarDashboardAdmin();
+            } else {
+                document.getElementById('clientContainer').classList.remove('hidden');
+                document.getElementById('clientContainer').classList.add('flex');
+                
+                document.getElementById('userGreeting').innerText = `Hola, ${usuarioActual.nombre.split(' ')[0]}`;
+                document.getElementById('userGreetingMobile').innerText = usuarioActual.nombre.split(' ')[0];
+                
+                document.getElementById('cliNombre').value = usuarioActual.nombre;
+                document.getElementById('cliCorreo').value = usuarioActual.correo;
+                
+                cambiarVistaCliente('catalogo');
+            }
         }
 
-        // --- GESTIÓN DEL CATÁLOGO DE SERVICIOS EN SUPABASE ---
-        async function obtenerServicios() {
-            const { data, error } = await bd.from('servicios').select('*');
-            if (error || !data || data.length === 0) {
-                return catálogoBase;
+        function cerrarSesionGeneral() {
+            usuarioActual = null;
+            isMockMode = false;
+            
+            document.getElementById('adminContainer').classList.add('hidden');
+            document.getElementById('adminContainer').classList.remove('flex');
+            document.getElementById('clientContainer').classList.add('hidden');
+            document.getElementById('clientContainer').classList.remove('flex');
+            document.getElementById('authLandingView').classList.remove('hidden');
+            
+            document.getElementById('authCorreo').value = '';
+            document.getElementById('authPass').value = '';
+        }
+
+        function cambiarVistaCliente(vista) {
+            document.getElementById('vistaCatalogoCliente').classList.add('hidden');
+            document.getElementById('vistaReservaCliente').classList.add('hidden');
+            
+            if(vista === 'catalogo') {
+                document.getElementById('vistaCatalogoCliente').classList.remove('hidden');
+                renderizarCatalogo();
+            } else {
+                document.getElementById('vistaReservaCliente').classList.remove('hidden');
             }
-            return data;
+        }
+
+        async function fetchServicios() {
+            if (isMockMode) return serviciosGlobalesData.length ? serviciosGlobalesData : catálogoInicial;
+            const { data, error } = await bd.from('servicios').select('*');
+            return (!error && data && data.length > 0) ? data : catálogoInicial;
+        }
+
+        async function fetchCitas() {
+            if (isMockMode) return citasGlobalesData;
+            const { data } = await bd.from('citas').select('*');
+            return data || [];
+        }
+
+        async function fetchHistorial() {
+            if (isMockMode) return JSON.parse(localStorage.getItem('mockHistorial')) || [];
+            return JSON.parse(localStorage.getItem('barberiaHistorialDiasV8')) || [];
+        }
+
+        async function saveHistorial(historialArr) {
+            if (isMockMode) localStorage.setItem('mockHistorial', JSON.stringify(historialArr));
+            else localStorage.setItem('barberiaHistorialDiasV8', JSON.stringify(historialArr));
         }
 
         async function renderizarCatalogo() {
-            const servicios = await obtenerServicios();
+            serviciosGlobalesData = await fetchServicios();
             const grid = document.getElementById('catalogoGrid');
-            if (grid) grid.innerHTML = '';
-
             const select = document.getElementById('cliServicio');
-            if (select) select.innerHTML = '';
+            
+            grid.innerHTML = '';
+            select.innerHTML = '';
 
-            servicios.forEach(serv => {
+            serviciosGlobalesData.forEach(serv => {
                 const imagen = serv.img || 'https://images.unsplash.com/photo-1622286342621-4bd786c2447c?q=80&w=600&auto=format&fit=crop';
-                const descripcion = serv.desc || 'Servicio profesional realizado por nuestro equipo VIP.';
+                const descripcion = serv.desc || 'Experiencia premium y profesional.';
                 
-                if (grid) {
-                    grid.innerHTML += `
-                        <div class="glass-panel rounded-3xl overflow-hidden flex flex-col glow-hover transition-all duration-300 group">
-                            <div class="relative h-48 sm:h-52 overflow-hidden">
-                                <img src="${imagen}" alt="${serv.nombre}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                                <span class="absolute bottom-3 left-4 text-amber-400 font-black text-lg sm:text-xl drop-shadow-md">L. ${serv.precio}</span>
-                            </div>
-                            <div class="p-5 sm:p-6 flex flex-col flex-grow">
-                                <h3 class="font-bold text-base sm:text-lg mb-1.5 text-white drop-shadow">${serv.nombre}</h3>
-                                <p class="text-xs text-slate-200 mb-5 flex-grow leading-relaxed">${descripcion}</p>
-                                <button onclick="seleccionarServicioRapido('${serv.nombre}|${serv.precio}')" class="w-full py-3 bg-amber-500/25 text-amber-300 border border-amber-500/40 rounded-xl text-xs font-extrabold hover:bg-amber-400 hover:text-slate-950 transition-all shadow-md">Reservar Este Servicio</button>
+                grid.innerHTML += `
+                    <div class="glass-panel rounded-3xl overflow-hidden flex flex-col glow-hover transition-all duration-300 group shadow-2xl">
+                        <div class="relative h-64 md:h-80 overflow-hidden cursor-pointer" onclick="abrirModalImagen('${imagen}')">
+                            <img src="${imagen}" alt="${serv.nombre}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                            <div class="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-transparent opacity-80 group-hover:opacity-40 transition-opacity"></div>
+                            <div class="absolute bottom-5 left-5 right-5 flex justify-between items-end">
+                                <h3 class="font-bold text-2xl md:text-3xl text-white drop-shadow-lg">${serv.nombre}</h3>
                             </div>
                         </div>
-                    `;
-                }
+                        <div class="p-6 md:p-8 flex flex-col flex-grow bg-[#0c0f17]">
+                            <p class="text-sm md:text-base text-slate-400 mb-6 flex-grow font-light leading-relaxed">${descripcion}</p>
+                            <div class="flex items-center justify-between mt-auto pt-4 border-t border-white/5">
+                                <span class="bg-[#111520] px-4 py-2 rounded-full border border-white/10 text-emerald-400 font-bold text-lg">L. ${serv.precio}</span>
+                                <button onclick="seleccionarServicioRapido('${serv.nombre}|${serv.precio}')" class="px-6 py-3 bg-white text-slate-900 font-bold rounded-xl text-sm hover:bg-amber-400 transition-colors">
+                                    Agendar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
 
-                if (select) {
-                    select.innerHTML += `<option value="${serv.nombre}|${serv.precio}" class="bg-slate-900 text-white">${serv.nombre} - L. ${serv.precio}</option>`;
-                }
+                select.innerHTML += `<option value="${serv.nombre}|${serv.precio}" class="bg-slate-900 text-white">${serv.nombre} - L. ${serv.precio}</option>`;
             });
         }
 
-        async function agregarNuevoServicio() {
-            const nombre = document.getElementById('nuevoServicioNombre').value.trim();
-            const precio = parseFloat(document.getElementById('nuevoServicioPrecio').value);
-            const img = document.getElementById('nuevoServicioImg').value.trim();
-            const desc = document.getElementById('nuevoServicioDesc').value.trim();
-
-            if (!nombre || isNaN(precio)) {
-                mostrarToast("Por favor ingresa un nombre y precio válido para el servicio.", "warning");
-                return;
-            }
-
-            const nuevo = {
-                nombre,
-                precio,
-                desc: desc || "Servicio profesional realizado por nuestro equipo VIP.",
-                img: img || ""
-            };
-
-            const { error } = await bd.from('servicios').insert([nuevo]);
-            if (error) {
-                mostrarToast("Error al agregar servicio: " + error.message, "error");
-            } else {
-                mostrarToast("¡Servicio agregado y sincronizado globalmente!", "success");
-                document.getElementById('nuevoServicioNombre').value = '';
-                document.getElementById('nuevoServicioPrecio').value = '';
-                document.getElementById('nuevoServicioImg').value = '';
-                document.getElementById('nuevoServicioDesc').value = '';
-                renderizarCatalogo();
-                actualizarTablaServiciosAdmin();
-            }
+        function seleccionarServicioRapido(val) {
+            document.getElementById('cliServicio').value = val;
+            cambiarVistaCliente('reserva');
         }
 
-        async function eliminarServicio(id) {
-            if (confirm("¿Seguro que deseas eliminar este servicio del catálogo global?")) {
-                const { error } = await bd.from('servicios').delete().eq('id', id);
-                if (error) {
-                    mostrarToast("Error al eliminar: " + error.message, "error");
-                } else {
-                    mostrarToast("Servicio eliminado.", "success");
-                    renderizarCatalogo();
-                    actualizarTablaServiciosAdmin();
-                }
-            }
-        }
-
-        async function actualizarTablaServiciosAdmin() {
-            const servicios = await obtenerServicios();
-            const tbody = document.getElementById('tablaAdminServicios');
-            if(tbody) tbody.innerHTML = '';
-
-            servicios.forEach((s) => {
-                if(tbody) {
-                    tbody.innerHTML += `
-                        <tr>
-                            <td class="py-2.5 px-3 font-semibold text-white">${s.nombre}</td>
-                            <td class="py-2.5 px-3 text-amber-400 font-bold">L. ${parseFloat(s.precio).toFixed(2)}</td>
-                            <td class="py-2.5 px-3 text-right">
-                                <button onclick="eliminarServicio(${s.id})" class="px-3 py-1 bg-red-500/20 text-red-300 hover:bg-red-500 hover:text-white rounded-lg text-xs font-bold transition-all">Eliminar</button>
-                            </td>
-                        </tr>
-                    `;
-                }
-            });
-        }
-
-        function seleccionarServicioRapido(valorServicio) {
-            const select = document.getElementById('cliServicio');
-            if(select) select.value = valorServicio;
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        // --- CITAS Y DASHBOARD ADMIN ---
         async function clienteAgendar() {
-            const cliente = document.getElementById('cliNombre').value.trim();
-            const correo = document.getElementById('cliCorreo').value.trim();
+            const cliente = document.getElementById('cliNombre').value;
+            const correo = document.getElementById('cliCorreo').value;
             const servicioData = document.getElementById('cliServicio').value.split('|');
-            const barbero = document.getElementById('cliBarbero').value.trim();
+            const barbero = document.getElementById('cliBarbero').value.trim() || 'Cualquiera';
             const fechaHora = document.getElementById('cliFechaHora').value;
 
-            if (!cliente || !correo || !barbero || !fechaHora) {
-                mostrarToast("Completa todos los campos requeridos.", "warning");
-                return;
+            if (!fechaHora) {
+                showToast("Por favor selecciona la fecha y hora.", 'error'); return;
             }
 
             const nuevaCita = {
@@ -723,167 +873,435 @@
                 atendido: false
             };
 
-            const { error } = await bd.from('citas').insert([nuevaCita]);
-
-            if (error) {
-                mostrarToast("Error al guardar en Supabase: " + error.message, "error");
+            if(isMockMode) {
+                nuevaCita.id = Math.floor(Math.random() * 10000);
+                citasGlobalesData.push(nuevaCita);
+                showToast("Cita agendada (Simulacion).", 'success');
             } else {
-                mostrarToast("¡Cita agendada con éxito!", "success");
-                
-                // Limpiar solo los campos que no están bloqueados
-                document.getElementById('cliBarbero').value = "";
-                document.getElementById('cliFechaHora').value = "";
+                const { error } = await bd.from('citas').insert([nuevaCita]);
+                if (error) showToast("Error al guardar: " + error.message, 'error');
+                else showToast("Cita confirmada.", 'success');
             }
+
+            document.getElementById('cliFechaHora').value = "";
+            document.getElementById('cliBarbero').value = "";
+            cambiarVistaCliente('catalogo');
         }
 
-        async function marcarComoAtendido(id) {
-            const { error } = await bd.from('citas').update({ atendido: true }).eq('id', id);
-            if (error) mostrarToast("Error: " + error.message, "error");
-            else actualizarDashboardAdmin();
+        function prepararEdicionServicio(id) {
+            const servicio = serviciosGlobalesData.find(s => s.id == id);
+            if(!servicio) return;
+
+            idServicioEditando = id;
+            document.getElementById('tituloFormServicio').innerText = "Editando: " + servicio.nombre;
+            document.getElementById('nuevoServicioNombre').value = servicio.nombre;
+            document.getElementById('nuevoServicioPrecio').value = servicio.precio;
+            document.getElementById('nuevoServicioImg').value = servicio.img || '';
+            document.getElementById('nuevoServicioDesc').value = servicio.desc || '';
+            
+            document.getElementById('btnAccionServicio').innerText = "Actualizar Cambios";
+            document.getElementById('btnCancelarEdicion').classList.remove('hidden');
         }
 
-        async function eliminarCitaAdmin(id) {
-            if (confirm("¿Seguro que deseas eliminar esta cita de la base de datos?")) {
-                const { error } = await bd.from('citas').delete().eq('id', id);
-                if (error) mostrarToast("Error: " + error.message, "error");
-                else actualizarDashboardAdmin();
-            }
+        function cancelarEdicionServicio() {
+            idServicioEditando = null;
+            document.getElementById('tituloFormServicio').innerText = "Agregar Nuevo Servicio";
+            document.getElementById('nuevoServicioNombre').value = '';
+            document.getElementById('nuevoServicioPrecio').value = '';
+            document.getElementById('nuevoServicioImg').value = '';
+            document.getElementById('nuevoServicioDesc').value = '';
+            
+            document.getElementById('btnAccionServicio').innerText = "Guardar Servicio";
+            document.getElementById('btnCancelarEdicion').classList.add('hidden');
         }
 
-        function obtenerHistorialDias() { return JSON.parse(localStorage.getItem('barberiaHistorialDiasV7')) || []; }
-        function guardarHistorialDias(historial) { localStorage.setItem('barberiaHistorialDiasV7', JSON.stringify(historial)); }
+        async function guardarOEditarServicio() {
+            const nombre = document.getElementById('nuevoServicioNombre').value.trim();
+            const precio = parseFloat(document.getElementById('nuevoServicioPrecio').value);
+            const img = document.getElementById('nuevoServicioImg').value.trim();
+            const desc = document.getElementById('nuevoServicioDesc').value.trim();
 
-        async function finalizarDiaCaja() {
-            const { data: citas, error } = await bd.from('citas').select('*');
-            if (error) {
-                mostrarToast("Error al obtener citas: " + error.message, "error");
+            if (!nombre || isNaN(precio)) { showToast("Nombre y precio invalidos.", 'error'); return; }
+
+            const dataObj = { nombre, precio, desc, img };
+
+            if(isMockMode) {
+                if (idServicioEditando) {
+                    const idx = serviciosGlobalesData.findIndex(s => s.id == idServicioEditando);
+                    if(idx>-1) serviciosGlobalesData[idx] = { ...serviciosGlobalesData[idx], ...dataObj };
+                } else {
+                    dataObj.id = Math.floor(Math.random() * 1000);
+                    serviciosGlobalesData.push(dataObj);
+                }
+                cancelarEdicionServicio();
+                actualizarTablaServiciosAdmin();
+                showToast("Catalogo actualizado (Simulacion)", 'success');
                 return;
             }
 
-            let totalDia = 0;
-            citas.forEach(c => {
-                if(c.atendido) totalDia += c.precio;
+            if (idServicioEditando) {
+                const { error } = await bd.from('servicios').update(dataObj).eq('id', idServicioEditando);
+                if (!error) { cancelarEdicionServicio(); actualizarTablaServiciosAdmin(); }
+            } else {
+                const { error } = await bd.from('servicios').insert([dataObj]);
+                if (!error) { cancelarEdicionServicio(); actualizarTablaServiciosAdmin(); }
+            }
+        }
+
+        function eliminarServicio(id) {
+            customConfirm("¿Borrar definitivamente este servicio del catalogo?", async () => {
+                if(isMockMode) {
+                    serviciosGlobalesData = serviciosGlobalesData.filter(s => s.id != id);
+                    actualizarTablaServiciosAdmin();
+                    return;
+                }
+                await bd.from('servicios').delete().eq('id', id);
+                actualizarTablaServiciosAdmin();
             });
+        }
 
-            if (totalDia === 0 && citas.length === 0) {
-                mostrarToast("No hay citas registradas para finalizar el día.", "warning");
-                return;
+        async function actualizarTablaServiciosAdmin() {
+            serviciosGlobalesData = await fetchServicios();
+            const tbody = document.getElementById('tablaAdminServicios');
+            tbody.innerHTML = '';
+
+            serviciosGlobalesData.forEach(s => {
+                const img = s.img || 'https://images.unsplash.com/photo-1622286342621-4bd786c2447c?q=80&w=150&auto=format&fit=crop';
+                tbody.innerHTML += `
+                    <tr>
+                        <td class="py-3 px-2">
+                            <img src="${img}" class="w-10 h-10 rounded-md object-cover cursor-pointer hover:scale-110 transition" onclick="abrirModalImagen('${img}')">
+                        </td>
+                        <td class="py-3 px-2 font-medium text-white">${s.nombre}</td>
+                        <td class="py-3 px-2 text-emerald-400 font-bold">L. ${s.precio}</td>
+                        <td class="py-3 px-2 text-slate-400 text-xs truncate max-w-[150px]">${s.desc || ''}</td>
+                        <td class="py-3 px-2 text-right">
+                            <button onclick="prepararEdicionServicio(${s.id})" class="text-amber-400 hover:underline text-xs mr-3">Editar</button>
+                            <button onclick="eliminarServicio(${s.id})" class="text-red-400 hover:underline text-xs">Borrar</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function cambiarMes(delta) {
+            currentMonth += delta;
+            if(currentMonth < 0) { currentMonth = 11; currentYear--; }
+            if(currentMonth > 11) { currentMonth = 0; currentYear++; }
+            renderCalendar(citasAgrupadas);
+        }
+
+        function renderCalendar(agrupadas) {
+            const monthNames = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+            document.getElementById('calendarMonthYear').innerText = `${monthNames[currentMonth]} ${currentYear}`;
+            
+            const grid = document.getElementById('calendarDaysGrid');
+            grid.innerHTML = '';
+
+            const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+            const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+
+            for(let i=0; i<firstDay; i++) {
+                grid.innerHTML += `<div class="aspect-square rounded-lg bg-transparent"></div>`;
             }
 
-            if (confirm(`¿Deseas cerrar la jornada actual? Se registrará un total de L. ${totalDia.toFixed(2)} y se limpiarán las citas activas de la base de datos.`)) {
-                let historial = obtenerHistorialDias();
-                const fechaHoy = new Date().toLocaleDateString('es-HN', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+            for(let day=1; day<=daysInMonth; day++) {
+                const dStr = `${currentYear}-${String(currentMonth+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+                const citasHoy = agrupadas[dStr] || [];
+                const tieneCita = citasHoy.length > 0;
                 
-                historial.push({
-                    fecha: `Cierre: ${fechaHoy}`,
-                    ingresos: totalDia
-                });
-                guardarHistorialDias(historial);
-
-                for (let c of citas) {
-                    await bd.from('citas').delete().eq('id', c.id);
+                let colorClass = 'bg-[#111520] border border-white/5 text-slate-400 hover:bg-white/5';
+                if(tieneCita) {
+                    colorClass = 'bg-amber-500/20 border border-amber-500/50 text-amber-400 font-bold shadow-[0_0_10px_rgba(245,158,11,0.2)] hover:bg-amber-500/40 cursor-pointer';
                 }
 
-                actualizarDashboardAdmin();
-                mostrarToast("¡Jornada finalizada exitosamente!", "success");
+                grid.innerHTML += `
+                    <div onclick="${tieneCita ? `mostrarDetalleDia('${dStr}')` : ''}" class="aspect-square rounded-lg flex flex-col items-center justify-center transition-all ${colorClass}">
+                        <span>${day}</span>
+                        ${tieneCita ? `<div class="w-1 h-1 rounded-full bg-amber-400 mt-1"></div>` : ''}
+                    </div>
+                `;
             }
         }
 
-        function eliminarDiaHistorial(index) {
-            let historial = obtenerHistorialDias();
-            if (confirm(`¿Seguro que deseas eliminar el registro "${historial[index].fecha}"?`)) {
-                historial.splice(index, 1);
-                guardarHistorialDias(historial);
-                actualizarDashboardAdmin();
-            }
+        function mostrarDetalleDia(fechaStr) {
+            const list = document.getElementById('detailAppointmentsList');
+            document.getElementById('detailDateTitle').innerText = `Agenda: ${fechaStr}`;
+            list.innerHTML = '';
+            
+            const citasHoy = citasAgrupadas[fechaStr] || [];
+            citasHoy.forEach(c => {
+                const hora = c.fechahora.split('T')[1] || 'Sin hora';
+                const estado = c.atendido ? '<span class="text-emerald-400">Atendido</span>' : '<span class="text-amber-400">Pendiente</span>';
+                
+                list.innerHTML += `
+                    <div class="bg-black/40 p-4 rounded-xl border border-white/5">
+                        <div class="flex justify-between items-start mb-2">
+                            <div class="font-bold text-white text-sm">${c.nombre}</div>
+                            <div class="text-xs bg-white/10 px-2 py-1 rounded">${hora}</div>
+                        </div>
+                        <div class="text-xs text-slate-400 mb-1">Servicio: <span class="text-slate-200">${c.servicio}</span></div>
+                        <div class="text-xs text-slate-400 mb-2">Barbero: <span class="text-slate-200">${c.barbero}</span></div>
+                        <div class="text-xs font-medium">${estado}</div>
+                    </div>
+                `;
+            });
+        }
+
+        function renderizarGraficos(citas, historial) {
+            const histReciente = [...historial].slice(-7).reverse();
+            const etiquetasBarras = histReciente.map(h => h.fecha.split(',')[0].replace('Cierre: ', '').substring(0,5));
+            const datosBarras = histReciente.map(h => h.ingresos);
+
+            let conteoServicios = {};
+            citas.forEach(c => {
+                conteoServicios[c.servicio] = (conteoServicios[c.servicio] || 0) + 1;
+            });
+            const etiquetasDoughnut = Object.keys(conteoServicios);
+            const datosDoughnut = Object.values(conteoServicios);
+
+            Chart.defaults.color = 'rgba(255, 255, 255, 0.5)';
+            Chart.defaults.borderColor = 'rgba(255, 255, 255, 0.05)';
+
+            if(chartIngresos) chartIngresos.destroy();
+            if(chartServicios) chartServicios.destroy();
+
+            const ctx1 = document.getElementById('ingresosChart').getContext('2d');
+            chartIngresos = new Chart(ctx1, {
+                type: 'bar',
+                data: {
+                    labels: etiquetasBarras.length ? etiquetasBarras : ['Sin datos'],
+                    datasets: [{
+                        label: 'Ingresos (L.)',
+                        data: datosBarras.length ? datosBarras : [0],
+                        backgroundColor: '#f59e0b',
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { y: { beginAtZero: true } }
+                }
+            });
+
+            const ctx2 = document.getElementById('serviciosChart').getContext('2d');
+            chartServicios = new Chart(ctx2, {
+                type: 'doughnut',
+                data: {
+                    labels: etiquetasDoughnut.length ? etiquetasDoughnut : ['Sin datos'],
+                    datasets: [{
+                        data: datosDoughnut.length ? datosDoughnut : [1],
+                        backgroundColor: ['#f59e0b', '#10b981', '#3b82f6', '#8b5cf6', '#6366f1'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom', labels: { boxWidth: 12 } } },
+                    cutout: '70%'
+                }
+            });
         }
 
         async function actualizarDashboardAdmin() {
-            const { data: citas, error } = await bd.from('citas').select('*');
-            if (error) {
-                console.error("Error al cargar citas:", error.message);
-                return;
-            }
-
-            const historial = obtenerHistorialDias();
+            const citas = await fetchCitas();
+            const historial = await fetchHistorial();
+            
             const tbody = document.getElementById('tablaAdminCitas');
-            const tbodyHistorial = document.getElementById('tablaHistorialDias');
-            if(tbody) tbody.innerHTML = '';
-            if(tbodyHistorial) tbodyHistorial.innerHTML = '';
+            const tbodyHist = document.getElementById('tablaHistorialDias');
+            tbody.innerHTML = '';
+            tbodyHist.innerHTML = '';
+            citasAgrupadas = {};
 
             let totalAtendidos = 0;
             let ingresosDiaActual = 0;
 
-            citas.forEach((c) => {
-                if (c.atendido) {
-                    totalAtendidos++;
-                    ingresosDiaActual += c.precio;
+            citas.forEach(c => {
+                if (c.atendido) { totalAtendidos++; ingresosDiaActual += c.precio; }
+                
+                if(c.fechahora) {
+                    const dStr = c.fechahora.split('T')[0];
+                    if(!citasAgrupadas[dStr]) citasAgrupadas[dStr] = [];
+                    citasAgrupadas[dStr].push(c);
                 }
 
-                if(tbody) {
-                    tbody.innerHTML += `
+                tbody.innerHTML += `
+                    <tr>
+                        <td class="py-3 px-2 font-medium text-white">${c.nombre}</td>
+                        <td class="py-3 px-2 text-slate-300">${c.servicio}</td>
+                        <td class="py-3 px-2 text-slate-400 text-xs">${c.fechahora.replace('T',' ')}</td>
+                        <td class="py-3 px-2 text-emerald-400 font-bold">L. ${c.precio}</td>
+                        <td class="py-3 px-2">
+                            ${c.atendido ? '<span class="text-emerald-400 text-xs font-bold">Atendido</span>' : '<span class="text-amber-400 text-xs font-bold">Pendiente</span>'}
+                        </td>
+                        <td class="py-3 px-2 text-right">
+                            ${!c.atendido ? `<button onclick="marcarComoAtendido(${c.id})" class="text-emerald-400 hover:underline text-xs mr-3">Marcar Atendido</button>` : ''}
+                            <button onclick="eliminarCitaAdmin(${c.id})" class="text-red-400 hover:underline text-xs">Borrar</button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            renderCalendar(citasAgrupadas);
+
+            let ingresosHistoricos = historial.reduce((sum, d) => sum + d.ingresos, 0);
+            
+            if(historial.length === 0) {
+                tbodyHist.innerHTML = `<tr><td colspan="3" class="py-4 px-2 text-slate-500 text-center italic text-xs">No hay historial.</td></tr>`;
+            } else {
+                [...historial].reverse().forEach((h, idx) => {
+                    const originalIdx = historial.length - 1 - idx;
+                    tbodyHist.innerHTML += `
                         <tr>
-                            <td class="py-3 px-4 text-amber-400 font-mono">VIP-${c.id}</td>
-                            <td class="py-3 px-4 text-white font-semibold">${c.nombre}</td>
-                            <td class="py-3 px-4 text-slate-300 text-xs">${c.correo || 'N/A'}</td>
-                            <td class="py-3 px-4 text-slate-200">${c.servicio}</td>
-                            <td class="py-3 px-4 text-slate-200">${c.barbero}</td>
-                            <td class="py-3 px-4 text-slate-300 text-xs">${c.fechahora}</td>
-                            <td class="py-3 px-4 text-amber-400 font-bold">L. ${parseFloat(c.precio).toFixed(2)}</td>
-                            <td class="py-3 px-4">
-                                ${c.atendido 
-                                    ? '<span class="text-emerald-400 font-bold flex items-center gap-1">✔ Atendido</span>' 
-                                    : '<span class="text-amber-400 font-bold">⏳ Pendiente</span>'}
-                            </td>
-                            <td class="py-3 px-4 text-center">
-                                <div class="flex items-center justify-center gap-2">
-                                    ${!c.atendido ? `
-                                        <button onclick="marcarComoAtendido(${c.id})" class="px-3 py-1 bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 hover:bg-emerald-500 hover:text-slate-950 rounded-lg text-xs font-extrabold transition-all">
-                                            ✓ Atender
-                                        </button>
-                                    ` : ''}
-                                    <button onclick="eliminarCitaAdmin(${c.id})" class="text-red-400 hover:underline text-xs">Borrar</button>
-                                </div>
+                            <td class="py-3 px-2 font-medium text-slate-300">${h.fecha.replace('Cierre: ', '')}</td>
+                            <td class="py-3 px-2 text-emerald-400 font-bold">L. ${h.ingresos.toFixed(2)}</td>
+                            <td class="py-3 px-2 text-right">
+                                <button onclick="eliminarDiaHistorial(${originalIdx})" class="text-red-400 hover:underline text-xs">Eliminar</button>
                             </td>
                         </tr>
                     `;
-                }
-            });
-
-            let ingresosHistoricos = historial.reduce((sum, d) => sum + d.ingresos, 0);
-            let ingresosTotales = ingresosHistoricos + ingresosDiaActual;
-
-            if(historial.length === 0) {
-                if(tbodyHistorial) tbodyHistorial.innerHTML = `<tr><td colspan="3" class="py-3 px-4 text-slate-400 text-center italic">No hay días finalizados registrados aún.</td></tr>`;
-            } else {
-                historial.forEach((h, index) => {
-                    if(tbodyHistorial) {
-                        tbodyHistorial.innerHTML += `
-                            <tr>
-                                <td class="py-3 px-4 font-semibold text-white">${h.fecha}</td>
-                                <td class="py-3 px-4 text-emerald-400 font-bold">L. ${parseFloat(h.ingresos).toFixed(2)}</td>
-                                <td class="py-3 px-4 text-right">
-                                    <button onclick="eliminarDiaHistorial(${index})" class="px-3 py-1 bg-red-500/20 text-red-300 hover:bg-red-500 hover:text-white rounded-lg text-xs font-bold transition-all">
-                                        Eliminar
-                                    </button>
-                                </td>
-                            </tr>
-                        `;
-                    }
                 });
             }
 
-            const statI = document.getElementById('statIngresos');
-            const statC = document.getElementById('statCitas');
-            const statA = document.getElementById('statAtendidos');
-            if(statI) statI.innerText = `L. ${ingresosTotales.toFixed(2)}`;
-            if(statC) statC.innerText = citas.length;
-            if(statA) statA.innerText = totalAtendidos;
+            document.getElementById('statIngresos').innerText = `L. ${(ingresosHistoricos + ingresosDiaActual).toLocaleString()}`;
+            document.getElementById('statCitas').innerText = citas.length;
+            document.getElementById('statAtendidos').innerText = totalAtendidos;
+            
+            let tasa = citas.length > 0 ? Math.round((totalAtendidos / citas.length) * 100) : 0;
+            document.getElementById('statRendimiento').innerText = `${tasa}%`;
+
+            renderizarGraficos(citas, historial);
         }
 
-        function toggleMobileMenu() {
-            const menu = document.getElementById('mobileMenu');
-            if(menu) menu.classList.toggle('hidden');
+        async function marcarComoAtendido(id) {
+            if(isMockMode) {
+                const c = citasGlobalesData.find(x=>x.id==id);
+                if(c) c.atendido = true;
+                actualizarDashboardAdmin(); return;
+            }
+            await bd.from('citas').update({ atendido: true }).eq('id', id);
+            actualizarDashboardAdmin();
+        }
+
+        function eliminarCitaAdmin(id) {
+            customConfirm("¿Seguro que deseas eliminar esta cita de la agenda?", async () => {
+                if(isMockMode) {
+                    citasGlobalesData = citasGlobalesData.filter(x=>x.id!=id);
+                    actualizarDashboardAdmin(); return;
+                }
+                await bd.from('citas').delete().eq('id', id);
+                actualizarDashboardAdmin();
+            });
+        }
+
+        async function finalizarDiaCaja() {
+            const citas = await fetchCitas();
+            let totalDia = citas.filter(c => c.atendido).reduce((sum, c) => sum + c.precio, 0);
+
+            if (totalDia === 0 && citas.length === 0) {
+                showToast("No hay actividad para cerrar.", 'error'); return;
+            }
+
+            customConfirm(`¿Cerrar jornada registrando L. ${totalDia.toFixed(2)} en caja?`, async () => {
+                let historial = await fetchHistorial();
+                const d = new Date();
+                const f = `${d.getDate()}/${d.getMonth()+1}/${d.getFullYear()}, ${d.getHours()}:${d.getMinutes()}`;
+                
+                historial.push({ fecha: `Cierre: ${f}`, ingresos: totalDia });
+                await saveHistorial(historial);
+
+                if(isMockMode) {
+                    citasGlobalesData = [];
+                } else {
+                    for (let c of citas) await bd.from('citas').delete().eq('id', c.id);
+                }
+
+                actualizarDashboardAdmin();
+                showToast("Jornada cerrada exitosamente.", 'success');
+            });
+        }
+
+        function eliminarDiaHistorial(index) {
+            customConfirm("¿Eliminar este registro historico de caja?", async () => {
+                let historial = await fetchHistorial();
+                historial.splice(index, 1);
+                await saveHistorial(historial);
+                actualizarDashboardAdmin();
+            });
+        }
+
+        function generarDatosDePrueba() {
+            serviciosGlobalesData = [...catálogoInicial];
+            citasGlobalesData = [];
+            
+            const nombres = ["Carlos M.", "Luis F.", "Andres G.", "Mario T.", "Hector B.", "Fernando C.", "Roberto", "Daniel", "Oscar P.", "Jose"];
+            const barberos = ["Marcos", "Julian", "Tony"];
+            const servicios = ["Corte Elite", "Perfilado de Barba", "Combo Royal"];
+            const precios = { "Corte Elite": 150, "Perfilado de Barba": 100, "Combo Royal": 220 };
+
+            for(let i=0; i<35; i++) {
+                const day = Math.floor(Math.random() * 28) + 1;
+                const dateStr = `${currentYear}-${String(currentMonth+1).padStart(2,'0')}-${String(day).padStart(2,'0')}T14:00`;
+                const s = servicios[Math.floor(Math.random() * servicios.length)];
+                
+                citasGlobalesData.push({
+                    id: i+1000,
+                    nombre: nombres[Math.floor(Math.random() * nombres.length)],
+                    correo: "demo@correo.com",
+                    servicio: s,
+                    precio: precios[s],
+                    barbero: barberos[Math.floor(Math.random() * barberos.length)],
+                    fechahora: dateStr,
+                    atendido: Math.random() > 0.3
+                });
+            }
+
+            let historialFalso = [];
+            for(let i=15; i>0; i--) {
+                const d = new Date();
+                d.setDate(d.getDate() - i);
+                historialFalso.push({
+                    fecha: `Cierre: ${d.getDate()}/${d.getMonth()+1}/${d.getFullYear()}`,
+                    ingresos: Math.floor(Math.random() * 2500) + 500
+                });
+            }
+            localStorage.setItem('mockHistorial', JSON.stringify(historialFalso));
+        }
+
+        function switchAdminTab(tabId, btnElement) {
+            document.querySelectorAll('.admin-tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.admin-tab-content').forEach(el => el.classList.remove('block'));
+            document.querySelectorAll('.admin-tab-btn').forEach(btn => btn.classList.remove('active'));
+            
+            document.getElementById(tabId).classList.remove('hidden');
+            document.getElementById(tabId).classList.add('block');
+            
+            if(btnElement) {
+                btnElement.classList.add('active');
+                const titles = { 'tabOverview': 'Dashboard Overview', 'tabServicios': 'Gestion de Catalogo', 'tabCitas': 'Agenda y Calendario' };
+                document.getElementById('adminSectionTitle').innerText = titles[tabId];
+            }
+        }
+
+        function abrirModalImagen(url) {
+            const modal = document.getElementById('imageModal');
+            const img = document.getElementById('expandedImg');
+            img.src = url;
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            setTimeout(() => { modal.classList.remove('opacity-0'); img.classList.remove('scale-95'); img.classList.add('scale-100'); }, 10);
+        }
+
+        function cerrarModalImagen() {
+            const modal = document.getElementById('imageModal');
+            const img = document.getElementById('expandedImg');
+            modal.classList.add('opacity-0');
+            img.classList.remove('scale-100');
+            img.classList.add('scale-95');
+            setTimeout(() => { modal.classList.add('hidden'); modal.classList.remove('flex'); img.src = ""; }, 300);
         }
     </script>
 </body>
