@@ -16,203 +16,231 @@
                 extend: {
                     colors: {
                         amberGold: '#f59e0b',
+                        darkPanel: '#11131a',
+                        lumoraDark: '#0f1115'
                     }
                 }
             }
         }
     </script>
+    
     <style>
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: #060911;
+            background-color: #050608;
             background-image: 
-                linear-gradient(rgba(6, 9, 17, 0.45), rgba(6, 9, 17, 0.6)),
+                linear-gradient(rgba(5, 6, 8, 0.4), rgba(5, 6, 8, 0.7)),
                 url('https://img.magnific.com/fotos-premium/barberia-cartel-que-dice-que-es-barberia_1015384-126289.jpg?semt=ais_hybrid&w=740&q=80');
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
             color: #f8fafc;
             min-height: 100vh;
+            overflow-x: hidden;
         }
 
         .glass-panel {
-            background: rgba(10, 14, 23, 0.55);
-            backdrop-filter: blur(14px);
-            -webkit-backdrop-filter: blur(14px);
-            border: 1px solid rgba(255, 255, 255, 0.18);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.65);
+            background: rgba(15, 17, 21, 0.65);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.7);
         }
 
         .glass-input {
-            background: rgba(8, 12, 20, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
+            color: white;
+            transition: all 0.3s ease;
         }
 
         .glass-input:focus {
             border-color: #f59e0b;
-            box-shadow: 0 0 15px rgba(245, 158, 11, 0.35);
-            background: rgba(8, 12, 20, 0.8);
+            box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.2);
+            background: rgba(0, 0, 0, 0.6);
             outline: none;
         }
 
         .dash-card {
-            background: rgba(15, 18, 28, 0.85);
+            background: rgba(17, 19, 26, 0.75);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255,255,255,0.08);
-            box-shadow: 0 15px 35px -5px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 1.5rem;
+            box-shadow: 0 10px 30px -5px rgba(0,0,0,0.5);
             position: relative;
             overflow: hidden;
+            transition: transform 0.3s ease;
         }
         
-        .dash-input {
-            background: rgba(0,0,0,0.4);
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-        .dash-input:focus {
-            border-color: #f59e0b;
-            background: rgba(0,0,0,0.6);
-            outline: none;
-        }
-
         @keyframes fadeInScale {
-            from { opacity: 0; transform: scale(0.97) translateY(15px); }
+            from { opacity: 0; transform: scale(0.98) translateY(10px); }
             to { opacity: 1; transform: scale(1) translateY(0); }
         }
 
-        @keyframes goldPulse {
-            0%, 100% { box-shadow: 0 0 20px rgba(245, 158, 11, 0.2); }
-            50% { box-shadow: 0 0 35px rgba(245, 158, 11, 0.45); }
-        }
-
-        .animate-slide { animation: fadeInScale 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        .glow-hover { transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
-        .glow-hover:hover {
-            animation: goldPulse 2s infinite;
-            border-color: rgba(245, 158, 11, 0.5);
-            transform: translateY(-3px);
-        }
-
+        .animate-slide { animation: fadeInScale 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         
-        .admin-tab-btn.active {
-            background: white;
-            color: #0f172a;
-            border-color: white;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        .admin-sidebar {
+            width: 5rem;
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .admin-tab-btn {
+        .admin-sidebar.expanded {
+            width: 16rem;
+        }
+        .admin-sidebar-text {
+            opacity: 0;
+            width: 0;
+            overflow: hidden;
+            transition: opacity 0.2s;
+            white-space: nowrap;
+        }
+        .admin-sidebar.expanded .admin-sidebar-text {
+            opacity: 1;
+            width: auto;
+            margin-left: 1rem;
+        }
+        
+        .admin-tab-btn.active, .client-nav-btn.active {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border-left: 3px solid #f59e0b;
+        }
+        .admin-tab-btn, .client-nav-btn {
             background: transparent;
             color: #94a3b8;
-            border-color: transparent;
+            border-left: 3px solid transparent;
         }
-        .admin-tab-btn:hover:not(.active) {
+        .client-nav-btn {
+            border-left: none;
+            border-bottom: 3px solid transparent;
+        }
+        .client-nav-btn.active {
+            border-left: none;
+            border-bottom: 3px solid #f59e0b;
+        }
+        .admin-tab-btn:hover:not(.active), .client-nav-btn:hover:not(.active) {
             color: white;
             background: rgba(255,255,255,0.05);
         }
         
-        /* Sistema de Toast (Notificaciones) */
+        .dropdown-menu {
+            transform-origin: top right;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
         #toast-container {
             position: fixed;
-            bottom: 20px;
-            right: 20px;
+            bottom: 24px;
+            right: 24px;
             z-index: 9999;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 12px;
         }
         .toast {
-            background: rgba(22, 25, 37, 0.95);
+            background: rgba(15, 17, 21, 0.95);
             backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
             border-left: 4px solid #f59e0b;
             color: white;
             padding: 16px 20px;
-            border-radius: 8px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
             transform: translateX(120%);
-            transition: transform 0.3s ease-in-out;
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
             font-size: 14px;
             font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
-        .toast.show {
-            transform: translateX(0);
-        }
+        .toast.show { transform: translateX(0); }
         .toast.error { border-left-color: #ef4444; }
         .toast.success { border-left-color: #10b981; }
     </style>
 </head>
+
 <body class="selection:bg-amber-500 selection:text-slate-950 overflow-x-hidden">
 
-    <!-- Contenedor para Notificaciones -->
     <div id="toast-container"></div>
 
-    <!-- Modal de Confirmación Personalizado (Reemplaza a window.confirm) -->
-    <div id="customConfirmModal" class="fixed inset-0 z-[9999] bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4 transition-opacity duration-300">
-        <div class="glass-panel max-w-sm w-full rounded-2xl p-6 sm:p-8 animate-slide shadow-2xl border border-white/10 text-center">
-            <div class="w-12 h-12 rounded-full bg-amber-500/20 border border-amber-500/30 flex items-center justify-center mx-auto mb-4 text-amber-500 font-bold text-xl">!</div>
+    <div id="customConfirmModal" class="fixed inset-0 z-[9999] bg-black/80 backdrop-blur-md hidden items-center justify-center p-4 transition-opacity duration-300">
+        <div class="glass-panel max-w-sm w-full rounded-3xl p-8 animate-slide shadow-2xl text-center border border-white/10">
+            <div class="w-14 h-14 rounded-full bg-amber-500/10 border border-amber-500/20 flex items-center justify-center mx-auto mb-5 text-amber-500">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+            </div>
             <h3 class="text-xl font-bold text-white mb-2">Confirmar Accion</h3>
-            <p id="confirmMsg" class="text-slate-300 text-sm mb-8 font-light"></p>
+            <p id="confirmMsg" class="text-slate-400 text-sm mb-8 font-light"></p>
             <div class="flex justify-center gap-3">
-                <button onclick="closeCustomConfirm()" class="px-5 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-sm font-medium text-slate-300 transition-colors">Cancelar</button>
-                <button onclick="executeCustomConfirm()" class="px-5 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-xl text-sm transition-transform active:scale-95">Confirmar</button>
+                <button onclick="closeCustomConfirm()" class="px-6 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-sm font-medium text-slate-300 transition-colors focus:outline-none">Cancelar</button>
+                <button onclick="executeCustomConfirm()" class="px-6 py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-xl text-sm transition-transform active:scale-95 focus:outline-none">Confirmar</button>
             </div>
         </div>
     </div>
 
-    <div id="authLandingView" class="fixed inset-0 z-50 flex bg-[#060911] transition-opacity duration-500">
+    <div id="imageModal" class="fixed inset-0 z-[9998] bg-black/95 backdrop-blur-md hidden flex-col items-center justify-center p-4 transition-opacity duration-300 opacity-0" onclick="cerrarModalImagen()">
+        <button class="absolute top-6 right-6 text-white/50 hover:text-white transition-colors focus:outline-none">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+        <img id="expandedImg" src="" class="max-w-full max-h-[90vh] object-contain rounded-2xl shadow-2xl transform scale-95 transition-transform duration-300" onclick="event.stopPropagation()">
+    </div>
+
+    <div id="authLandingView" class="fixed inset-0 z-50 flex bg-[#050608] transition-opacity duration-500">
         <div class="flex w-full h-full flex-col lg:flex-row">
             
             <div class="hidden lg:flex lg:w-1/2 relative bg-black h-full">
-                <img src="https://img.magnific.com/fotos-premium/barberia-cartel-que-dice-que-es-barberia_1015384-126289.jpg?semt=ais_hybrid&w=740&q=80" alt="Barberia" class="absolute inset-0 w-full h-full object-cover opacity-60">
-                <div class="absolute inset-0 bg-gradient-to-t from-[#060911] via-transparent to-transparent"></div>
-                <div class="absolute inset-0 bg-gradient-to-r from-[#060911]/50 to-transparent"></div>
-                <div class="absolute bottom-20 left-16 right-16 z-10">
-                    <h2 class="text-5xl xl:text-6xl font-extrabold text-white mb-6 leading-tight drop-shadow-2xl">Forja tu estilo,<br>un corte a la vez.</h2>
+                <img src="https://img.magnific.com/fotos-premium/barberia-cartel-que-dice-que-es-barberia_1015384-126289.jpg?semt=ais_hybrid&w=740&q=80" class="absolute inset-0 w-full h-full object-cover opacity-50">
+                <div class="absolute inset-0 bg-gradient-to-t from-[#050608] via-transparent to-transparent"></div>
+                <div class="absolute inset-0 bg-gradient-to-r from-[#050608]/50 to-transparent"></div>
+                <div class="absolute bottom-24 left-16 right-16 z-10">
+                    <h2 class="text-5xl xl:text-6xl font-extrabold text-white mb-6 leading-tight drop-shadow-2xl tracking-tight">Forja tu estilo,<br>un corte a la vez.</h2>
                     <p class="text-slate-300 text-lg xl:text-xl drop-shadow-lg max-w-md font-light leading-relaxed">Unete a la elite de Barber Studio y vive una experiencia inigualable. Tu imagen es nuestra obra maestra.</p>
                 </div>
             </div>
             
-            <div class="w-full lg:w-1/2 h-full flex items-center justify-center bg-[#080b13] relative overflow-y-auto no-scrollbar border-l border-white/5 p-6 sm:p-12">
-                <div class="w-full max-w-md">
-                    <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-amber-600 to-amber-400 flex items-center justify-center shadow-lg shadow-amber-500/20 mb-10">
+            <div class="w-full lg:w-1/2 h-full flex items-center justify-center bg-lumoraDark relative overflow-y-auto no-scrollbar border-l border-white/5 p-6 sm:p-12">
+                <div class="w-full max-w-md animate-slide">
+                    <div class="w-14 h-14 rounded-2xl bg-amber-500 flex items-center justify-center shadow-lg shadow-amber-500/20 mb-10">
                         <span class="text-slate-950 font-black text-3xl">B</span>
                     </div>
 
-                    <h3 class="text-3xl font-semibold text-white mb-2" id="landingAuthTitle">Inicia Sesion</h3>
-                    <p class="text-sm text-slate-400 mb-10 font-light" id="landingAuthSubtitle">Ingresa a tu portal exclusivo.</p>
+                    <h3 class="text-3xl font-semibold text-white mb-2 tracking-tight" id="landingAuthTitle">Acceder</h3>
+                    <p class="text-sm text-slate-400 mb-10 font-light" id="landingAuthSubtitle">Ingresa a tu cuenta para continuar.</p>
                     
                     <div class="space-y-6">
                         <div id="fieldNombre" class="hidden">
-                            <label class="block text-xs text-slate-300 mb-2 font-medium">Nombre Completo *</label>
-                            <input type="text" id="authNombre" class="w-full bg-[#111520] border border-white/10 rounded-xl px-5 py-4 text-white text-sm focus:border-amber-500 focus:bg-[#151a28] transition-all outline-none" placeholder="Ingresa tu nombre">
+                            <label class="block text-xs uppercase tracking-widest text-slate-400 mb-2 font-semibold">Nombre Completo *</label>
+                            <input type="text" id="authNombre" class="w-full glass-input rounded-xl px-5 py-4 text-sm" placeholder="Ingresa tu nombre">
                         </div>
                         
                         <div>
-                            <label class="block text-xs text-slate-300 mb-2 font-medium">Usuario o Correo *</label>
-                            <input type="text" id="authCorreo" class="w-full bg-[#111520] border border-white/10 rounded-xl px-5 py-4 text-white text-sm focus:border-amber-500 focus:bg-[#151a28] transition-all outline-none" placeholder="Usuario o correo">
+                            <label class="block text-xs uppercase tracking-widest text-slate-400 mb-2 font-semibold">Usuario o Correo *</label>
+                            <input type="text" id="authCorreo" class="w-full glass-input rounded-xl px-5 py-4 text-sm" placeholder="usuario o correo">
                         </div>
                         
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-5" id="passwordGrid">
                             <div class="col-span-1 sm:col-span-2" id="passContainer">
-                                <label class="block text-xs text-slate-300 mb-2 font-medium">Contrasena *</label>
-                                <input type="password" id="authPass" class="w-full bg-[#111520] border border-white/10 rounded-xl px-5 py-4 text-white text-sm focus:border-amber-500 focus:bg-[#151a28] transition-all outline-none" placeholder="••••••••">
+                                <label class="block text-xs uppercase tracking-widest text-slate-400 mb-2 font-semibold">Contrasena *</label>
+                                <input type="password" id="authPass" class="w-full glass-input rounded-xl px-5 py-4 text-sm" placeholder="••••••••">
                             </div>
                             
                             <div class="hidden" id="fieldPassConfirm">
-                                <label class="block text-xs text-slate-300 mb-2 font-medium">Confirmar Contrasena *</label>
-                                <input type="password" id="authPassConfirm" class="w-full bg-[#111520] border border-white/10 rounded-xl px-5 py-4 text-white text-sm focus:border-amber-500 focus:bg-[#151a28] transition-all outline-none" placeholder="••••••••">
+                                <label class="block text-xs uppercase tracking-widest text-slate-400 mb-2 font-semibold">Confirmar Contrasena *</label>
+                                <input type="password" id="authPassConfirm" class="w-full glass-input rounded-xl px-5 py-4 text-sm" placeholder="••••••••">
                             </div>
                         </div>
                         
-                        <button id="btnAuthAction" onclick="procesarAuth()" class="w-full py-4 mt-8 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-xl text-sm transition-transform active:scale-[0.98] shadow-lg shadow-amber-500/20">
-                            Entrar al Portal
+                        <button id="btnAuthAction" onclick="procesarAuth()" class="w-full py-4 mt-8 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-xl text-sm transition-transform active:scale-[0.98] shadow-lg shadow-amber-500/20 focus:outline-none">
+                            Iniciar Sesion
                         </button>
                         
                         <div class="text-center pt-8 border-t border-white/5 mt-8">
-                            <span class="text-sm text-slate-400 font-light" id="btnAuthToggleText">No tienes una cuenta? </span>
-                            <button id="btnAuthToggle" onclick="toggleAuthMode()" class="text-sm text-amber-400 hover:text-amber-300 transition-colors font-medium">
+                            <span class="text-sm text-slate-400 font-light" id="btnAuthToggleText">No tienes cuenta? </span>
+                            <button id="btnAuthToggle" onclick="toggleAuthMode()" class="text-sm text-amber-500 hover:text-amber-400 transition-colors font-semibold focus:outline-none">
                                 Registrate
                             </button>
                         </div>
@@ -222,69 +250,78 @@
         </div>
     </div>
 
-    <div id="clientContainer" class="hidden flex-col min-h-screen relative z-10">
-        <header class="w-full max-w-7xl mx-auto px-4 sm:px-6 py-6 flex justify-between items-center transition-all border-b border-white/10">
-            <div class="text-xl sm:text-2xl font-extrabold tracking-wider flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-600 to-amber-400 flex items-center justify-center shadow-lg shadow-amber-500/20">
-                    <span class="text-slate-950 font-black text-xl">B</span>
-                </div>
-                <div>
-                    <span class="text-white drop-shadow-md">BARBER</span><span class="text-amber-400 drop-shadow-md">STUDIO</span>
-                </div>
-            </div>
-
-            <nav class="hidden md:flex gap-8 text-sm font-medium text-slate-200 items-center">
-                <button onclick="cambiarVistaCliente('catalogo')" class="hover:text-amber-400 transition-colors focus:outline-none">Catalogo VIP</button>
-                <button onclick="cambiarVistaCliente('reserva')" class="hover:text-amber-400 transition-colors focus:outline-none">Reservar Cita</button>
+    <div id="clientContainer" class="hidden flex-col min-h-screen relative z-10 pb-24">
+        
+        <header class="w-full max-w-[1400px] mx-auto px-4 sm:px-8 pt-6 pb-4 relative z-50">
+            <div class="glass-panel rounded-full px-6 py-4 flex justify-between items-center w-full shadow-2xl border border-white/10">
                 
-                <div class="flex items-center gap-5 ml-4 pl-5 border-l border-white/20">
-                    <span class="text-slate-300 text-sm flex items-center gap-2 font-light">
-                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.8)]"></span>
-                        <span id="userGreeting">Hola, Usuario</span>
-                    </span>
-                    <button onclick="cerrarSesionGeneral()" class="text-slate-400 hover:text-white transition-colors text-sm font-medium">
-                        Salir
-                    </button>
+                <div class="flex items-center gap-3 cursor-pointer" onclick="cambiarVistaCliente('catalogo')">
+                    <div class="w-8 h-8 rounded-full bg-amber-500 flex items-center justify-center shadow-lg shadow-amber-500/20">
+                        <span class="text-slate-950 font-black text-sm">B</span>
+                    </div>
+                    <span class="text-white font-bold tracking-widest text-sm hidden sm:block">BARBER<span class="text-amber-500">STUDIO</span></span>
                 </div>
-            </nav>
 
-            <div class="flex md:hidden items-center gap-4">
-                <button onclick="cerrarSesionGeneral()" class="text-slate-400 text-sm font-medium">
-                    Salir
-                </button>
-                <button onclick="document.getElementById('mobileMenu').classList.toggle('hidden')" class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-white">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
-                </button>
+                <nav class="hidden md:flex items-center gap-2 bg-[#0b0d13]/95 px-2 py-1.5 rounded-full border border-white/5 shadow-inner">
+                    <button onclick="cambiarVistaCliente('catalogo')" class="px-6 py-2 rounded-full text-sm font-medium transition-colors focus:outline-none client-nav-btn active">
+                        <span class="flex items-center gap-2"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg> Catalogo</span>
+                    </button>
+                    <button onclick="cambiarVistaCliente('reserva')" class="px-6 py-2 rounded-full text-sm font-medium transition-colors focus:outline-none client-nav-btn">
+                        <span class="flex items-center gap-2"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg> Reservar</span>
+                    </button>
+                </nav>
+
+                <div class="flex items-center gap-4">
+                    <div class="relative cursor-pointer" onclick="toggleDropdown(event, 'clientMenu')">
+                        <div class="flex items-center gap-3 bg-[#0b0d13]/95 hover:bg-white/10 border border-white/10 pl-4 pr-2 py-1.5 rounded-full transition-colors shadow-inner">
+                            <span class="text-sm font-medium text-slate-300 hidden sm:block" id="userGreeting">Usuario</span>
+                            <div class="w-8 h-8 rounded-full bg-amber-500/20 flex items-center justify-center text-amber-500 font-bold overflow-hidden border border-amber-500/30">
+                                <span class="user-avatar-initial">U</span>
+                                <img src="" class="user-avatar-img hidden w-full h-full object-cover">
+                            </div>
+                        </div>
+                        
+                        <div id="clientMenu" class="dropdown-menu absolute right-0 top-full mt-2 w-56 bg-[#11131a] border border-white/10 rounded-2xl shadow-2xl opacity-0 invisible scale-95 flex flex-col p-2 z-50 transition-all duration-200">
+                            <div class="px-4 py-3 border-b border-white/5 mb-2">
+                                <div class="text-xs text-slate-400">Conectado como</div>
+                                <div class="text-sm font-bold text-white truncate" id="userEmailDisplay">correo@demo.com</div>
+                            </div>
+                            <button onclick="cambiarVistaCliente('ajustes')" class="flex items-center gap-3 px-4 py-2.5 hover:bg-white/5 rounded-xl text-sm text-slate-300 hover:text-white transition-colors text-left focus:outline-none">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                                Ajustes de Cuenta
+                            </button>
+                            <button id="btnVolverAdmin" onclick="volverAAdminFromCliente()" class="hidden flex items-center gap-3 px-4 py-2.5 hover:bg-amber-500/10 rounded-xl text-sm text-amber-500 transition-colors text-left focus:outline-none">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                                Panel Admin
+                            </button>
+                            <div class="border-t border-white/5 my-1"></div>
+                            <button onclick="cerrarSesionGeneral()" class="flex items-center gap-3 px-4 py-2.5 hover:bg-red-500/10 rounded-xl text-sm text-red-400 transition-colors text-left focus:outline-none">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                                Cerrar Sesion
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
+            
         </header>
 
-        <div id="mobileMenu" class="hidden md:hidden glass-panel mx-4 rounded-2xl p-4 mb-4 mt-2 space-y-2 z-20 animate-slide">
-            <div class="pb-3 mb-2 border-b border-white/10 px-4">
-                <span class="text-slate-300 text-sm flex items-center gap-2">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-                    <span id="userGreetingMobile">Usuario</span>
-                </span>
-            </div>
-            <button onclick="cambiarVistaCliente('catalogo'); document.getElementById('mobileMenu').classList.add('hidden')" class="w-full text-left py-3 px-4 rounded-xl text-white font-medium hover:bg-white/10 transition">Catalogo VIP</button>
-            <button onclick="cambiarVistaCliente('reserva'); document.getElementById('mobileMenu').classList.add('hidden')" class="w-full text-left py-3 px-4 rounded-xl text-white font-medium hover:bg-white/10 transition">Reservar Cita</button>
-        </div>
-
-        <main class="flex-grow w-full max-w-7xl mx-auto px-4 sm:px-6 py-8 pb-24 relative">
+        <main class="flex-grow w-full max-w-[1400px] mx-auto px-4 sm:px-8 py-4 relative">
             
-            <div id="vistaCatalogoCliente" class="animate-slide block">
-                <div class="mb-10 text-center sm:text-left">
-                    <h2 class="text-2xl sm:text-4xl font-extrabold text-white mb-3">Nuestros Servicios</h2>
-                    <p class="text-slate-400 text-sm sm:text-base font-light">Explora y elige el estilo que definira tu presencia.</p>
+            <div id="vistaCatalogoCliente" class="client-view block">
+                <div class="mb-10 text-center sm:text-left animate-slide">
+                    <h2 class="text-3xl sm:text-4xl font-extrabold text-white mb-2 tracking-tight">Nuestros Servicios</h2>
+                    <p class="text-slate-400 text-sm font-light">Explora y elige el estilo que definira tu presencia.</p>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12" id="catalogoGrid"></div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 animate-slide" style="animation-delay: 0.1s" id="catalogoGrid"></div>
             </div>
 
-            <div id="vistaReservaCliente" class="animate-slide hidden">
-                <div class="max-w-2xl mx-auto glass-panel rounded-3xl p-8 sm:p-12 shadow-2xl relative overflow-hidden mt-4">
-                    <div class="absolute -left-16 -bottom-16 w-48 h-48 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
+            <div id="vistaReservaCliente" class="client-view hidden">
+                <div class="max-w-2xl mx-auto glass-panel rounded-3xl p-8 sm:p-12 shadow-2xl relative overflow-hidden mt-4 animate-slide">
+                    <div class="absolute -left-20 -bottom-20 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
                     
                     <div class="text-center mb-10 relative z-10">
-                        <h2 class="text-3xl sm:text-4xl font-extrabold text-white mb-3">Confirma tu Cita</h2>
+                        <h2 class="text-3xl font-extrabold text-white mb-2 tracking-tight">Confirma tu Cita</h2>
                         <p class="text-slate-400 text-sm font-light">Verifica tus datos y agendemos tu espacio en el estudio.</p>
                     </div>
 
@@ -306,99 +343,164 @@
                             </div>
                             <div>
                                 <label class="block text-xs uppercase tracking-widest text-slate-400 font-semibold mb-2">Barbero (Opcional)</label>
-                                <input type="text" id="cliBarbero" placeholder="Ej. Marcos" class="w-full glass-input rounded-xl px-5 py-4 text-white font-medium focus:border-amber-500 transition-colors">
+                                <input type="text" id="cliBarbero" placeholder="Ej. Marcos" class="w-full glass-input rounded-xl px-5 py-4 text-white font-medium focus:border-amber-500 transition-colors outline-none">
                             </div>
                         </div>
 
                         <div>
                             <label class="block text-xs uppercase tracking-widest text-slate-400 font-semibold mb-2">Fecha y Hora</label>
-                            <input type="datetime-local" id="cliFechaHora" class="w-full glass-input rounded-xl px-5 py-4 text-white font-medium focus:border-amber-500 transition-colors">
+                            <input type="datetime-local" id="cliFechaHora" class="w-full glass-input rounded-xl px-5 py-4 text-white font-medium focus:border-amber-500 transition-colors outline-none">
                         </div>
 
-                        <button onclick="clienteAgendar()" class="w-full py-4 mt-4 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-xl transition-transform active:scale-[0.98] shadow-lg shadow-amber-500/20 text-base">
+                        <button onclick="clienteAgendar()" class="w-full py-4 mt-6 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-xl transition-transform active:scale-[0.98] shadow-lg shadow-amber-500/20 text-sm focus:outline-none">
                             Agendar Definitivamente
                         </button>
                     </div>
                 </div>
             </div>
+            
+            <div id="vistaAjustesCliente" class="client-view hidden">
+                <div class="max-w-xl mx-auto glass-panel rounded-3xl p-8 sm:p-12 shadow-2xl relative overflow-hidden mt-4 animate-slide">
+                    <div class="text-center mb-8 relative z-10">
+                        <div class="w-20 h-20 mx-auto rounded-full bg-amber-500/10 border-2 border-amber-500/30 flex items-center justify-center text-amber-500 font-bold text-2xl overflow-hidden mb-4 relative shadow-xl">
+                            <span class="user-avatar-initial">U</span>
+                            <img src="" class="user-avatar-img hidden w-full h-full object-cover">
+                        </div>
+                        <h2 class="text-2xl font-extrabold text-white tracking-tight">Ajustes de Cuenta</h2>
+                    </div>
+
+                    <div class="space-y-6 relative z-10">
+                        <div>
+                            <label class="block text-xs uppercase tracking-widest text-slate-400 font-semibold mb-2">Nombre Completo</label>
+                            <input type="text" id="ajustesNombreCli" class="w-full glass-input rounded-xl px-5 py-4 text-white text-sm outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs uppercase tracking-widest text-slate-400 font-semibold mb-2">URL Foto de Perfil (Opcional)</label>
+                            <input type="url" id="ajustesAvatarCli" class="w-full glass-input rounded-xl px-5 py-4 text-white text-sm outline-none" placeholder="https://ejemplo.com/mifoto.jpg">
+                        </div>
+                        <div class="border-t border-white/5 pt-6 mt-6">
+                            <label class="block text-xs uppercase tracking-widest text-slate-400 font-semibold mb-2">Nueva Contrasena</label>
+                            <input type="password" id="ajustesPassCli" class="w-full glass-input rounded-xl px-5 py-4 text-white text-sm outline-none" placeholder="Dejar en blanco para mantener actual">
+                        </div>
+                        <button onclick="guardarDatosAjustes('client')" class="w-full py-4 mt-6 bg-white text-slate-900 hover:bg-slate-200 font-bold rounded-xl transition-transform active:scale-[0.98] shadow-lg text-sm focus:outline-none">
+                            Guardar Cambios
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
         </main>
     </div>
 
-    <div id="adminContainer" class="hidden h-screen bg-black/40 backdrop-blur-md text-white overflow-hidden flex-col md:flex-row relative z-50">
+    <div id="adminContainer" class="hidden h-screen bg-transparent text-white overflow-hidden flex-col md:flex-row relative z-50">
         
-        <aside class="w-full md:w-64 bg-[#090b10]/90 border-b md:border-b-0 md:border-r border-white/10 flex flex-col h-auto md:h-full shrink-0 z-10 shadow-2xl">
-            <div class="p-6 lg:p-8 flex items-center gap-4 border-b border-white/5">
-                <div class="w-10 h-10 rounded-xl bg-amber-500 flex items-center justify-center shadow-lg shadow-amber-500/20">
-                    <span class="text-slate-950 font-black text-xl">X</span>
+        <aside id="adminSidebar" class="admin-sidebar bg-[#0b0d13]/95 border-r border-white/5 flex flex-col h-screen shrink-0 shadow-2xl absolute md:relative z-50 overflow-hidden backdrop-blur-xl" onclick="event.stopPropagation()">
+            
+            <div class="p-6 h-24 flex items-center gap-4 cursor-pointer hover:bg-white/5 transition-colors" onclick="toggleSidebar(event)" title="Expandir/Colapsar Menu">
+                <div class="w-8 h-8 shrink-0 rounded-full bg-amber-500 flex items-center justify-center shadow-lg shadow-amber-500/20">
+                    <span class="text-slate-950 font-black text-sm">B</span>
                 </div>
-                <span class="font-bold text-xl tracking-wide">Insight<span class="text-amber-500">X</span></span>
+                <span class="font-bold text-xl tracking-tight admin-sidebar-text">Insight<span class="text-amber-500">X</span></span>
             </div>
 
-            <nav class="flex-1 px-4 py-6 space-y-2 overflow-x-auto md:overflow-x-visible flex md:block whitespace-nowrap md:whitespace-normal no-scrollbar">
-                <div class="text-xs text-slate-500 font-semibold mb-4 hidden md:block px-3">Principal</div>
+            <nav class="flex-1 py-4 space-y-2 overflow-y-auto no-scrollbar px-3">
+                <div class="mb-2 pl-3">
+                    <div class="text-[10px] text-slate-500 font-bold uppercase tracking-widest admin-sidebar-text">Menu</div>
+                </div>
                 
-                <button onclick="switchAdminTab('tabOverview', this)" class="admin-tab-btn active w-full flex items-center gap-4 px-4 py-3 rounded-xl font-medium text-sm transition-all">
-                    Dashboard
-                </button>
-                <button onclick="switchAdminTab('tabServicios', this)" class="admin-tab-btn w-full flex items-center gap-4 px-4 py-3 rounded-xl font-medium text-sm transition-all">
-                    Servicios
-                </button>
-                <button onclick="switchAdminTab('tabCitas', this)" class="admin-tab-btn w-full flex items-center gap-4 px-4 py-3 rounded-xl font-medium text-sm transition-all">
-                    Reservas
+                <button onclick="switchAdminTab('tabOverview', this)" class="admin-tab-btn active w-full flex items-center px-3 py-3 rounded-xl transition-colors focus:outline-none group" title="Dashboard">
+                    <svg class="w-5 h-5 shrink-0 text-slate-400 group-[.active]:text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                    <span class="admin-sidebar-text font-medium text-sm">Dashboard</span>
                 </button>
                 
-                <div class="text-xs text-slate-500 font-semibold mb-4 mt-8 hidden md:block px-3 pt-6 border-t border-white/5">Sistema</div>
-                <button onclick="finalizarDiaCaja()" class="w-full flex items-center gap-4 px-4 py-3 text-emerald-400 hover:bg-emerald-400/10 rounded-xl font-medium text-sm transition-all">
-                    Cerrar Jornada
+                <button onclick="switchAdminTab('tabServicios', this)" class="admin-tab-btn w-full flex items-center px-3 py-3 rounded-xl transition-colors focus:outline-none group" title="Servicios">
+                    <svg class="w-5 h-5 shrink-0 text-slate-400 group-[.active]:text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5"></path></svg>
+                    <span class="admin-sidebar-text font-medium text-sm">Servicios</span>
+                </button>
+                
+                <button onclick="switchAdminTab('tabCitas', this)" class="admin-tab-btn w-full flex items-center px-3 py-3 rounded-xl transition-colors focus:outline-none group" title="Reservas">
+                    <svg class="w-5 h-5 shrink-0 text-slate-400 group-[.active]:text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    <span class="admin-sidebar-text font-medium text-sm">Reservas</span>
+                </button>
+                
+                <div class="mb-2 mt-8 pl-3 pt-6 border-t border-white/5">
+                    <div class="text-[10px] text-slate-500 font-bold uppercase tracking-widest admin-sidebar-text">Sistema</div>
+                </div>
+
+                <button onclick="finalizarDiaCaja()" class="w-full flex items-center px-3 py-3 rounded-xl text-emerald-500 hover:bg-emerald-500/10 transition-colors focus:outline-none" title="Cerrar Jornada">
+                    <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <span class="admin-sidebar-text font-medium text-sm">Cerrar Jornada</span>
                 </button>
             </nav>
-
-            <div class="p-6 border-t border-white/5 mt-auto hidden md:flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-full bg-[#111520] border border-white/10 flex items-center justify-center text-sm font-bold text-amber-500">
-                        AD
-                    </div>
-                    <div>
-                        <div class="text-sm font-medium text-white" id="adminNameDisplay">Administrador</div>
-                        <div class="text-xs text-emerald-400" id="adminStatusDisplay">Conectado</div>
-                    </div>
-                </div>
-                <button onclick="cerrarSesionGeneral()" class="text-slate-500 hover:text-white transition-colors" title="Salir">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
-                </button>
-            </div>
         </aside>
 
-        <main class="flex-1 overflow-y-auto p-4 md:p-8 lg:p-10 relative no-scrollbar">
+        <main class="flex-1 h-screen overflow-y-auto p-4 md:p-8 lg:p-10 relative no-scrollbar bg-transparent" onclick="collapseSidebarIfMobile()">
             
-            <div class="flex justify-between items-center mb-8">
-                <h1 class="text-3xl font-bold text-white tracking-tight" id="adminSectionTitle">Dashboard Overview</h1>
+            <div class="flex justify-between items-center mb-8 pb-6 border-b border-white/5">
                 <div class="flex items-center gap-4">
-                    <button onclick="actualizarDashboardAdmin()" class="px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-sm font-medium text-slate-300 transition-colors hidden sm:block">
-                        Actualizar Datos
+                    <button onclick="toggleSidebar(event)" class="md:hidden text-white focus:outline-none">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
                     </button>
-                    <button onclick="cerrarSesionGeneral()" class="md:hidden px-4 py-2 bg-red-500/10 text-red-400 rounded-xl text-sm font-medium">Salir</button>
+                    <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight" id="adminSectionTitle">Dashboard Overview</h1>
+                </div>
+                
+                <div class="flex items-center gap-4">
+                    <button onclick="actualizarDashboardAdmin()" class="hidden sm:flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full text-sm font-medium text-slate-300 transition-colors focus:outline-none">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                        Actualizar
+                    </button>
+
+                    <div class="relative cursor-pointer ml-2" onclick="toggleDropdown(event, 'adminMenu')">
+                        <div class="w-10 h-10 rounded-full bg-[#11131a] border border-white/10 flex items-center justify-center text-sm font-bold text-amber-500 overflow-hidden shadow-lg transition-transform hover:scale-105">
+                            <span class="user-avatar-initial">AD</span>
+                            <img src="" class="user-avatar-img hidden w-full h-full object-cover">
+                        </div>
+                        
+                        <div id="adminMenu" class="dropdown-menu absolute right-0 top-full mt-2 w-56 bg-[#11131a] border border-white/10 rounded-2xl shadow-2xl opacity-0 invisible scale-95 flex flex-col p-2 z-50 transition-all duration-200">
+                            <div class="px-4 py-3 border-b border-white/5 mb-2">
+                                <div class="text-xs text-slate-400 font-medium uppercase tracking-wider">Administrador</div>
+                                <div class="text-sm font-bold text-white truncate mt-0.5" id="adminNameDisplay">Owner</div>
+                            </div>
+                            
+                            <button onclick="switchAdminTab('tabAjustes', null)" class="flex items-center gap-3 px-4 py-2.5 hover:bg-white/5 rounded-xl text-sm text-slate-300 hover:text-white transition-colors text-left focus:outline-none">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                                Ajustes de Cuenta
+                            </button>
+                            
+                            <button onclick="cambiarAClienteFromAdmin()" class="flex items-center gap-3 px-4 py-2.5 hover:bg-amber-500/10 rounded-xl text-sm text-amber-500 transition-colors text-left focus:outline-none">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                                Ver como Cliente
+                            </button>
+                            
+                            <div class="border-t border-white/5 my-1"></div>
+                            
+                            <button onclick="cerrarSesionGeneral()" class="flex items-center gap-3 px-4 py-2.5 hover:bg-red-500/10 rounded-xl text-sm text-red-400 transition-colors text-left focus:outline-none">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                                Salir
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
             
             <div id="tabOverview" class="admin-tab-content block animate-slide space-y-6">
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-                    <div class="dash-card rounded-2xl p-6 border border-amber-500/20">
+                    <div class="dash-card p-6 border border-amber-500/20">
                         <div class="text-slate-400 text-xs font-medium mb-2 uppercase tracking-wider">Ingresos Totales</div>
                         <div class="text-3xl font-bold text-white tracking-tight" id="statIngresos">L. 0.00</div>
                         <div class="text-emerald-400 text-xs font-medium mt-2">Caja actual en Lempiras</div>
                     </div>
-                    <div class="dash-card rounded-2xl p-6">
+                    <div class="dash-card p-6">
                         <div class="text-slate-400 text-xs font-medium mb-2 uppercase tracking-wider">Citas Activas</div>
                         <div class="text-3xl font-bold text-white tracking-tight" id="statCitas">0</div>
                         <div class="text-slate-500 text-xs font-medium mt-2">Pendientes de atencion</div>
                     </div>
-                    <div class="dash-card rounded-2xl p-6">
+                    <div class="dash-card p-6">
                         <div class="text-slate-400 text-xs font-medium mb-2 uppercase tracking-wider">Clientes Atendidos</div>
                         <div class="text-3xl font-bold text-white tracking-tight" id="statAtendidos">0</div>
                         <div class="text-slate-500 text-xs font-medium mt-2">En el periodo actual</div>
                     </div>
-                    <div class="dash-card rounded-2xl p-6">
+                    <div class="dash-card p-6">
                         <div class="text-slate-400 text-xs font-medium mb-2 uppercase tracking-wider">Rendimiento</div>
                         <div class="text-3xl font-bold text-white tracking-tight" id="statRendimiento">0%</div>
                         <div class="text-slate-500 text-xs font-medium mt-2">Tasa de finalizacion</div>
@@ -406,13 +508,13 @@
                 </div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div class="dash-card rounded-2xl p-6 lg:col-span-2">
+                    <div class="dash-card p-6 lg:col-span-2">
                         <h3 class="text-sm font-semibold text-white mb-4">Ingresos Recientes (Dias Cerrados)</h3>
                         <div class="h-64 w-full">
                             <canvas id="ingresosChart"></canvas>
                         </div>
                     </div>
-                    <div class="dash-card rounded-2xl p-6">
+                    <div class="dash-card p-6">
                         <h3 class="text-sm font-semibold text-white mb-4">Demanda de Servicios</h3>
                         <div class="h-64 w-full flex items-center justify-center">
                             <canvas id="serviciosChart"></canvas>
@@ -420,7 +522,7 @@
                     </div>
                 </div>
 
-                <div class="dash-card rounded-2xl p-6">
+                <div class="dash-card p-6">
                     <h3 class="text-sm font-semibold text-white mb-4">Ultimas Jornadas</h3>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left border-collapse min-w-[500px]">
@@ -439,34 +541,34 @@
             </div>
 
             <div id="tabServicios" class="admin-tab-content hidden animate-slide space-y-6">
-                <div class="dash-card rounded-2xl p-6">
-                    <div class="bg-[#111520] p-6 rounded-xl border border-white/5 mb-8">
-                        <h4 class="text-sm font-medium text-white mb-6" id="tituloFormServicio">Agregar Nuevo Servicio</h4>
+                <div class="dash-card p-6">
+                    <div class="bg-[#0b0d13]/50 p-6 rounded-2xl border border-white/5 mb-8">
+                        <h4 class="text-sm font-semibold text-white mb-6" id="tituloFormServicio">Agregar Nuevo Servicio</h4>
                         
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
                             <div>
-                                <label class="block text-xs text-slate-400 mb-2">Nombre del Servicio</label>
-                                <input type="text" id="nuevoServicioNombre" class="w-full dash-input rounded-xl px-4 py-3 text-white text-sm">
+                                <label class="block text-xs uppercase tracking-widest text-slate-400 mb-2 font-semibold">Nombre del Servicio</label>
+                                <input type="text" id="nuevoServicioNombre" class="w-full glass-input rounded-xl px-4 py-3 text-sm">
                             </div>
                             <div>
-                                <label class="block text-xs text-slate-400 mb-2">Precio (Lempiras)</label>
-                                <input type="number" id="nuevoServicioPrecio" class="w-full dash-input rounded-xl px-4 py-3 text-white text-sm">
+                                <label class="block text-xs uppercase tracking-widest text-slate-400 mb-2 font-semibold">Precio (Lempiras)</label>
+                                <input type="number" id="nuevoServicioPrecio" class="w-full glass-input rounded-xl px-4 py-3 text-sm">
                             </div>
                             <div>
-                                <label class="block text-xs text-slate-400 mb-2">URL de la Imagen (Para el catalogo)</label>
-                                <input type="url" id="nuevoServicioImg" class="w-full dash-input rounded-xl px-4 py-3 text-white text-sm">
+                                <label class="block text-xs uppercase tracking-widest text-slate-400 mb-2 font-semibold">URL de la Imagen</label>
+                                <input type="url" id="nuevoServicioImg" class="w-full glass-input rounded-xl px-4 py-3 text-sm">
                             </div>
                             <div>
-                                <label class="block text-xs text-slate-400 mb-2">Descripcion Corta</label>
-                                <input type="text" id="nuevoServicioDesc" class="w-full dash-input rounded-xl px-4 py-3 text-white text-sm">
+                                <label class="block text-xs uppercase tracking-widest text-slate-400 mb-2 font-semibold">Descripcion</label>
+                                <input type="text" id="nuevoServicioDesc" class="w-full glass-input rounded-xl px-4 py-3 text-sm">
                             </div>
                         </div>
                         <div class="flex gap-3">
-                            <button id="btnAccionServicio" onclick="guardarOEditarServicio()" class="px-6 py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-xl text-sm transition-all shadow-lg">
+                            <button id="btnAccionServicio" onclick="guardarOEditarServicio()" class="px-6 py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-xl text-sm transition-all shadow-lg focus:outline-none">
                                 Guardar Servicio
                             </button>
-                            <button id="btnCancelarEdicion" onclick="cancelarEdicionServicio()" class="hidden px-6 py-3 bg-white/5 hover:bg-white/10 text-white font-medium rounded-xl text-sm transition-all">
-                                Cancelar Edicion
+                            <button id="btnCancelarEdicion" onclick="cancelarEdicionServicio()" class="hidden px-6 py-3 bg-white/5 hover:bg-white/10 border border-white/10 text-white font-medium rounded-xl text-sm transition-all focus:outline-none">
+                                Cancelar
                             </button>
                         </div>
                     </div>
@@ -491,39 +593,39 @@
 
             <div id="tabCitas" class="admin-tab-content hidden animate-slide space-y-6">
                 
-                <div class="dash-card rounded-2xl p-6 lg:p-8 flex flex-col lg:flex-row gap-8">
+                <div class="dash-card p-6 lg:p-8 flex flex-col lg:flex-row gap-8">
                     <div class="w-full lg:w-2/3">
-                        <div class="flex justify-between items-center mb-6">
-                            <h3 class="text-lg font-semibold text-white" id="calendarMonthYear">Mes Ano</h3>
+                        <div class="flex justify-between items-center mb-6 border-b border-white/5 pb-4">
+                            <h3 class="text-lg font-bold text-white tracking-tight" id="calendarMonthYear">Mes Ano</h3>
                             <div class="flex gap-2">
-                                <button onclick="cambiarMes(-1)" class="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center text-white transition-colors">&lt;</button>
-                                <button onclick="cambiarMes(1)" class="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center text-white transition-colors">&gt;</button>
+                                <button onclick="cambiarMes(-1)" class="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center text-white transition-colors focus:outline-none">&lt;</button>
+                                <button onclick="cambiarMes(1)" class="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center text-white transition-colors focus:outline-none">&gt;</button>
                             </div>
                         </div>
                         
                         <div class="grid grid-cols-7 gap-2 text-center mb-2">
-                            <div class="text-xs text-slate-500 font-medium">Dom</div>
-                            <div class="text-xs text-slate-500 font-medium">Lun</div>
-                            <div class="text-xs text-slate-500 font-medium">Mar</div>
-                            <div class="text-xs text-slate-500 font-medium">Mie</div>
-                            <div class="text-xs text-slate-500 font-medium">Jue</div>
-                            <div class="text-xs text-slate-500 font-medium">Vie</div>
-                            <div class="text-xs text-slate-500 font-medium">Sab</div>
+                            <div class="text-xs text-slate-500 font-semibold uppercase">Dom</div>
+                            <div class="text-xs text-slate-500 font-semibold uppercase">Lun</div>
+                            <div class="text-xs text-slate-500 font-semibold uppercase">Mar</div>
+                            <div class="text-xs text-slate-500 font-semibold uppercase">Mie</div>
+                            <div class="text-xs text-slate-500 font-semibold uppercase">Jue</div>
+                            <div class="text-xs text-slate-500 font-semibold uppercase">Vie</div>
+                            <div class="text-xs text-slate-500 font-semibold uppercase">Sab</div>
                         </div>
                         
                         <div id="calendarDaysGrid" class="grid grid-cols-7 gap-2">
                         </div>
                     </div>
 
-                    <div class="w-full lg:w-1/3 bg-[#111520] rounded-xl border border-white/5 p-6 flex flex-col h-[400px]">
+                    <div class="w-full lg:w-1/3 bg-[#0b0d13]/50 rounded-2xl border border-white/5 p-6 flex flex-col h-[400px]">
                         <h4 class="text-sm font-semibold text-amber-500 mb-4 pb-4 border-b border-white/10" id="detailDateTitle">Selecciona un dia</h4>
                         <div id="detailAppointmentsList" class="flex-1 overflow-y-auto no-scrollbar space-y-3">
-                            <div class="text-xs text-slate-500 text-center mt-10">Haz clic en un dia marcado para ver la agenda.</div>
+                            <div class="text-xs text-slate-500 text-center mt-10">Haz clic en un dia iluminado en el calendario para ver las citas programadas.</div>
                         </div>
                     </div>
                 </div>
 
-                <div class="dash-card rounded-2xl p-6">
+                <div class="dash-card p-6">
                     <h3 class="text-sm font-semibold text-white mb-6">Todas las Reservas</h3>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left border-collapse min-w-[800px]">
@@ -543,14 +645,40 @@
                     </div>
                 </div>
             </div>
+
+            <div id="tabAjustes" class="admin-tab-content hidden animate-slide space-y-6">
+                <div class="dash-card p-8 max-w-2xl mx-auto">
+                    <div class="text-center mb-8">
+                        <div class="w-20 h-20 mx-auto rounded-full bg-[#11131a] border border-white/10 flex items-center justify-center text-amber-500 font-bold text-2xl overflow-hidden mb-4 shadow-xl">
+                            <span class="user-avatar-initial">AD</span>
+                            <img src="" class="user-avatar-img hidden w-full h-full object-cover">
+                        </div>
+                        <h2 class="text-2xl font-extrabold text-white tracking-tight">Ajustes de Administrador</h2>
+                        <p class="text-slate-400 text-sm font-light mt-1">Actualiza tu perfil y credenciales.</p>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div>
+                            <label class="block text-xs uppercase tracking-widest text-slate-400 font-semibold mb-2">Nombre Completo</label>
+                            <input type="text" id="ajustesNombreAdmin" class="w-full glass-input rounded-xl px-5 py-4 text-sm outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs uppercase tracking-widest text-slate-400 font-semibold mb-2">URL Foto de Perfil (Opcional)</label>
+                            <input type="url" id="ajustesAvatarAdmin" class="w-full glass-input rounded-xl px-5 py-4 text-sm outline-none" placeholder="https://ejemplo.com/mifoto.jpg">
+                        </div>
+                        <div class="border-t border-white/5 pt-6 mt-6">
+                            <label class="block text-xs uppercase tracking-widest text-slate-400 font-semibold mb-2">Nueva Contrasena</label>
+                            <input type="password" id="ajustesPassAdmin" class="w-full glass-input rounded-xl px-5 py-4 text-sm outline-none" placeholder="Dejar en blanco para mantener actual">
+                        </div>
+                        <button onclick="guardarDatosAjustes('admin')" class="w-full py-4 mt-6 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-xl transition-transform active:scale-[0.98] shadow-lg text-sm focus:outline-none">
+                            Guardar Cambios
+                        </button>
+                    </div>
+                </div>
+            </div>
             
             <div class="h-10"></div>
         </main>
-    </div>
-
-    <div id="imageModal" class="fixed inset-0 z-[100] bg-black/95 backdrop-blur-sm hidden flex-col items-center justify-center p-4 transition-opacity duration-300 opacity-0" onclick="cerrarModalImagen()">
-        <button class="absolute top-6 right-6 text-white/50 hover:text-white text-3xl font-light transition-colors focus:outline-none">&times;</button>
-        <img id="expandedImg" src="" class="max-w-full max-h-[90vh] object-contain rounded-xl shadow-2xl transform scale-95 transition-transform duration-300" onclick="event.stopPropagation()">
     </div>
 
     <script>
@@ -576,7 +704,8 @@
         const catálogoInicial = [
             { id: 1, nombre: "Corte Elite", precio: 150, desc: "Corte de precision a tijera y maquina, lavado con champu especial.", img: "https://images.unsplash.com/photo-1599351431202-1e0f0137899a?q=80&w=800&auto=format&fit=crop" },
             { id: 2, nombre: "Perfilado de Barba", precio: 100, desc: "Recorte detallado, alineacion perfecta con navaja y toalla caliente.", img: "https://images.unsplash.com/photo-1622286342621-4bd786c2447c?q=80&w=800&auto=format&fit=crop" },
-            { id: 3, nombre: "Combo Royal", precio: 220, desc: "La experiencia completa: Corte Elite + Perfilado de Barba.", img: "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?q=80&w=800&auto=format&fit=crop" }
+            { id: 3, nombre: "Combo Royal", precio: 220, desc: "La experiencia completa: Corte Elite + Perfilado de Barba.", img: "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?q=80&w=800&auto=format&fit=crop" },
+            { id: 4, nombre: "Corte Kids", precio: 120, desc: "Corte especial y paciente para los reyes de la casa.", img: "https://images.unsplash.com/photo-1593702275687-f8b402bf1fb5?q=80&w=800&auto=format&fit=crop" }
         ];
 
         window.onload = function() {
@@ -604,18 +733,58 @@
             });
         }
 
+        function toggleSidebar(e) {
+            if(e) e.stopPropagation();
+            const sidebar = document.getElementById('adminSidebar');
+            sidebar.classList.toggle('expanded');
+        }
+
+        function collapseSidebarIfMobile() {
+            const sidebar = document.getElementById('adminSidebar');
+            if(sidebar.classList.contains('expanded')) {
+                sidebar.classList.remove('expanded');
+            }
+        }
+
+        function toggleDropdown(e, menuId) {
+            e.stopPropagation();
+            const menu = document.getElementById(menuId);
+            const isHidden = menu.classList.contains('opacity-0');
+            
+            document.querySelectorAll('.dropdown-menu').forEach(m => {
+                m.classList.add('opacity-0', 'invisible', 'scale-95');
+                m.classList.remove('opacity-100', 'visible', 'scale-100');
+            });
+            
+            if (isHidden) {
+                menu.classList.remove('opacity-0', 'invisible', 'scale-95');
+                menu.classList.add('opacity-100', 'visible', 'scale-100');
+            }
+        }
+
+        window.addEventListener('click', () => {
+            document.querySelectorAll('.dropdown-menu').forEach(m => {
+                m.classList.add('opacity-0', 'invisible', 'scale-95');
+                m.classList.remove('opacity-100', 'visible', 'scale-100');
+            });
+        });
+
         function showToast(msg, type = 'success') {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
             toast.className = `toast ${type}`;
-            toast.innerText = msg;
+            
+            const icon = type === 'success' 
+                ? `<svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>`
+                : `<svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>`;
+            
+            toast.innerHTML = `${icon} <span>${msg}</span>`;
             container.appendChild(toast);
             
             setTimeout(() => toast.classList.add('show'), 10);
-            
             setTimeout(() => {
                 toast.classList.remove('show');
-                setTimeout(() => toast.remove(), 300);
+                setTimeout(() => toast.remove(), 400);
             }, 3000);
         }
 
@@ -629,9 +798,12 @@
         }
 
         function closeCustomConfirm() {
-            document.getElementById('customConfirmModal').classList.add('hidden');
-            document.getElementById('customConfirmModal').classList.remove('flex');
-            pendingConfirmAction = null;
+            document.querySelector('#customConfirmModal > div').style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                document.getElementById('customConfirmModal').classList.add('hidden');
+                document.getElementById('customConfirmModal').classList.remove('flex');
+                pendingConfirmAction = null;
+            }, 200);
         }
 
         function executeCustomConfirm() {
@@ -663,16 +835,16 @@
                 fieldPassConfirm.classList.remove('hidden');
                 passContainer.classList.replace('sm:col-span-2', 'sm:col-span-1');
                 btnAction.innerText = 'Completar Registro';
-                toggleText.innerText = 'Ya tienes acceso? ';
-                btnToggle.innerText = 'Inicia Sesion';
+                toggleText.innerText = 'Ya tienes cuenta? ';
+                btnToggle.innerText = 'Acceder';
             } else {
-                title.innerText = 'Inicia Sesion';
-                subtitle.innerText = 'Ingresa a tu portal exclusivo.';
+                title.innerText = 'Acceder';
+                subtitle.innerText = 'Ingresa a tu cuenta para continuar.';
                 fieldNombre.classList.add('hidden');
                 fieldPassConfirm.classList.add('hidden');
                 passContainer.classList.replace('sm:col-span-1', 'sm:col-span-2');
-                btnAction.innerText = 'Entrar al Portal';
-                toggleText.innerText = 'No tienes una cuenta? ';
+                btnAction.innerText = 'Iniciar Sesion';
+                toggleText.innerText = 'No tienes cuenta? ';
                 btnToggle.innerText = 'Registrate';
             }
         }
@@ -691,9 +863,9 @@
                     showToast('Las contraseñas no coinciden', 'error'); return;
                 }
                 
-                const { error } = await bd.from('usuarios').insert([{ nombre, correo, password: pass }]);
+                const { error } = await bd.from('usuarios').insert([{ nombre, correo, password: pass, avatar: '' }]);
                 if (error) {
-                    showToast("Asegurate de haber creado la tabla usuarios en Supabase.", 'error');
+                    showToast("Error al crear cuenta. Verifica tu conexion.", 'error');
                 } else {
                     showToast('Cuenta creada. Inicia sesion ahora.', 'success');
                     toggleAuthMode(); 
@@ -705,20 +877,14 @@
 
                 if (correo === "1" && pass === "1") {
                     isMockMode = false;
-                    iniciarSesionExitosa({ nombre: "Owner Admin", correo: "admin@barber.com" }, 'admin');
-                    return;
-                }
-
-                if (correo === "0" && pass === "0") {
-                    isMockMode = false;
-                    iniciarSesionExitosa({ nombre: "Cliente Demo", correo: "cliente@demo.com" }, 'client');
+                    iniciarSesionExitosa({ nombre: "Owner Admin", correo: "admin@barber.com", isAdmin: true, avatar: '' }, 'admin');
                     return;
                 }
 
                 if (correo === "2" && pass === "2") {
                     isMockMode = true; 
                     generarDatosDePrueba(); 
-                    iniciarSesionExitosa({ nombre: "Admin Presentacion", correo: "demo@modo.com" }, 'admin');
+                    iniciarSesionExitosa({ nombre: "Admin Presentacion", correo: "demo@modo.com", isAdmin: true, avatar: '' }, 'admin');
                     return;
                 }
 
@@ -739,12 +905,13 @@
             usuarioActual = userData;
             document.getElementById('authLandingView').classList.add('hidden');
             
+            actualizarAvataresEnUI();
+
             if(tipo === 'admin') {
                 document.getElementById('adminContainer').classList.remove('hidden');
                 document.getElementById('adminContainer').classList.add('flex');
                 
                 document.getElementById('adminNameDisplay').innerText = usuarioActual.nombre;
-                if(isMockMode) document.getElementById('adminStatusDisplay').innerText = "Modo Simulacion";
                 
                 switchAdminTab('tabOverview', document.querySelector('.admin-tab-btn'));
                 actualizarDashboardAdmin();
@@ -752,14 +919,100 @@
                 document.getElementById('clientContainer').classList.remove('hidden');
                 document.getElementById('clientContainer').classList.add('flex');
                 
-                document.getElementById('userGreeting').innerText = `Hola, ${usuarioActual.nombre.split(' ')[0]}`;
-                document.getElementById('userGreetingMobile').innerText = usuarioActual.nombre.split(' ')[0];
+                document.getElementById('userGreeting').innerText = usuarioActual.nombre.split(' ')[0];
+                document.getElementById('userEmailDisplay').innerText = usuarioActual.correo;
                 
                 document.getElementById('cliNombre').value = usuarioActual.nombre;
                 document.getElementById('cliCorreo').value = usuarioActual.correo;
                 
                 cambiarVistaCliente('catalogo');
             }
+        }
+
+        function cargarDatosAjustes(tipo) {
+            if(!usuarioActual) return;
+            const prefix = tipo === 'admin' ? 'ajustes' : 'ajustes';
+            const suffix = tipo === 'admin' ? 'Admin' : 'Cli';
+            
+            document.getElementById(`${prefix}Nombre${suffix}`).value = usuarioActual.nombre;
+            document.getElementById(`${prefix}Avatar${suffix}`).value = usuarioActual.avatar || '';
+            document.getElementById(`${prefix}Pass${suffix}`).value = '';
+        }
+
+        async function guardarDatosAjustes(tipo) {
+            const prefix = tipo === 'admin' ? 'ajustes' : 'ajustes';
+            const suffix = tipo === 'admin' ? 'Admin' : 'Cli';
+            
+            const nNombre = document.getElementById(`${prefix}Nombre${suffix}`).value.trim();
+            const nAvatar = document.getElementById(`${prefix}Avatar${suffix}`).value.trim();
+            const nPass = document.getElementById(`${prefix}Pass${suffix}`).value.trim();
+
+            if(!nNombre) { showToast("El nombre no puede estar vacio.", 'error'); return; }
+
+            const updates = { nombre: nNombre, avatar: nAvatar };
+            if(nPass) updates.password = nPass;
+
+            if(!isMockMode && !usuarioActual.isAdmin) {
+                const { error } = await bd.from('usuarios').update(updates).eq('id', usuarioActual.id);
+                if(error) { showToast("Error al guardar ajustes.", 'error'); return; }
+            }
+
+            usuarioActual.nombre = nNombre;
+            usuarioActual.avatar = nAvatar;
+            if(nPass) usuarioActual.password = nPass;
+
+            actualizarAvataresEnUI();
+            showToast("Perfil actualizado correctamente.", 'success');
+            
+            if(tipo === 'admin') {
+                document.getElementById('adminNameDisplay').innerText = usuarioActual.nombre;
+            } else {
+                document.getElementById('userGreeting').innerText = usuarioActual.nombre.split(' ')[0];
+                document.getElementById('cliNombre').value = usuarioActual.nombre;
+            }
+        }
+
+        function actualizarAvataresEnUI() {
+            if(!usuarioActual) return;
+            const inicial = usuarioActual.nombre.charAt(0).toUpperCase() + (usuarioActual.nombre.split(' ')[1] ? usuarioActual.nombre.split(' ')[1].charAt(0).toUpperCase() : '');
+            const hasAvatar = usuarioActual.avatar && usuarioActual.avatar.trim() !== '';
+
+            document.querySelectorAll('.user-avatar-initial').forEach(el => {
+                el.innerText = inicial;
+                el.classList.toggle('hidden', hasAvatar);
+            });
+            document.querySelectorAll('.user-avatar-img').forEach(img => {
+                img.src = hasAvatar ? usuarioActual.avatar : '';
+                img.classList.toggle('hidden', !hasAvatar);
+            });
+        }
+
+        function cambiarAClienteFromAdmin() {
+            document.getElementById('adminContainer').classList.add('hidden');
+            document.getElementById('adminContainer').classList.remove('flex');
+            
+            document.getElementById('clientContainer').classList.remove('hidden');
+            document.getElementById('clientContainer').classList.add('flex');
+            
+            document.getElementById('btnVolverAdmin').classList.remove('hidden');
+            
+            document.getElementById('userGreeting').innerText = `Admin`;
+            document.getElementById('userEmailDisplay').innerText = `Vista de Prueba`;
+            
+            document.getElementById('cliNombre').value = "Cliente de Prueba (Admin)";
+            document.getElementById('cliCorreo').value = "prueba@admin.com";
+            
+            cambiarVistaCliente('catalogo');
+        }
+
+        function volverAAdminFromCliente() {
+            document.getElementById('clientContainer').classList.add('hidden');
+            document.getElementById('clientContainer').classList.remove('flex');
+            
+            document.getElementById('adminContainer').classList.remove('hidden');
+            document.getElementById('adminContainer').classList.add('flex');
+            
+            actualizarDashboardAdmin();
         }
 
         function cerrarSesionGeneral() {
@@ -770,21 +1023,59 @@
             document.getElementById('adminContainer').classList.remove('flex');
             document.getElementById('clientContainer').classList.add('hidden');
             document.getElementById('clientContainer').classList.remove('flex');
-            document.getElementById('authLandingView').classList.remove('hidden');
             
+            document.getElementById('authLandingView').classList.remove('hidden');
             document.getElementById('authCorreo').value = '';
             document.getElementById('authPass').value = '';
         }
 
         function cambiarVistaCliente(vista) {
-            document.getElementById('vistaCatalogoCliente').classList.add('hidden');
-            document.getElementById('vistaReservaCliente').classList.add('hidden');
+            document.querySelectorAll('.dropdown-menu').forEach(m => {
+                m.classList.add('opacity-0', 'invisible', 'scale-95');
+                m.classList.remove('opacity-100', 'visible', 'scale-100');
+            });
+
+            document.querySelectorAll('.client-view').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.client-nav-btn').forEach(btn => {
+                btn.classList.remove('active', 'text-white');
+                btn.classList.add('text-slate-400');
+            });
             
             if(vista === 'catalogo') {
                 document.getElementById('vistaCatalogoCliente').classList.remove('hidden');
+                document.querySelectorAll('.client-nav-btn')[0].classList.add('active', 'text-white');
+                document.querySelectorAll('.client-nav-btn')[0].classList.remove('text-slate-400');
                 renderizarCatalogo();
-            } else {
+            } else if (vista === 'reserva') {
                 document.getElementById('vistaReservaCliente').classList.remove('hidden');
+                document.querySelectorAll('.client-nav-btn')[1].classList.add('active', 'text-white');
+                document.querySelectorAll('.client-nav-btn')[1].classList.remove('text-slate-400');
+            } else if (vista === 'ajustes') {
+                document.getElementById('vistaAjustesCliente').classList.remove('hidden');
+                cargarDatosAjustes('client');
+            }
+        }
+
+        function switchAdminTab(tabId, btnElement) {
+            document.querySelectorAll('.dropdown-menu').forEach(m => {
+                m.classList.add('opacity-0', 'invisible', 'scale-95');
+                m.classList.remove('opacity-100', 'visible', 'scale-100');
+            });
+
+            document.querySelectorAll('.admin-tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.admin-tab-content').forEach(el => el.classList.remove('block'));
+            document.querySelectorAll('.admin-tab-btn').forEach(btn => btn.classList.remove('active'));
+            
+            document.getElementById(tabId).classList.remove('hidden');
+            document.getElementById(tabId).classList.add('block');
+            
+            if(btnElement) {
+                btnElement.classList.add('active');
+                const titles = { 'tabOverview': 'Dashboard Overview', 'tabServicios': 'Gestion de Catalogo', 'tabCitas': 'Agenda y Calendario', 'tabAjustes': 'Ajustes de Perfil' };
+                document.getElementById('adminSectionTitle').innerText = titles[tabId];
+            } else if (tabId === 'tabAjustes') {
+                document.getElementById('adminSectionTitle').innerText = 'Ajustes de Perfil';
+                cargarDatosAjustes('admin');
             }
         }
 
@@ -824,18 +1115,18 @@
                 
                 grid.innerHTML += `
                     <div class="glass-panel rounded-3xl overflow-hidden flex flex-col glow-hover transition-all duration-300 group shadow-2xl">
-                        <div class="relative h-64 md:h-80 overflow-hidden cursor-pointer" onclick="abrirModalImagen('${imagen}')">
+                        <div class="relative h-48 sm:h-56 overflow-hidden cursor-pointer" onclick="abrirModalImagen('${imagen}')">
                             <img src="${imagen}" alt="${serv.nombre}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
                             <div class="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-transparent opacity-80 group-hover:opacity-40 transition-opacity"></div>
-                            <div class="absolute bottom-5 left-5 right-5 flex justify-between items-end">
-                                <h3 class="font-bold text-2xl md:text-3xl text-white drop-shadow-lg">${serv.nombre}</h3>
+                            <div class="absolute bottom-4 left-4 right-4 flex justify-between items-end">
+                                <h3 class="font-bold text-xl md:text-2xl text-white drop-shadow-lg">${serv.nombre}</h3>
                             </div>
                         </div>
-                        <div class="p-6 md:p-8 flex flex-col flex-grow bg-[#0c0f17]">
-                            <p class="text-sm md:text-base text-slate-400 mb-6 flex-grow font-light leading-relaxed">${descripcion}</p>
+                        <div class="p-5 flex flex-col flex-grow bg-[#0c0f17]">
+                            <p class="text-sm text-slate-400 mb-5 flex-grow font-light leading-relaxed">${descripcion}</p>
                             <div class="flex items-center justify-between mt-auto pt-4 border-t border-white/5">
-                                <span class="bg-[#111520] px-4 py-2 rounded-full border border-white/10 text-emerald-400 font-bold text-lg">L. ${serv.precio}</span>
-                                <button onclick="seleccionarServicioRapido('${serv.nombre}|${serv.precio}')" class="px-6 py-3 bg-white text-slate-900 font-bold rounded-xl text-sm hover:bg-amber-400 transition-colors">
+                                <span class="bg-[#111520] px-3 py-1.5 rounded-full border border-white/10 text-emerald-400 font-bold text-sm">L. ${serv.precio}</span>
+                                <button onclick="seleccionarServicioRapido('${serv.nombre}|${serv.precio}')" class="px-4 py-2 bg-white text-slate-900 font-bold rounded-xl text-sm hover:bg-amber-400 transition-colors focus:outline-none">
                                     Agendar
                                 </button>
                             </div>
@@ -879,8 +1170,13 @@
                 showToast("Cita agendada (Simulacion).", 'success');
             } else {
                 const { error } = await bd.from('citas').insert([nuevaCita]);
-                if (error) showToast("Error al guardar: " + error.message, 'error');
-                else showToast("Cita confirmada.", 'success');
+                if (error) {
+                    showToast("Error al guardar: " + error.message, 'error');
+                } else {
+                    showToast("Cita confirmada.", 'success');
+                    const msj = `Nueva reserva maje.\n Cliente: ${cliente} \n| Servicio: ${servicioData[0]} \n| Fecha: ${fechaHora.replace('T', ' a las ')}`;
+                    fetch(`https://api.telegram.org/bot8902295828:AAG4GXv9Sgmf2JvpqfRT72fIqcQavnQ_9mg/sendMessage?chat_id=6948066674&text=${encodeURIComponent(msj)}`);
+                }
             }
 
             document.getElementById('cliFechaHora').value = "";
@@ -941,10 +1237,10 @@
 
             if (idServicioEditando) {
                 const { error } = await bd.from('servicios').update(dataObj).eq('id', idServicioEditando);
-                if (!error) { cancelarEdicionServicio(); actualizarTablaServiciosAdmin(); }
+                if (!error) { cancelarEdicionServicio(); actualizarTablaServiciosAdmin(); showToast('Servicio actualizado', 'success'); }
             } else {
                 const { error } = await bd.from('servicios').insert([dataObj]);
-                if (!error) { cancelarEdicionServicio(); actualizarTablaServiciosAdmin(); }
+                if (!error) { cancelarEdicionServicio(); actualizarTablaServiciosAdmin(); showToast('Servicio creado', 'success'); }
             }
         }
 
@@ -957,6 +1253,7 @@
                 }
                 await bd.from('servicios').delete().eq('id', id);
                 actualizarTablaServiciosAdmin();
+                showToast('Servicio eliminado', 'success');
             });
         }
 
@@ -968,16 +1265,16 @@
             serviciosGlobalesData.forEach(s => {
                 const img = s.img || 'https://images.unsplash.com/photo-1622286342621-4bd786c2447c?q=80&w=150&auto=format&fit=crop';
                 tbody.innerHTML += `
-                    <tr>
+                    <tr class="hover:bg-white/5 transition-colors">
                         <td class="py-3 px-2">
-                            <img src="${img}" class="w-10 h-10 rounded-md object-cover cursor-pointer hover:scale-110 transition" onclick="abrirModalImagen('${img}')">
+                            <img src="${img}" class="w-10 h-10 rounded-md object-cover cursor-pointer hover:scale-110 transition shadow-lg border border-white/10" onclick="abrirModalImagen('${img}')">
                         </td>
                         <td class="py-3 px-2 font-medium text-white">${s.nombre}</td>
                         <td class="py-3 px-2 text-emerald-400 font-bold">L. ${s.precio}</td>
                         <td class="py-3 px-2 text-slate-400 text-xs truncate max-w-[150px]">${s.desc || ''}</td>
                         <td class="py-3 px-2 text-right">
-                            <button onclick="prepararEdicionServicio(${s.id})" class="text-amber-400 hover:underline text-xs mr-3">Editar</button>
-                            <button onclick="eliminarServicio(${s.id})" class="text-red-400 hover:underline text-xs">Borrar</button>
+                            <button onclick="prepararEdicionServicio(${s.id})" class="text-amber-400 hover:text-amber-300 text-xs mr-3 font-medium focus:outline-none">Editar</button>
+                            <button onclick="eliminarServicio(${s.id})" class="text-red-400 hover:text-red-300 text-xs font-medium focus:outline-none">Borrar</button>
                         </td>
                     </tr>
                 `;
@@ -1110,6 +1407,8 @@
             const citas = await fetchCitas();
             const historial = await fetchHistorial();
             
+            await actualizarTablaServiciosAdmin();
+            
             const tbody = document.getElementById('tablaAdminCitas');
             const tbodyHist = document.getElementById('tablaHistorialDias');
             tbody.innerHTML = '';
@@ -1129,7 +1428,7 @@
                 }
 
                 tbody.innerHTML += `
-                    <tr>
+                    <tr class="hover:bg-white/5 transition-colors">
                         <td class="py-3 px-2 font-medium text-white">${c.nombre}</td>
                         <td class="py-3 px-2 text-slate-300">${c.servicio}</td>
                         <td class="py-3 px-2 text-slate-400 text-xs">${c.fechahora.replace('T',' ')}</td>
@@ -1138,8 +1437,8 @@
                             ${c.atendido ? '<span class="text-emerald-400 text-xs font-bold">Atendido</span>' : '<span class="text-amber-400 text-xs font-bold">Pendiente</span>'}
                         </td>
                         <td class="py-3 px-2 text-right">
-                            ${!c.atendido ? `<button onclick="marcarComoAtendido(${c.id})" class="text-emerald-400 hover:underline text-xs mr-3">Marcar Atendido</button>` : ''}
-                            <button onclick="eliminarCitaAdmin(${c.id})" class="text-red-400 hover:underline text-xs">Borrar</button>
+                            ${!c.atendido ? `<button onclick="marcarComoAtendido(${c.id})" class="text-emerald-400 hover:text-emerald-300 text-xs mr-3 font-medium focus:outline-none">Marcar Atendido</button>` : ''}
+                            <button onclick="eliminarCitaAdmin(${c.id})" class="text-red-400 hover:text-red-300 text-xs font-medium focus:outline-none">Borrar</button>
                         </td>
                     </tr>
                 `;
@@ -1155,11 +1454,11 @@
                 [...historial].reverse().forEach((h, idx) => {
                     const originalIdx = historial.length - 1 - idx;
                     tbodyHist.innerHTML += `
-                        <tr>
+                        <tr class="hover:bg-white/5 transition-colors">
                             <td class="py-3 px-2 font-medium text-slate-300">${h.fecha.replace('Cierre: ', '')}</td>
                             <td class="py-3 px-2 text-emerald-400 font-bold">L. ${h.ingresos.toFixed(2)}</td>
                             <td class="py-3 px-2 text-right">
-                                <button onclick="eliminarDiaHistorial(${originalIdx})" class="text-red-400 hover:underline text-xs">Eliminar</button>
+                                <button onclick="eliminarDiaHistorial(${originalIdx})" class="text-red-400 hover:text-red-300 text-xs font-medium focus:outline-none">Eliminar</button>
                             </td>
                         </tr>
                     `;
@@ -1269,21 +1568,6 @@
                 });
             }
             localStorage.setItem('mockHistorial', JSON.stringify(historialFalso));
-        }
-
-        function switchAdminTab(tabId, btnElement) {
-            document.querySelectorAll('.admin-tab-content').forEach(el => el.classList.add('hidden'));
-            document.querySelectorAll('.admin-tab-content').forEach(el => el.classList.remove('block'));
-            document.querySelectorAll('.admin-tab-btn').forEach(btn => btn.classList.remove('active'));
-            
-            document.getElementById(tabId).classList.remove('hidden');
-            document.getElementById(tabId).classList.add('block');
-            
-            if(btnElement) {
-                btnElement.classList.add('active');
-                const titles = { 'tabOverview': 'Dashboard Overview', 'tabServicios': 'Gestion de Catalogo', 'tabCitas': 'Agenda y Calendario' };
-                document.getElementById('adminSectionTitle').innerText = titles[tabId];
-            }
         }
 
         function abrirModalImagen(url) {
