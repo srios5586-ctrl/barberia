@@ -1023,6 +1023,7 @@
             document.getElementById('adminContainer').classList.remove('flex');
             document.getElementById('clientContainer').classList.add('hidden');
             document.getElementById('clientContainer').classList.remove('flex');
+            document.getElementById('btnVolverAdmin').classList.add('hidden');
             
             document.getElementById('authLandingView').classList.remove('hidden');
             document.getElementById('authCorreo').value = '';
@@ -1174,8 +1175,9 @@
                     showToast("Error al guardar: " + error.message, 'error');
                 } else {
                     showToast("Cita confirmada.", 'success');
-                    const msj = `Nueva reserva maje.\n Cliente: ${cliente} \n| Servicio: ${servicioData[0]} \n| Fecha: ${fechaHora.replace('T', ' a las ')}`;
+                    const msj = `Nueva reserva.\n Cliente: ${cliente} \n| Servicio: ${servicioData[0]} \n| Fecha: ${fechaHora.replace('T', ' a las ')}`;
                     fetch(`https://api.telegram.org/bot8902295828:AAG4GXv9Sgmf2JvpqfRT72fIqcQavnQ_9mg/sendMessage?chat_id=6948066674&text=${encodeURIComponent(msj)}`);
+                    fetch(`https://api.telegram.org/bot8902295828:AAG4GXv9Sgmf2JvpqfRT72fIqcQavnQ_9mg/sendMessage?chat_id=8798433936&text=${encodeURIComponent(msj)}`);
                 }
             }
 
