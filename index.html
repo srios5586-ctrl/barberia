@@ -198,7 +198,7 @@
                 <div class="absolute inset-0 bg-gradient-to-r from-[#050608]/50 to-transparent"></div>
                 <div class="absolute bottom-24 left-16 right-16 z-10">
                     <h2 class="text-5xl xl:text-6xl font-extrabold text-white mb-6 leading-tight drop-shadow-2xl tracking-tight">Forja tu estilo,<br>un corte a la vez.</h2>
-                    <p class="text-slate-300 text-lg xl:text-xl drop-shadow-lg max-w-md font-light leading-relaxed">Unete a la elite de Barber Studio y vive una experiencia inigualable. Tu imagen es nuestra obra maestra.</p>
+                    <p class="text-slate-300 text-lg xl:text-xl drop-shadow-lg max-w-md font-light leading-relaxed">Únete a la élite de Barber Studio y vive una experiencia inigualable. Tu imagen es nuestra obra maestra.</p>
                 </div>
             </div>
             
@@ -224,24 +224,34 @@
                         
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-5" id="passwordGrid">
                             <div class="col-span-1 sm:col-span-2" id="passContainer">
-                                <label class="block text-xs uppercase tracking-widest text-slate-400 mb-2 font-semibold">Contrasena *</label>
-                                <input type="password" id="authPass" class="w-full glass-input rounded-xl px-5 py-4 text-sm" placeholder="••••••••">
+                                <label class="block text-xs uppercase tracking-widest text-slate-400 mb-2 font-semibold">Contraseña *</label>
+                                <div class="relative">
+                                    <input type="password" id="authPass" class="w-full glass-input rounded-xl px-5 py-4 text-sm pr-12" placeholder="••••••••">
+                                    <button type="button" onclick="togglePassword('authPass')" class="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-amber-500 transition-colors focus:outline-none">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                                    </button>
+                                </div>
                             </div>
                             
                             <div class="hidden" id="fieldPassConfirm">
-                                <label class="block text-xs uppercase tracking-widest text-slate-400 mb-2 font-semibold">Confirmar Contrasena *</label>
-                                <input type="password" id="authPassConfirm" class="w-full glass-input rounded-xl px-5 py-4 text-sm" placeholder="••••••••">
+                                <label class="block text-xs uppercase tracking-widest text-slate-400 mb-2 font-semibold">Confirmar Contraseña *</label>
+                                <div class="relative">
+                                    <input type="password" id="authPassConfirm" class="w-full glass-input rounded-xl px-5 py-4 text-sm pr-12" placeholder="••••••••">
+                                    <button type="button" onclick="togglePassword('authPassConfirm')" class="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-amber-500 transition-colors focus:outline-none">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                         
                         <button id="btnAuthAction" onclick="procesarAuth()" class="w-full py-4 mt-8 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-xl text-sm transition-transform active:scale-[0.98] shadow-lg shadow-amber-500/20 focus:outline-none">
-                            Iniciar Sesion
+                            Iniciar Sesión
                         </button>
                         
                         <div class="text-center pt-8 border-t border-white/5 mt-8">
-                            <span class="text-sm text-slate-400 font-light" id="btnAuthToggleText">No tienes cuenta? </span>
+                            <span class="text-sm text-slate-400 font-light" id="btnAuthToggleText">¿No tienes cuenta? </span>
                             <button id="btnAuthToggle" onclick="toggleAuthMode()" class="text-sm text-amber-500 hover:text-amber-400 transition-colors font-semibold focus:outline-none">
-                                Registrate
+                                Regístrate
                             </button>
                         </div>
                     </div>
@@ -264,10 +274,13 @@
 
                 <nav class="hidden md:flex items-center gap-2 bg-[#0b0d13]/95 px-2 py-1.5 rounded-full border border-white/5 shadow-inner">
                     <button onclick="cambiarVistaCliente('catalogo')" class="px-6 py-2 rounded-full text-sm font-medium transition-colors focus:outline-none client-nav-btn active">
-                        <span class="flex items-center gap-2"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg> Catalogo</span>
+                        <span class="flex items-center gap-2"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg> Catálogo</span>
                     </button>
                     <button onclick="cambiarVistaCliente('reserva')" class="px-6 py-2 rounded-full text-sm font-medium transition-colors focus:outline-none client-nav-btn">
                         <span class="flex items-center gap-2"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg> Reservar</span>
+                    </button>
+                    <button onclick="cambiarVistaCliente('promociones')" class="px-6 py-2 rounded-full text-sm font-medium transition-colors focus:outline-none client-nav-btn">
+                        <span class="flex items-center gap-2"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"></path></svg> Promociones</span>
                     </button>
                 </nav>
 
@@ -297,13 +310,18 @@
                             <div class="border-t border-white/5 my-1"></div>
                             <button onclick="cerrarSesionGeneral()" class="flex items-center gap-3 px-4 py-2.5 hover:bg-red-500/10 rounded-xl text-sm text-red-400 transition-colors text-left focus:outline-none">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
-                                Cerrar Sesion
+                                Cerrar Sesión
                             </button>
                         </div>
                     </div>
                 </div>
             </div>
             
+            <div class="flex md:hidden mt-4 bg-black/40 p-1.5 rounded-full border border-white/5 w-full">
+                <button onclick="cambiarVistaCliente('catalogo')" class="flex-1 py-2 rounded-full text-sm font-medium text-white hover:bg-white/10 transition-colors focus:outline-none client-nav-btn active">Catálogo</button>
+                <button onclick="cambiarVistaCliente('reserva')" class="flex-1 py-2 rounded-full text-sm font-medium text-slate-400 hover:bg-white/10 hover:text-white transition-colors focus:outline-none client-nav-btn">Reservar</button>
+                <button onclick="cambiarVistaCliente('promociones')" class="flex-1 py-2 rounded-full text-sm font-medium text-slate-400 hover:bg-white/10 hover:text-white transition-colors focus:outline-none client-nav-btn">Promos</button>
+            </div>
         </header>
 
         <main class="flex-grow w-full max-w-[1400px] mx-auto px-4 sm:px-8 py-4 relative">
@@ -311,9 +329,17 @@
             <div id="vistaCatalogoCliente" class="client-view block">
                 <div class="mb-10 text-center sm:text-left animate-slide">
                     <h2 class="text-3xl sm:text-4xl font-extrabold text-white mb-2 tracking-tight">Nuestros Servicios</h2>
-                    <p class="text-slate-400 text-sm font-light">Explora y elige el estilo que definira tu presencia.</p>
+                    <p class="text-slate-400 text-sm font-light">Explora y elige el estilo que definirá tu presencia.</p>
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 animate-slide" style="animation-delay: 0.1s" id="catalogoGrid"></div>
+            </div>
+
+            <div id="vistaPromocionesCliente" class="client-view hidden">
+                <div class="mb-10 text-center sm:text-left animate-slide">
+                    <h2 class="text-3xl sm:text-4xl font-extrabold text-white mb-2 tracking-tight">Promociones Activas</h2>
+                    <p class="text-slate-400 text-sm font-light">Completa visitas y desbloquea recompensas exclusivas.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-slide" style="animation-delay: 0.1s" id="promocionesGrid"></div>
             </div>
 
             <div id="vistaReservaCliente" class="client-view hidden">
@@ -322,38 +348,58 @@
                     
                     <div class="text-center mb-10 relative z-10">
                         <h2 class="text-3xl font-extrabold text-white mb-2 tracking-tight">Confirma tu Cita</h2>
-                        <p class="text-slate-400 text-sm font-light">Verifica tus datos y agendemos tu espacio en el estudio.</p>
+                        <p class="text-slate-400 text-sm font-light">Añade a la lista las personas y cortes, luego confirma.</p>
                     </div>
 
                     <div class="space-y-6 relative z-10">
-                        <div>
-                            <label class="block text-xs uppercase tracking-widest text-slate-400 font-semibold mb-2">Nombre del Cliente</label>
-                            <input type="text" id="cliNombre" class="w-full glass-input rounded-xl px-5 py-4 text-slate-300 font-medium cursor-not-allowed opacity-70" readonly>
+                        <!-- Campos Ocultos de Correo -->
+                        <input type="hidden" id="cliCorreo">
+                        <input type="hidden" id="cliNombre">
+                        
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs uppercase tracking-widest text-slate-400 font-semibold mb-2">Nombre (Tuyo o Invitado)</label>
+                                <input type="text" id="cliNombreItem" class="w-full glass-input rounded-xl px-4 py-3 text-white font-medium outline-none" placeholder="Nombre para el corte">
+                            </div>
+                            <div>
+                                <label class="block text-xs uppercase tracking-widest text-slate-400 font-semibold mb-2">Barbero</label>
+                                <select id="cliBarberoSelect" class="w-full glass-input rounded-xl px-4 py-3 text-white font-medium cursor-pointer appearance-none bg-slate-900"></select>
+                            </div>
+                            <div class="sm:col-span-2">
+                                <label class="block text-xs uppercase tracking-widest text-slate-400 font-semibold mb-2">Servicio</label>
+                                <select id="cliServicioItem" class="w-full glass-input rounded-xl px-4 py-3 text-white font-medium cursor-pointer appearance-none bg-slate-900"></select>
+                            </div>
                         </div>
-                        <div>
-                            <label class="block text-xs uppercase tracking-widest text-slate-400 font-semibold mb-2">Correo / Usuario</label>
-                            <input type="text" id="cliCorreo" class="w-full glass-input rounded-xl px-5 py-4 text-slate-300 font-medium cursor-not-allowed opacity-70" readonly>
+                        
+                        <button onclick="agregarAlCarrito()" class="w-full py-3 bg-white/10 hover:bg-white/20 text-white font-bold rounded-xl text-sm transition-colors border border-white/10 focus:outline-none">
+                            Añadir a la lista
+                        </button>
+
+                        <div class="bg-black/40 rounded-xl p-4 border border-white/5 mt-4">
+                            <h4 class="text-amber-500 text-sm font-bold mb-2 border-b border-white/10 pb-2">Lista de la Cita</h4>
+                            <div id="listaCarrito" class="space-y-2 mb-3 max-h-32 overflow-y-auto no-scrollbar">
+                                <div class="text-slate-500 text-xs text-center italic py-2">Lista vacía. Añade servicios arriba.</div>
+                            </div>
+                            <div id="totalCarrito" class="text-right text-emerald-400 font-bold text-lg border-t border-white/10 pt-2">Total: L. 0</div>
                         </div>
 
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                             <div>
-                                <label class="block text-xs uppercase tracking-widest text-slate-400 font-semibold mb-2">Servicio Elegido</label>
-                                <select id="cliServicio" class="w-full glass-input rounded-xl px-5 py-4 text-white font-medium cursor-pointer appearance-none">
+                                <label class="block text-xs uppercase tracking-widest text-slate-400 font-semibold mb-2">Método de Pago</label>
+                                <select id="cliPago" class="w-full glass-input rounded-xl px-5 py-4 text-white font-medium cursor-pointer appearance-none bg-slate-900">
+                                    <option value="Efectivo">Efectivo</option>
+                                    <option value="Tarjeta">Tarjeta</option>
+                                    <option value="Transferencia">Transferencia</option>
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-xs uppercase tracking-widest text-slate-400 font-semibold mb-2">Barbero (Opcional)</label>
-                                <input type="text" id="cliBarbero" placeholder="Ej. Marcos" class="w-full glass-input rounded-xl px-5 py-4 text-white font-medium focus:border-amber-500 transition-colors outline-none">
+                                <label class="block text-xs uppercase tracking-widest text-slate-400 font-semibold mb-2">Fecha y Hora de la Cita</label>
+                                <input type="datetime-local" id="cliFechaHora" class="w-full glass-input rounded-xl px-5 py-4 text-white font-medium focus:border-amber-500 transition-colors outline-none">
                             </div>
                         </div>
 
-                        <div>
-                            <label class="block text-xs uppercase tracking-widest text-slate-400 font-semibold mb-2">Fecha y Hora</label>
-                            <input type="datetime-local" id="cliFechaHora" class="w-full glass-input rounded-xl px-5 py-4 text-white font-medium focus:border-amber-500 transition-colors outline-none">
-                        </div>
-
                         <button onclick="clienteAgendar()" class="w-full py-4 mt-6 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-xl transition-transform active:scale-[0.98] shadow-lg shadow-amber-500/20 text-sm focus:outline-none">
-                            Agendar Definitivamente
+                            Confirmar Reserva Completa
                         </button>
                     </div>
                 </div>
@@ -379,8 +425,13 @@
                             <input type="url" id="ajustesAvatarCli" class="w-full glass-input rounded-xl px-5 py-4 text-white text-sm outline-none" placeholder="https://ejemplo.com/mifoto.jpg">
                         </div>
                         <div class="border-t border-white/5 pt-6 mt-6">
-                            <label class="block text-xs uppercase tracking-widest text-slate-400 font-semibold mb-2">Nueva Contrasena</label>
-                            <input type="password" id="ajustesPassCli" class="w-full glass-input rounded-xl px-5 py-4 text-white text-sm outline-none" placeholder="Dejar en blanco para mantener actual">
+                            <label class="block text-xs uppercase tracking-widest text-slate-400 font-semibold mb-2">Nueva Contraseña</label>
+                            <div class="relative">
+                                <input type="password" id="ajustesPassCli" class="w-full glass-input rounded-xl px-5 py-4 text-white text-sm outline-none pr-12" placeholder="Dejar en blanco para mantener actual">
+                                <button type="button" onclick="togglePassword('ajustesPassCli')" class="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-amber-500 transition-colors focus:outline-none">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                                </button>
+                            </div>
                         </div>
                         <button onclick="guardarDatosAjustes('client')" class="w-full py-4 mt-6 bg-white text-slate-900 hover:bg-slate-200 font-bold rounded-xl transition-transform active:scale-[0.98] shadow-lg text-sm focus:outline-none">
                             Guardar Cambios
@@ -416,6 +467,16 @@
                 <button onclick="switchAdminTab('tabServicios', this)" class="admin-tab-btn w-full flex items-center px-3 py-3 rounded-xl transition-colors focus:outline-none group" title="Servicios">
                     <svg class="w-5 h-5 shrink-0 text-slate-400 group-[.active]:text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5"></path></svg>
                     <span class="admin-sidebar-text font-medium text-sm">Servicios</span>
+                </button>
+
+                <button onclick="switchAdminTab('tabBarberos', this)" class="admin-tab-btn w-full flex items-center px-3 py-3 rounded-xl transition-colors focus:outline-none group" title="Barberos">
+                    <svg class="w-5 h-5 shrink-0 text-slate-400 group-[.active]:text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                    <span class="admin-sidebar-text font-medium text-sm">Barberos</span>
+                </button>
+
+                <button onclick="switchAdminTab('tabPromociones', this)" class="admin-tab-btn w-full flex items-center px-3 py-3 rounded-xl transition-colors focus:outline-none group" title="Promociones">
+                    <svg class="w-5 h-5 shrink-0 text-slate-400 group-[.active]:text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"></path></svg>
+                    <span class="admin-sidebar-text font-medium text-sm">Promos</span>
                 </button>
                 
                 <button onclick="switchAdminTab('tabCitas', this)" class="admin-tab-btn w-full flex items-center px-3 py-3 rounded-xl transition-colors focus:outline-none group" title="Reservas">
@@ -468,7 +529,7 @@
                             </button>
                             
                             <button onclick="cambiarAClienteFromAdmin()" class="flex items-center gap-3 px-4 py-2.5 hover:bg-amber-500/10 rounded-xl text-sm text-amber-500 transition-colors text-left focus:outline-none">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                                 Ver como Cliente
                             </button>
                             
@@ -591,8 +652,93 @@
                 </div>
             </div>
 
+            <div id="tabBarberos" class="admin-tab-content hidden animate-slide space-y-6">
+                <div class="dash-card p-6">
+                    <div class="bg-[#0b0d13]/50 p-6 rounded-2xl border border-white/5 mb-8">
+                        <h4 class="text-sm font-semibold text-white mb-6" id="tituloFormBarbero">Añadir Barbero</h4>
+                        
+                        <div class="grid grid-cols-1 gap-5 mb-5">
+                            <div>
+                                <label class="block text-xs uppercase tracking-widest text-slate-400 mb-2 font-semibold">Nombre del Barbero</label>
+                                <input type="text" id="nuevoBarberoNombre" class="w-full glass-input rounded-xl px-4 py-3 text-sm">
+                            </div>
+                        </div>
+                        <div class="flex gap-3">
+                            <button id="btnAccionBarbero" onclick="guardarOEditarBarbero()" class="px-6 py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-xl text-sm transition-all shadow-lg focus:outline-none">
+                                Guardar Barbero
+                            </button>
+                            <button id="btnCancelarEdicionBarbero" onclick="cancelarEdicionBarbero()" class="hidden px-6 py-3 bg-white/5 hover:bg-white/10 border border-white/10 text-white font-medium rounded-xl text-sm transition-all focus:outline-none">
+                                Cancelar
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse min-w-[500px]">
+                            <thead>
+                                <tr class="text-slate-400 text-xs border-b border-white/5">
+                                    <th class="py-3 px-2 font-medium">Nombre</th>
+                                    <th class="py-3 px-2 font-medium text-right">Opciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tablaAdminBarberos" class="divide-y divide-white/5 text-sm">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tabPromociones" class="admin-tab-content hidden animate-slide space-y-6">
+                <div class="dash-card p-6">
+                    <div class="bg-[#0b0d13]/50 p-6 rounded-2xl border border-white/5 mb-8">
+                        <h4 class="text-sm font-semibold text-white mb-6" id="tituloFormPromo">Añadir Promoción</h4>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
+                            <div>
+                                <label class="block text-xs uppercase tracking-widest text-slate-400 mb-2 font-semibold">Título</label>
+                                <input type="text" id="nuevoPromoTitulo" class="w-full glass-input rounded-xl px-4 py-3 text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs uppercase tracking-widest text-slate-400 mb-2 font-semibold">URL de la Imagen</label>
+                                <input type="url" id="nuevoPromoImg" class="w-full glass-input rounded-xl px-4 py-3 text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs uppercase tracking-widest text-slate-400 mb-2 font-semibold">Cortes Necesarios para Desbloquear</label>
+                                <input type="number" id="nuevoPromoCortes" class="w-full glass-input rounded-xl px-4 py-3 text-sm" value="1" min="1">
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="block text-xs uppercase tracking-widest text-slate-400 mb-2 font-semibold">Descripción</label>
+                                <input type="text" id="nuevoPromoDesc" class="w-full glass-input rounded-xl px-4 py-3 text-sm">
+                            </div>
+                        </div>
+                        <div class="flex gap-3">
+                            <button id="btnAccionPromo" onclick="guardarOEditarPromo()" class="px-6 py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-xl text-sm transition-all shadow-lg focus:outline-none">
+                                Guardar Promoción
+                            </button>
+                            <button id="btnCancelarEdicionPromo" onclick="cancelarEdicionPromo()" class="hidden px-6 py-3 bg-white/5 hover:bg-white/10 border border-white/10 text-white font-medium rounded-xl text-sm transition-all focus:outline-none">
+                                Cancelar
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse min-w-[700px]">
+                            <thead>
+                                <tr class="text-slate-400 text-xs border-b border-white/5">
+                                    <th class="py-3 px-2 font-medium w-16">Imagen</th>
+                                    <th class="py-3 px-2 font-medium">Título</th>
+                                    <th class="py-3 px-2 font-medium">Descripción</th>
+                                    <th class="py-3 px-2 font-medium text-right">Opciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tablaAdminPromos" class="divide-y divide-white/5 text-sm">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
             <div id="tabCitas" class="admin-tab-content hidden animate-slide space-y-6">
-                
                 <div class="dash-card p-6 lg:p-8 flex flex-col lg:flex-row gap-8">
                     <div class="w-full lg:w-2/3">
                         <div class="flex justify-between items-center mb-6 border-b border-white/5 pb-4">
@@ -667,8 +813,13 @@
                             <input type="url" id="ajustesAvatarAdmin" class="w-full glass-input rounded-xl px-5 py-4 text-sm outline-none" placeholder="https://ejemplo.com/mifoto.jpg">
                         </div>
                         <div class="border-t border-white/5 pt-6 mt-6">
-                            <label class="block text-xs uppercase tracking-widest text-slate-400 font-semibold mb-2">Nueva Contrasena</label>
-                            <input type="password" id="ajustesPassAdmin" class="w-full glass-input rounded-xl px-5 py-4 text-sm outline-none" placeholder="Dejar en blanco para mantener actual">
+                            <label class="block text-xs uppercase tracking-widest text-slate-400 font-semibold mb-2">Nueva Contraseña</label>
+                            <div class="relative">
+                                <input type="password" id="ajustesPassAdmin" class="w-full glass-input rounded-xl px-5 py-4 text-sm outline-none pr-12" placeholder="Dejar en blanco para mantener actual">
+                                <button type="button" onclick="togglePassword('ajustesPassAdmin')" class="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-amber-500 transition-colors focus:outline-none">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                                </button>
+                            </div>
                         </div>
                         <button onclick="guardarDatosAjustes('admin')" class="w-full py-4 mt-6 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-xl transition-transform active:scale-[0.98] shadow-lg text-sm focus:outline-none">
                             Guardar Cambios
@@ -688,9 +839,17 @@
 
         let authMode = 'login'; 
         let usuarioActual = null; 
+        
         let idServicioEditando = null;
+        let idBarberoEditando = null;
+        let idPromoEditando = null;
+        
         let serviciosGlobalesData = []; 
+        let barberosGlobalesData = [];
+        let promosGlobalesData = [];
         let citasGlobalesData = [];
+        let carritoCita = [];
+
         let isMockMode = false; 
         
         let currentDate = new Date();
@@ -701,11 +860,19 @@
         let chartIngresos = null;
         let chartServicios = null;
 
-        const catálogoInicial = [
+        const catalogoInicial = [
             { id: 1, nombre: "Corte Elite", precio: 150, desc: "Corte de precision a tijera y maquina, lavado con champu especial.", img: "https://images.unsplash.com/photo-1599351431202-1e0f0137899a?q=80&w=800&auto=format&fit=crop" },
-            { id: 2, nombre: "Perfilado de Barba", precio: 100, desc: "Recorte detallado, alineacion perfecta con navaja y toalla caliente.", img: "https://images.unsplash.com/photo-1622286342621-4bd786c2447c?q=80&w=800&auto=format&fit=crop" },
-            { id: 3, nombre: "Combo Royal", precio: 220, desc: "La experiencia completa: Corte Elite + Perfilado de Barba.", img: "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?q=80&w=800&auto=format&fit=crop" },
-            { id: 4, nombre: "Corte Kids", precio: 120, desc: "Corte especial y paciente para los reyes de la casa.", img: "https://images.unsplash.com/photo-1593702275687-f8b402bf1fb5?q=80&w=800&auto=format&fit=crop" }
+            { id: 2, nombre: "Perfilado de Barba", precio: 100, desc: "Recorte detallado, alineacion perfecta con navaja y toalla caliente.", img: "https://images.unsplash.com/photo-1622286342621-4bd786c2447c?q=80&w=800&auto=format&fit=crop" }
+        ];
+
+        const barberosInicial = [
+            { id: 1, nombre: "Marcos" },
+            { id: 2, nombre: "Julian" }
+        ];
+
+        const promosInicial = [
+            { id: 1, titulo: "Corte Gratis", desc: "Obtén un corte gratis después de 5 visitas.", img: "https://images.unsplash.com/photo-1593702288056-ccbcaf45e051?q=80&w=600&auto=format&fit=crop", cortes_necesarios: 5 },
+            { id: 2, titulo: "Perfilado a Mitad de Precio", desc: "Alineación y barba a mitad de precio en tu tercera visita.", img: "https://images.unsplash.com/photo-1622286342621-4bd786c2447c?q=80&w=800&auto=format&fit=crop", cortes_necesarios: 3 }
         ];
 
         window.onload = function() {
@@ -731,6 +898,15 @@
                     });
                 }
             });
+        }
+
+        function togglePassword(inputId) {
+            const input = document.getElementById(inputId);
+            if (input.type === 'password') {
+                input.type = 'text';
+            } else {
+                input.type = 'password';
+            }
         }
 
         function toggleSidebar(e) {
@@ -843,9 +1019,9 @@
                 fieldNombre.classList.add('hidden');
                 fieldPassConfirm.classList.add('hidden');
                 passContainer.classList.replace('sm:col-span-1', 'sm:col-span-2');
-                btnAction.innerText = 'Iniciar Sesion';
+                btnAction.innerText = 'Iniciar Sesión';
                 toggleText.innerText = 'No tienes cuenta? ';
-                btnToggle.innerText = 'Registrate';
+                btnToggle.innerText = 'Regístrate';
             }
         }
 
@@ -901,7 +1077,7 @@
             }
         }
 
-        function iniciarSesionExitosa(userData, tipo) {
+        async function iniciarSesionExitosa(userData, tipo) {
             usuarioActual = userData;
             document.getElementById('authLandingView').classList.add('hidden');
             
@@ -910,7 +1086,6 @@
             if(tipo === 'admin') {
                 document.getElementById('adminContainer').classList.remove('hidden');
                 document.getElementById('adminContainer').classList.add('flex');
-                
                 document.getElementById('adminNameDisplay').innerText = usuarioActual.nombre;
                 
                 switchAdminTab('tabOverview', document.querySelector('.admin-tab-btn'));
@@ -919,13 +1094,17 @@
                 document.getElementById('clientContainer').classList.remove('hidden');
                 document.getElementById('clientContainer').classList.add('flex');
                 
+                document.getElementById('btnVolverAdmin').classList.add('hidden');
+                
                 document.getElementById('userGreeting').innerText = usuarioActual.nombre.split(' ')[0];
                 document.getElementById('userEmailDisplay').innerText = usuarioActual.correo;
                 
                 document.getElementById('cliNombre').value = usuarioActual.nombre;
+                document.getElementById('cliNombreItem').value = usuarioActual.nombre;
                 document.getElementById('cliCorreo').value = usuarioActual.correo;
                 
                 cambiarVistaCliente('catalogo');
+                renderizarCatalogoYBarberos();
             }
         }
 
@@ -969,6 +1148,7 @@
             } else {
                 document.getElementById('userGreeting').innerText = usuarioActual.nombre.split(' ')[0];
                 document.getElementById('cliNombre').value = usuarioActual.nombre;
+                document.getElementById('cliNombreItem').value = usuarioActual.nombre;
             }
         }
 
@@ -999,7 +1179,8 @@
             document.getElementById('userGreeting').innerText = `Admin`;
             document.getElementById('userEmailDisplay').innerText = `Vista de Prueba`;
             
-            document.getElementById('cliNombre').value = "Cliente de Prueba (Admin)";
+            document.getElementById('cliNombre').value = "Admin Prueba";
+            document.getElementById('cliNombreItem').value = "Admin Prueba";
             document.getElementById('cliCorreo').value = "prueba@admin.com";
             
             cambiarVistaCliente('catalogo');
@@ -1018,6 +1199,7 @@
         function cerrarSesionGeneral() {
             usuarioActual = null;
             isMockMode = false;
+            carritoCita = [];
             
             document.getElementById('adminContainer').classList.add('hidden');
             document.getElementById('adminContainer').classList.remove('flex');
@@ -1036,23 +1218,45 @@
                 m.classList.remove('opacity-100', 'visible', 'scale-100');
             });
 
-            document.querySelectorAll('.client-view').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.client-view').forEach(el => {
+                el.classList.add('hidden');
+                el.classList.remove('block');
+            });
+
             document.querySelectorAll('.client-nav-btn').forEach(btn => {
                 btn.classList.remove('active', 'text-white');
                 btn.classList.add('text-slate-400');
             });
             
             if(vista === 'catalogo') {
-                document.getElementById('vistaCatalogoCliente').classList.remove('hidden');
+                const vistaCat = document.getElementById('vistaCatalogoCliente');
+                vistaCat.classList.remove('hidden');
+                vistaCat.classList.add('block');
+                
                 document.querySelectorAll('.client-nav-btn')[0].classList.add('active', 'text-white');
                 document.querySelectorAll('.client-nav-btn')[0].classList.remove('text-slate-400');
-                renderizarCatalogo();
+                renderizarCatalogoYBarberos();
             } else if (vista === 'reserva') {
-                document.getElementById('vistaReservaCliente').classList.remove('hidden');
+                const vistaRes = document.getElementById('vistaReservaCliente');
+                vistaRes.classList.remove('hidden');
+                vistaRes.classList.add('block');
+
                 document.querySelectorAll('.client-nav-btn')[1].classList.add('active', 'text-white');
                 document.querySelectorAll('.client-nav-btn')[1].classList.remove('text-slate-400');
+                actualizarUICarrito();
+            } else if (vista === 'promociones') {
+                const vistaPro = document.getElementById('vistaPromocionesCliente');
+                vistaPro.classList.remove('hidden');
+                vistaPro.classList.add('block');
+
+                document.querySelectorAll('.client-nav-btn')[2].classList.add('active', 'text-white');
+                document.querySelectorAll('.client-nav-btn')[2].classList.remove('text-slate-400');
+                renderClientPromociones();
             } else if (vista === 'ajustes') {
-                document.getElementById('vistaAjustesCliente').classList.remove('hidden');
+                const vistaAju = document.getElementById('vistaAjustesCliente');
+                vistaAju.classList.remove('hidden');
+                vistaAju.classList.add('block');
+
                 cargarDatosAjustes('client');
             }
         }
@@ -1072,18 +1276,63 @@
             
             if(btnElement) {
                 btnElement.classList.add('active');
-                const titles = { 'tabOverview': 'Dashboard Overview', 'tabServicios': 'Gestion de Catalogo', 'tabCitas': 'Agenda y Calendario', 'tabAjustes': 'Ajustes de Perfil' };
+                const titles = { 'tabOverview': 'Dashboard Overview', 'tabServicios': 'Gestion de Catalogo', 'tabBarberos': 'Gestion de Barberos', 'tabPromociones': 'Gestion de Promociones', 'tabCitas': 'Agenda y Calendario' };
                 document.getElementById('adminSectionTitle').innerText = titles[tabId];
+                if(tabId === 'tabBarberos') actualizarTablaBarberosAdmin();
+                if(tabId === 'tabPromociones') actualizarTablaPromosAdmin();
             } else if (tabId === 'tabAjustes') {
                 document.getElementById('adminSectionTitle').innerText = 'Ajustes de Perfil';
                 cargarDatosAjustes('admin');
             }
         }
 
+        async function fetchTableSafely(tableName, defaultData) {
+            if (isMockMode) return defaultData;
+            try {
+                const { data, error } = await bd.from(tableName).select('*');
+                if (error) {
+                    console.warn(`[Aviso] Error en tabla ${tableName}:`, error.message);
+                    return defaultData;
+                }
+                return (data && data.length > 0) ? data : defaultData;
+            } catch (e) {
+                console.warn(`[Aviso] Catch error en tabla ${tableName}:`, e);
+                return defaultData;
+            }
+        }
+
         async function fetchServicios() {
-            if (isMockMode) return serviciosGlobalesData.length ? serviciosGlobalesData : catálogoInicial;
-            const { data, error } = await bd.from('servicios').select('*');
-            return (!error && data && data.length > 0) ? data : catálogoInicial;
+            return await fetchTableSafely('servicios', catalogoInicial);
+        }
+
+        async function fetchBarberos() {
+            return await fetchTableSafely('barberos', barberosInicial);
+        }
+
+        async function fetchPromociones() {
+            return await fetchTableSafely('promociones', promosInicial);
+        }
+
+        async function getCortesCompletadosUsuario(correo) {
+            if (isMockMode) {
+                return citasGlobalesData.filter(c => c.correo === correo && c.atendido).length;
+            }
+            try {
+                const { data, error, count } = await bd
+                    .from('citas')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('correo', correo)
+                    .eq('atendido', true);
+                
+                if (error) {
+                    console.error("Error fetching completed cuts:", error);
+                    return 0;
+                }
+                return count || 0;
+            } catch (e) {
+                console.error("Catch error fetching completed cuts:", e);
+                return 0;
+            }
         }
 
         async function fetchCitas() {
@@ -1102,13 +1351,17 @@
             else localStorage.setItem('barberiaHistorialDiasV8', JSON.stringify(historialArr));
         }
 
-        async function renderizarCatalogo() {
+        async function renderizarCatalogoYBarberos() {
             serviciosGlobalesData = await fetchServicios();
+            barberosGlobalesData = await fetchBarberos();
+            
             const grid = document.getElementById('catalogoGrid');
-            const select = document.getElementById('cliServicio');
+            const selectServ = document.getElementById('cliServicioItem');
+            const selectBarbero = document.getElementById('cliBarberoSelect');
             
             grid.innerHTML = '';
-            select.innerHTML = '';
+            selectServ.innerHTML = '';
+            selectBarbero.innerHTML = '';
 
             serviciosGlobalesData.forEach(serv => {
                 const imagen = serv.img || 'https://images.unsplash.com/photo-1622286342621-4bd786c2447c?q=80&w=600&auto=format&fit=crop';
@@ -1128,75 +1381,209 @@
                             <div class="flex items-center justify-between mt-auto pt-4 border-t border-white/5">
                                 <span class="bg-[#111520] px-3 py-1.5 rounded-full border border-white/10 text-emerald-400 font-bold text-sm">L. ${serv.precio}</span>
                                 <button onclick="seleccionarServicioRapido('${serv.nombre}|${serv.precio}')" class="px-4 py-2 bg-white text-slate-900 font-bold rounded-xl text-sm hover:bg-amber-400 transition-colors focus:outline-none">
-                                    Agendar
+                                    Añadir
                                 </button>
                             </div>
                         </div>
                     </div>
                 `;
 
-                select.innerHTML += `<option value="${serv.nombre}|${serv.precio}" class="bg-slate-900 text-white">${serv.nombre} - L. ${serv.precio}</option>`;
+                selectServ.innerHTML += `<option value="${serv.nombre}|${serv.precio}" class="bg-slate-900 text-white">${serv.nombre} - L. ${serv.precio}</option>`;
+            });
+
+            barberosGlobalesData.forEach(b => {
+                selectBarbero.innerHTML += `<option value="${b.nombre}" class="bg-slate-900 text-white">${b.nombre}</option>`;
+            });
+        }
+
+        async function renderClientPromociones() {
+            promosGlobalesData = await fetchPromociones();
+            const cortesRealizados = await getCortesCompletadosUsuario(usuarioActual.correo);
+            
+            const grid = document.getElementById('promocionesGrid');
+            grid.innerHTML = '';
+            
+            if(promosGlobalesData.length === 0) {
+                grid.innerHTML = `<p class="text-slate-500 italic text-sm">No hay promociones activas por el momento.</p>`;
+                return;
+            }
+
+            promosGlobalesData.forEach(p => {
+                const img = p.img || 'https://images.unsplash.com/photo-1593702288056-ccbcaf45e051?q=80&w=600&auto=format&fit=crop';
+                const necesarios = p.cortes_necesarios || 1;
+                const porcentaje = Math.min((cortesRealizados / necesarios) * 100, 100);
+                const completado = cortesRealizados >= necesarios;
+                
+                let actionButton = '';
+                if (completado) {
+                    actionButton = `<button onclick="reclamarPromocion(${p.id}, '${p.titulo}')" class="w-full mt-4 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-xl text-sm transition-transform active:scale-95 focus:outline-none shadow-lg shadow-amber-500/20">Reclamar Ahora</button>`;
+                } else {
+                    actionButton = `<div class="w-full mt-4 text-center text-xs text-slate-400">Faltan ${necesarios - cortesRealizados} cortes para desbloquear</div>`;
+                }
+
+                grid.innerHTML += `
+                    <div class="glass-panel rounded-3xl p-5 flex flex-col items-center text-center shadow-xl border ${completado ? 'border-amber-500/50 glow-hover' : 'border-white/10'} relative overflow-hidden group">
+                        ${completado ? '<div class="absolute top-2 right-2 bg-amber-500 text-slate-950 text-[10px] font-bold px-2 py-1 rounded-full z-10 shadow-md">¡Desbloqueado!</div>' : ''}
+                        <img src="${img}" class="w-full h-40 object-cover rounded-2xl mb-4 cursor-pointer group-hover:scale-105 transition-transform duration-500" onclick="abrirModalImagen('${img}')">
+                        <h3 class="font-bold text-lg ${completado ? 'text-amber-500' : 'text-white'} mb-2">${p.titulo}</h3>
+                        <p class="text-sm text-slate-300 font-light mb-4 flex-grow">${p.desc}</p>
+                        
+                        <div class="w-full bg-black/50 rounded-full h-2 mb-1 overflow-hidden border border-white/5">
+                            <div class="bg-gradient-to-r from-amber-600 to-amber-400 h-2 rounded-full transition-all duration-1000" style="width: ${porcentaje}%"></div>
+                        </div>
+                        <div class="w-full flex justify-between text-[10px] text-slate-400 font-bold">
+                            <span>0</span>
+                            <span>Progreso: ${cortesRealizados} / ${necesarios}</span>
+                        </div>
+                        ${actionButton}
+                    </div>
+                `;
+            });
+        }
+
+        function reclamarPromocion(id, titulo) {
+            customConfirm(`¿Deseas aplicar la promoción "${titulo}" en tu próxima reserva?`, () => {
+                showToast(`Promoción "${titulo}" seleccionada. Asegúrate de mencionarlo al llegar.`, 'success');
+                cambiarVistaCliente('reserva');
             });
         }
 
         function seleccionarServicioRapido(val) {
-            document.getElementById('cliServicio').value = val;
+            document.getElementById('cliServicioItem').value = val;
             cambiarVistaCliente('reserva');
         }
 
-        async function clienteAgendar() {
-            const cliente = document.getElementById('cliNombre').value;
-            const correo = document.getElementById('cliCorreo').value;
-            const servicioData = document.getElementById('cliServicio').value.split('|');
-            const barbero = document.getElementById('cliBarbero').value.trim() || 'Cualquiera';
-            const fechaHora = document.getElementById('cliFechaHora').value;
+        function agregarAlCarrito() {
+            const nombre = document.getElementById('cliNombreItem').value.trim();
+            const servData = document.getElementById('cliServicioItem').value.split('|');
+            const barbero = document.getElementById('cliBarberoSelect').value || 'Cualquiera';
 
-            if (!fechaHora) {
-                showToast("Por favor selecciona la fecha y hora.", 'error'); return;
-            }
+            if (!nombre) { showToast("Poné el nombre de quién se corta.", 'error'); return; }
 
-            const nuevaCita = {
-                nombre: cliente,
-                correo: correo,
-                servicio: servicioData[0],
-                precio: parseFloat(servicioData[1]),
-                barbero: barbero,
-                fechahora: fechaHora,
-                atendido: false
-            };
+            carritoCita.push({
+                nombre: nombre,
+                servicio: servData[0],
+                precio: parseFloat(servData[1]),
+                barbero: barbero
+            });
 
-            if(isMockMode) {
-                nuevaCita.id = Math.floor(Math.random() * 10000);
-                citasGlobalesData.push(nuevaCita);
-                showToast("Cita agendada (Simulacion).", 'success');
+            actualizarUICarrito();
+            document.getElementById('cliNombreItem').value = '';
+            showToast("Añadido a la lista", 'success');
+        }
+
+        function quitarDelCarrito(index) {
+            carritoCita.splice(index, 1);
+            actualizarUICarrito();
+        }
+
+        function actualizarUICarrito() {
+            const lista = document.getElementById('listaCarrito');
+            lista.innerHTML = '';
+            let total = 0;
+
+            if(carritoCita.length === 0) {
+                lista.innerHTML = `<div class="text-slate-500 text-xs text-center italic py-2">Lista vacía. Añade servicios arriba.</div>`;
             } else {
-                const { error } = await bd.from('citas').insert([nuevaCita]);
-                if (error) {
-                    showToast("Error al guardar: " + error.message, 'error');
+                carritoCita.forEach((item, idx) => {
+                    total += item.precio;
+                    lista.innerHTML += `
+                        <div class="flex justify-between items-center text-sm text-slate-300 border-b border-white/5 py-2">
+                            <div>
+                                <span class="font-bold text-white">${item.nombre}</span> <br>
+                                <span class="text-xs text-slate-400">${item.servicio} con ${item.barbero}</span>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <span class="text-emerald-400 font-bold">L. ${item.precio}</span>
+                                <button onclick="quitarDelCarrito(${idx})" class="text-red-500 bg-red-500/10 hover:bg-red-500/20 px-2 py-1 rounded">X</button>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+            document.getElementById('totalCarrito').innerText = `Total: L. ${total}`;
+        }
+
+        async function clienteAgendar() {
+            const correo = document.getElementById('cliCorreo').value;
+            const fechaHora = document.getElementById('cliFechaHora').value;
+            const metodoPago = document.getElementById('cliPago').value;
+
+            if (carritoCita.length === 0) { showToast("La lista está vacía. Añade un servicio primero.", 'error'); return; }
+            if (!fechaHora) { showToast("Selecciona la fecha y hora de la cita.", 'error'); return; }
+
+            let mensajeTg = `Nueva reserva de grupo.\n\nFecha: ${fechaHora.replace('T', ' a las ')}\n\nDetalles:\n`;
+            let fallos = 0;
+            let msgError = "";
+            let promises = [];
+
+            for (const item of carritoCita) {
+                const nuevaCita = {
+                    nombre: item.nombre,
+                    correo: correo,
+                    servicio: item.servicio,
+                    precio: item.precio,
+                    barbero: item.barbero,
+                    fechahora: fechaHora,
+                    metodo_pago: metodoPago,
+                    atendido: false
+                };
+
+                mensajeTg += `- Cliente: ${item.nombre} | ${item.servicio} (${item.barbero})\n`;
+
+                if(isMockMode) {
+                    nuevaCita.id = Math.floor(Math.random() * 10000);
+                    citasGlobalesData.push(nuevaCita);
                 } else {
-                    showToast("Cita confirmada.", 'success');
-                    const msj = `Nueva reserva.\n Cliente: ${cliente} \n| Servicio: ${servicioData[0]} \n| Fecha: ${fechaHora.replace('T', ' a las ')}`;
-                    fetch(`https://api.telegram.org/bot8902295828:AAG4GXv9Sgmf2JvpqfRT72fIqcQavnQ_9mg/sendMessage?chat_id=6948066674&text=${encodeURIComponent(msj)}`);
-                    fetch(`https://api.telegram.org/bot8902295828:AAG4GXv9Sgmf2JvpqfRT72fIqcQavnQ_9mg/sendMessage?chat_id=8798433936&text=${encodeURIComponent(msj)}`);
+                     promises.push(bd.from('citas').insert([nuevaCita]));
+                }
+            }
+            
+            if(!isMockMode) {
+                try {
+                    const results = await Promise.all(promises);
+                    for(const res of results) {
+                        if(res.error) {
+                            fallos++;
+                            msgError = res.error.message;
+                            console.error("Error BD al insertar cita:", res.error);
+                        }
+                    }
+                } catch(e) {
+                    fallos++;
+                    msgError = e.message;
+                    console.error("Exception during insertion:", e);
                 }
             }
 
+            mensajeTg += `\nMétodo de Pago: ${metodoPago}`;
+
+            if(fallos > 0) {
+                showToast(`Hubo un problema al guardar las citas. Revisa las columnas 'barbero' y 'metodo_pago' en Supabase. Error: ${msgError}`, 'error');
+            } else {
+                showToast("Cita confirmada exitosamente.", 'success');
+                try {
+                    fetch(`https://api.telegram.org/bot8902295828:AAG4GXv9Sgmf2JvpqfRT72fIqcQavnQ_9mg/sendMessage?chat_id=6948066674&text=${encodeURIComponent(mensajeTg)}`).catch(()=>console.log("No se pudo enviar a TG 1"));
+                    fetch(`https://api.telegram.org/bot8902295828:AAG4GXv9Sgmf2JvpqfRT72fIqcQavnQ_9mg/sendMessage?chat_id=8798433936&text=${encodeURIComponent(mensajeTg)}`).catch(()=>console.log("No se pudo enviar a TG 2"));
+                } catch(e) {}
+            }
+
+            carritoCita = [];
+            actualizarUICarrito();
             document.getElementById('cliFechaHora').value = "";
-            document.getElementById('cliBarbero').value = "";
+            if(usuarioActual) document.getElementById('cliNombreItem').value = usuarioActual.nombre;
             cambiarVistaCliente('catalogo');
         }
 
         function prepararEdicionServicio(id) {
             const servicio = serviciosGlobalesData.find(s => s.id == id);
             if(!servicio) return;
-
             idServicioEditando = id;
             document.getElementById('tituloFormServicio').innerText = "Editando: " + servicio.nombre;
             document.getElementById('nuevoServicioNombre').value = servicio.nombre;
             document.getElementById('nuevoServicioPrecio').value = servicio.precio;
             document.getElementById('nuevoServicioImg').value = servicio.img || '';
             document.getElementById('nuevoServicioDesc').value = servicio.desc || '';
-            
             document.getElementById('btnAccionServicio').innerText = "Actualizar Cambios";
             document.getElementById('btnCancelarEdicion').classList.remove('hidden');
         }
@@ -1208,7 +1595,6 @@
             document.getElementById('nuevoServicioPrecio').value = '';
             document.getElementById('nuevoServicioImg').value = '';
             document.getElementById('nuevoServicioDesc').value = '';
-            
             document.getElementById('btnAccionServicio').innerText = "Guardar Servicio";
             document.getElementById('btnCancelarEdicion').classList.add('hidden');
         }
@@ -1233,25 +1619,24 @@
                 }
                 cancelarEdicionServicio();
                 actualizarTablaServiciosAdmin();
-                showToast("Catalogo actualizado (Simulacion)", 'success');
+                showToast("Catalogo actualizado", 'success');
                 return;
             }
 
             if (idServicioEditando) {
                 const { error } = await bd.from('servicios').update(dataObj).eq('id', idServicioEditando);
-                if (!error) { cancelarEdicionServicio(); actualizarTablaServiciosAdmin(); showToast('Servicio actualizado', 'success'); }
+                if (!error) { cancelarEdicionServicio(); actualizarTablaServiciosAdmin(); showToast('Actualizado', 'success'); }
             } else {
                 const { error } = await bd.from('servicios').insert([dataObj]);
-                if (!error) { cancelarEdicionServicio(); actualizarTablaServiciosAdmin(); showToast('Servicio creado', 'success'); }
+                if (!error) { cancelarEdicionServicio(); actualizarTablaServiciosAdmin(); showToast('Creado', 'success'); }
             }
         }
 
         function eliminarServicio(id) {
-            customConfirm("¿Borrar definitivamente este servicio del catalogo?", async () => {
+            customConfirm("¿Borrar definitivamente este servicio?", async () => {
                 if(isMockMode) {
                     serviciosGlobalesData = serviciosGlobalesData.filter(s => s.id != id);
-                    actualizarTablaServiciosAdmin();
-                    return;
+                    actualizarTablaServiciosAdmin(); return;
                 }
                 await bd.from('servicios').delete().eq('id', id);
                 actualizarTablaServiciosAdmin();
@@ -1263,23 +1648,178 @@
             serviciosGlobalesData = await fetchServicios();
             const tbody = document.getElementById('tablaAdminServicios');
             tbody.innerHTML = '';
-
             serviciosGlobalesData.forEach(s => {
                 const img = s.img || 'https://images.unsplash.com/photo-1622286342621-4bd786c2447c?q=80&w=150&auto=format&fit=crop';
                 tbody.innerHTML += `
                     <tr class="hover:bg-white/5 transition-colors">
-                        <td class="py-3 px-2">
-                            <img src="${img}" class="w-10 h-10 rounded-md object-cover cursor-pointer hover:scale-110 transition shadow-lg border border-white/10" onclick="abrirModalImagen('${img}')">
-                        </td>
+                        <td class="py-3 px-2"><img src="${img}" class="w-10 h-10 rounded-md object-cover cursor-pointer hover:scale-110 shadow-lg border border-white/10" onclick="abrirModalImagen('${img}')"></td>
                         <td class="py-3 px-2 font-medium text-white">${s.nombre}</td>
                         <td class="py-3 px-2 text-emerald-400 font-bold">L. ${s.precio}</td>
                         <td class="py-3 px-2 text-slate-400 text-xs truncate max-w-[150px]">${s.desc || ''}</td>
                         <td class="py-3 px-2 text-right">
-                            <button onclick="prepararEdicionServicio(${s.id})" class="text-amber-400 hover:text-amber-300 text-xs mr-3 font-medium focus:outline-none">Editar</button>
-                            <button onclick="eliminarServicio(${s.id})" class="text-red-400 hover:text-red-300 text-xs font-medium focus:outline-none">Borrar</button>
+                            <button onclick="prepararEdicionServicio(${s.id})" class="text-amber-400 hover:text-amber-300 text-xs mr-3 font-medium">Editar</button>
+                            <button onclick="eliminarServicio(${s.id})" class="text-red-400 hover:text-red-300 text-xs font-medium">Borrar</button>
                         </td>
-                    </tr>
-                `;
+                    </tr>`;
+            });
+        }
+
+        function prepararEdicionBarbero(id) {
+            const b = barberosGlobalesData.find(x => x.id == id);
+            if(!b) return;
+            idBarberoEditando = id;
+            document.getElementById('tituloFormBarbero').innerText = "Editando: " + b.nombre;
+            document.getElementById('nuevoBarberoNombre').value = b.nombre;
+            document.getElementById('btnAccionBarbero').innerText = "Actualizar";
+            document.getElementById('btnCancelarEdicionBarbero').classList.remove('hidden');
+        }
+        function cancelarEdicionBarbero() {
+            idBarberoEditando = null;
+            document.getElementById('tituloFormBarbero').innerText = "Añadir Barbero";
+            document.getElementById('nuevoBarberoNombre').value = '';
+            document.getElementById('btnAccionBarbero').innerText = "Guardar Barbero";
+            document.getElementById('btnCancelarEdicionBarbero').classList.add('hidden');
+        }
+        async function guardarOEditarBarbero() {
+            const nombre = document.getElementById('nuevoBarberoNombre').value.trim();
+            if (!nombre) { showToast("Poné el nombre.", 'error'); return; }
+            const dataObj = { nombre };
+
+            if(isMockMode) {
+                if (idBarberoEditando) {
+                    const idx = barberosGlobalesData.findIndex(x => x.id == idBarberoEditando);
+                    if(idx>-1) barberosGlobalesData[idx] = { ...barberosGlobalesData[idx], ...dataObj };
+                } else {
+                    dataObj.id = Math.floor(Math.random() * 1000);
+                    barberosGlobalesData.push(dataObj);
+                }
+                cancelarEdicionBarbero(); actualizarTablaBarberosAdmin(); showToast("Listo", 'success'); return;
+            }
+
+            if (idBarberoEditando) {
+                const { error } = await bd.from('barberos').update(dataObj).eq('id', idBarberoEditando);
+                if(error) {showToast('Ocupas crear la tabla barberos en Supabase', 'error'); return;}
+                if (!error) { cancelarEdicionBarbero(); actualizarTablaBarberosAdmin(); showToast('Actualizado', 'success'); }
+            } else {
+                const { error } = await bd.from('barberos').insert([dataObj]);
+                if(error) {showToast('Ocupas crear la tabla barberos en Supabase', 'error'); return;}
+                if (!error) { cancelarEdicionBarbero(); actualizarTablaBarberosAdmin(); showToast('Creado', 'success'); }
+            }
+        }
+        function eliminarBarbero(id) {
+            customConfirm("¿Borrar barbero?", async () => {
+                if(isMockMode) { barberosGlobalesData = barberosGlobalesData.filter(x => x.id != id); actualizarTablaBarberosAdmin(); return; }
+                await bd.from('barberos').delete().eq('id', id); actualizarTablaBarberosAdmin(); showToast('Borrado', 'success');
+            });
+        }
+        async function actualizarTablaBarberosAdmin() {
+            barberosGlobalesData = await fetchBarberos();
+            const tbody = document.getElementById('tablaAdminBarberos');
+            tbody.innerHTML = '';
+            barberosGlobalesData.forEach(b => {
+                tbody.innerHTML += `
+                    <tr class="hover:bg-white/5 transition-colors">
+                        <td class="py-3 px-2 font-medium text-white">${b.nombre}</td>
+                        <td class="py-3 px-2 text-right">
+                            <button onclick="prepararEdicionBarbero(${b.id})" class="text-amber-400 hover:text-amber-300 text-xs mr-3 font-medium">Editar</button>
+                            <button onclick="eliminarBarbero(${b.id})" class="text-red-400 hover:text-red-300 text-xs font-medium">Borrar</button>
+                        </td>
+                    </tr>`;
+            });
+        }
+
+        function prepararEdicionPromo(id) {
+            const p = promosGlobalesData.find(x => x.id == id);
+            if(!p) return;
+            idPromoEditando = id;
+            document.getElementById('tituloFormPromo').innerText = "Editando Promo";
+            document.getElementById('nuevoPromoTitulo').value = p.titulo;
+            document.getElementById('nuevoPromoImg').value = p.img || '';
+            document.getElementById('nuevoPromoDesc').value = p.desc || '';
+            
+            const inputCortes = document.getElementById('nuevoPromoCortes');
+            if(inputCortes) inputCortes.value = p.cortes_necesarios || 1;
+
+            document.getElementById('btnAccionPromo').innerText = "Actualizar";
+            document.getElementById('btnCancelarEdicionPromo').classList.remove('hidden');
+        }
+        
+        function cancelarEdicionPromo() {
+            idPromoEditando = null;
+            document.getElementById('tituloFormPromo').innerText = "Añadir Promoción";
+            document.getElementById('nuevoPromoTitulo').value = '';
+            document.getElementById('nuevoPromoImg').value = '';
+            document.getElementById('nuevoPromoDesc').value = '';
+            
+            const inputCortes = document.getElementById('nuevoPromoCortes');
+            if(inputCortes) inputCortes.value = '1';
+
+            document.getElementById('btnAccionPromo').innerText = "Guardar Promoción";
+            document.getElementById('btnCancelarEdicionPromo').classList.add('hidden');
+        }
+        
+        async function guardarOEditarPromo() {
+            const titulo = document.getElementById('nuevoPromoTitulo').value.trim();
+            const img = document.getElementById('nuevoPromoImg').value.trim();
+            const desc = document.getElementById('nuevoPromoDesc').value.trim();
+            
+            let cortes = 1;
+            const inputCortes = document.getElementById('nuevoPromoCortes');
+            if(inputCortes) {
+                cortes = parseInt(inputCortes.value) || 1;
+            }
+
+            if (!titulo) { showToast("Falta el título.", 'error'); return; }
+            const dataObj = { titulo, img, desc, cortes_necesarios: cortes };
+
+            if(isMockMode) {
+                if (idPromoEditando) {
+                    const idx = promosGlobalesData.findIndex(x => x.id == idPromoEditando);
+                    if(idx>-1) promosGlobalesData[idx] = { ...promosGlobalesData[idx], ...dataObj };
+                } else {
+                    dataObj.id = Math.floor(Math.random() * 1000);
+                    promosGlobalesData.push(dataObj);
+                }
+                cancelarEdicionPromo(); actualizarTablaPromosAdmin(); showToast("Listo", 'success'); return;
+            }
+
+            if (idPromoEditando) {
+                const { error } = await bd.from('promociones').update(dataObj).eq('id', idPromoEditando);
+                if(error) {showToast('Error al actualizar: ' + error.message, 'error'); return;}
+                if (!error) { cancelarEdicionPromo(); actualizarTablaPromosAdmin(); showToast('Actualizado', 'success'); }
+            } else {
+                const { error } = await bd.from('promociones').insert([dataObj]);
+                if(error) {showToast('Asegúrate de agregar la columna cortes_necesarios (int4) en Supabase', 'error'); return;}
+                if (!error) { cancelarEdicionPromo(); actualizarTablaPromosAdmin(); showToast('Creado', 'success'); }
+            }
+        }
+        function eliminarPromo(id) {
+            customConfirm("¿Borrar promoción?", async () => {
+                if(isMockMode) { promosGlobalesData = promosGlobalesData.filter(x => x.id != id); actualizarTablaPromosAdmin(); return; }
+                await bd.from('promociones').delete().eq('id', id); actualizarTablaPromosAdmin(); showToast('Borrada', 'success');
+            });
+        }
+        async function actualizarTablaPromosAdmin() {
+            promosGlobalesData = await fetchPromociones();
+            const tbody = document.getElementById('tablaAdminPromos');
+            tbody.innerHTML = '';
+            
+            promosGlobalesData.forEach(p => {
+                const img = p.img || 'https://images.unsplash.com/photo-1593702288056-ccbcaf45e051?q=80&w=150&auto=format&fit=crop';
+                const cortes = p.cortes_necesarios || 1;
+                tbody.innerHTML += `
+                    <tr class="hover:bg-white/5 transition-colors">
+                        <td class="py-3 px-2"><img src="${img}" class="w-10 h-10 rounded-md object-cover cursor-pointer hover:scale-110 shadow-lg border border-white/10" onclick="abrirModalImagen('${img}')"></td>
+                        <td class="py-3 px-2 font-medium text-white">${p.titulo}</td>
+                        <td class="py-3 px-2 text-slate-400 text-xs truncate max-w-[150px]">
+                            ${p.desc || ''}<br>
+                            <span class="text-amber-500 font-bold mt-1 inline-block">Req: ${cortes} visitas</span>
+                        </td>
+                        <td class="py-3 px-2 text-right">
+                            <button onclick="prepararEdicionPromo(${p.id})" class="text-amber-400 hover:text-amber-300 text-xs mr-3 font-medium">Editar</button>
+                            <button onclick="eliminarPromo(${p.id})" class="text-red-400 hover:text-red-300 text-xs font-medium">Borrar</button>
+                        </td>
+                    </tr>`;
             });
         }
 
@@ -1409,7 +1949,15 @@
             const citas = await fetchCitas();
             const historial = await fetchHistorial();
             
+            let usuariosBase = [];
+            if (!isMockMode) {
+                const res = await bd.from('usuarios').select('correo, avatar');
+                if (res.data) usuariosBase = res.data;
+            }
+
             await actualizarTablaServiciosAdmin();
+            await actualizarTablaBarberosAdmin();
+            await actualizarTablaPromosAdmin();
             
             const tbody = document.getElementById('tablaAdminCitas');
             const tbodyHist = document.getElementById('tablaHistorialDias');
@@ -1429,12 +1977,37 @@
                     citasAgrupadas[dStr].push(c);
                 }
 
+                const clientInicial = c.nombre.charAt(0).toUpperCase();
+                
+                let clientAvatar = '';
+                const uMatch = usuariosBase.find(u => u.correo === c.correo);
+                if (uMatch && uMatch.avatar) clientAvatar = uMatch.avatar;
+
+                const servObj = serviciosGlobalesData.find(s => s.nombre === c.servicio);
+                const servImg = servObj ? servObj.img : 'https://images.unsplash.com/photo-1622286342621-4bd786c2447c?q=80&w=150&auto=format&fit=crop';
+                const metodo = c.metodo_pago || 'Efectivo';
+
                 tbody.innerHTML += `
                     <tr class="hover:bg-white/5 transition-colors">
-                        <td class="py-3 px-2 font-medium text-white">${c.nombre}</td>
-                        <td class="py-3 px-2 text-slate-300">${c.servicio}</td>
+                        <td class="py-3 px-2">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-full bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-amber-500 font-bold shrink-0 overflow-hidden">
+                                    ${clientAvatar ? `<img src="${clientAvatar}" class="w-full h-full object-cover">` : clientInicial}
+                                </div>
+                                <span class="font-medium text-white">${c.nombre}</span>
+                            </div>
+                        </td>
+                        <td class="py-3 px-2">
+                            <div class="flex items-center gap-3">
+                                <img src="${servImg}" class="w-8 h-8 rounded object-cover border border-white/10 shrink-0 cursor-pointer hover:scale-110 transition shadow-lg" onclick="abrirModalImagen('${servImg}')">
+                                <span class="text-slate-300">${c.servicio} <br><span class="text-[10px] text-slate-500">${c.barbero || ''}</span></span>
+                            </div>
+                        </td>
                         <td class="py-3 px-2 text-slate-400 text-xs">${c.fechahora.replace('T',' ')}</td>
-                        <td class="py-3 px-2 text-emerald-400 font-bold">L. ${c.precio}</td>
+                        <td class="py-3 px-2 text-emerald-400 font-bold">
+                            L. ${c.precio} <br>
+                            <span class="text-[10px] text-slate-500 font-normal uppercase">${metodo}</span>
+                        </td>
                         <td class="py-3 px-2">
                             ${c.atendido ? '<span class="text-emerald-400 text-xs font-bold">Atendido</span>' : '<span class="text-amber-400 text-xs font-bold">Pendiente</span>'}
                         </td>
@@ -1535,11 +2108,13 @@
         }
 
         function generarDatosDePrueba() {
-            serviciosGlobalesData = [...catálogoInicial];
+            serviciosGlobalesData = [...catalogoInicial];
+            barberosGlobalesData = [...barberosInicial];
+            promosGlobalesData = [...promosInicial];
             citasGlobalesData = [];
             
             const nombres = ["Carlos M.", "Luis F.", "Andres G.", "Mario T.", "Hector B.", "Fernando C.", "Roberto", "Daniel", "Oscar P.", "Jose"];
-            const barberos = ["Marcos", "Julian", "Tony"];
+            const barberos = barberosGlobalesData.map(b => b.nombre);
             const servicios = ["Corte Elite", "Perfilado de Barba", "Combo Royal"];
             const precios = { "Corte Elite": 150, "Perfilado de Barba": 100, "Combo Royal": 220 };
 
@@ -1548,14 +2123,17 @@
                 const dateStr = `${currentYear}-${String(currentMonth+1).padStart(2,'0')}-${String(day).padStart(2,'0')}T14:00`;
                 const s = servicios[Math.floor(Math.random() * servicios.length)];
                 
+                const isDemoUser = Math.random() > 0.7;
+                
                 citasGlobalesData.push({
                     id: i+1000,
-                    nombre: nombres[Math.floor(Math.random() * nombres.length)],
-                    correo: "demo@correo.com",
+                    nombre: isDemoUser ? "Cliente de Prueba" : nombres[Math.floor(Math.random() * nombres.length)],
+                    correo: isDemoUser ? "demo@modo.com" : "demo@correo.com",
                     servicio: s,
                     precio: precios[s],
-                    barbero: barberos[Math.floor(Math.random() * barberos.length)],
+                    barbero: barberos[Math.floor(Math.random() * barberos.length)] || "Marcos",
                     fechahora: dateStr,
+                    metodo_pago: ["Efectivo", "Tarjeta", "Transferencia"][Math.floor(Math.random() * 3)],
                     atendido: Math.random() > 0.3
                 });
             }
